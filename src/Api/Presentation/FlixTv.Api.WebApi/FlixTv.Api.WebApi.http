@@ -1,0 +1,6 @@
+@FlixTv.Api.WebApi_HostAddress = http://localhost:5053
+
+GET {{FlixTv.Api.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
