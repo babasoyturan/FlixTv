@@ -1,4 +1,5 @@
 ﻿using FlixTv.Api.Domain.Abstracts;
+using FlixTv.Common.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace FlixTv.Api.Domain.Concretes
         public required int ReleaseYear { get; set; }
         public required int Duration { get; set; }
         public required short AgeLimitation { get; set; }
-        public required ICollection<Category> Categories { get; set; }
+        public required ICollection<MovieCategory> Categories { get; set; }
         public bool IsVisible { get; set; } = true;
         public ICollection<ViewData>? Views { get; set; }
         public ICollection<Comment>? Comments { get; set; }
@@ -42,7 +43,7 @@ namespace FlixTv.Api.Domain.Concretes
             int releaseYear, 
             int duration, 
             short ageLimitation, 
-            ICollection<Category> categories, 
+            ICollection<MovieCategory> categories, 
             bool isVisible = true)
         {
             SourceVideoUrl = sourceVideoUrl;

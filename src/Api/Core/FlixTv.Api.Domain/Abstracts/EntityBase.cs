@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FlixTv.Api.Domain.Abstracts
 {
-    public class EntityBase : IEntityBase
+    public abstract class EntityBase : IEntityBase
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

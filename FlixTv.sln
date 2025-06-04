@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.36105.23 d17.13
+VisualStudioVersion = 17.13.36105.23
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -27,13 +27,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Api.Application", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Api.Infrastructure", "src\Api\Infrastructure\FlixTv.Api.Infrastructure\FlixTv.Api.Infrastructure.csproj", "{F15CE857-3DBF-4B09-8D70-E3316C279C2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Api.Presentation", "src\Api\Infrastructure\FlixTv.Api.Presentation\FlixTv.Api.Presentation.csproj", "{91ECCE56-710D-43DF-ACCF-B554297EF36A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Api.WebApi", "src\Api\Presentation\FlixTv.Api.WebApi\FlixTv.Api.WebApi.csproj", "{BD5ABF7D-071D-4EE2-BF85-A18A4BE21984}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Common", "src\Common\FlixTv.Common\FlixTv.Common.csproj", "{BA06F779-AE91-42CF-9405-A4D969C9C438}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Clients.WebApp", "src\Clients\MvcWeb\FlixTv.Clients.WebApp\FlixTv.Clients.WebApp.csproj", "{6AC23980-C1C5-41CD-A8D7-2AC1E0FE79F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Api.Persistence", "src\Api\Infrastructure\FlixTv.Api.Persistence\FlixTv.Api.Persistence.csproj", "{9428962C-F94C-4B74-87E6-88A71033BCB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +53,6 @@ Global
 		{F15CE857-3DBF-4B09-8D70-E3316C279C2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F15CE857-3DBF-4B09-8D70-E3316C279C2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F15CE857-3DBF-4B09-8D70-E3316C279C2B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{91ECCE56-710D-43DF-ACCF-B554297EF36A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{91ECCE56-710D-43DF-ACCF-B554297EF36A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{91ECCE56-710D-43DF-ACCF-B554297EF36A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{91ECCE56-710D-43DF-ACCF-B554297EF36A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD5ABF7D-071D-4EE2-BF85-A18A4BE21984}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BD5ABF7D-071D-4EE2-BF85-A18A4BE21984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD5ABF7D-071D-4EE2-BF85-A18A4BE21984}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,6 +65,10 @@ Global
 		{6AC23980-C1C5-41CD-A8D7-2AC1E0FE79F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AC23980-C1C5-41CD-A8D7-2AC1E0FE79F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AC23980-C1C5-41CD-A8D7-2AC1E0FE79F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9428962C-F94C-4B74-87E6-88A71033BCB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9428962C-F94C-4B74-87E6-88A71033BCB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9428962C-F94C-4B74-87E6-88A71033BCB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9428962C-F94C-4B74-87E6-88A71033BCB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,10 +85,10 @@ Global
 		{CD73A33C-E0F5-4082-ADA6-A58050E2C141} = {87F8365D-9B4D-486B-80D1-E6A0D32EBB06}
 		{49C89596-2CD7-43F1-AE47-AE0652E0E98A} = {87F8365D-9B4D-486B-80D1-E6A0D32EBB06}
 		{F15CE857-3DBF-4B09-8D70-E3316C279C2B} = {F4AB339C-2E23-4E9F-BC6C-2283794C64C6}
-		{91ECCE56-710D-43DF-ACCF-B554297EF36A} = {F4AB339C-2E23-4E9F-BC6C-2283794C64C6}
 		{BD5ABF7D-071D-4EE2-BF85-A18A4BE21984} = {6E44A1D3-9D1A-43C0-99F1-83BA47A6CECD}
 		{BA06F779-AE91-42CF-9405-A4D969C9C438} = {D03D8701-5BBD-4E92-AF38-DD20969B22A6}
 		{6AC23980-C1C5-41CD-A8D7-2AC1E0FE79F9} = {AE2CB53F-A0AA-420F-A3BF-EEB6EBF6C32B}
+		{9428962C-F94C-4B74-87E6-88A71033BCB2} = {F4AB339C-2E23-4E9F-BC6C-2283794C64C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF92D6FA-8F55-48A6-97A0-E16FC53DAE6F}
