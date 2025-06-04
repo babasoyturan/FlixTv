@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\FlixTv.Api.Application\FlixTv.Api.Application.csproj" />
     <ProjectReference Include="..\..\Core\FlixTv.Api.Domain\FlixTv.Api.Domain.csproj" />
   </ItemGroup>
 
