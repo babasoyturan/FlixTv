@@ -9,9 +9,9 @@ namespace FlixTv.Api.Domain.Concretes
 {
     public class Comment : EntityBase
     {
-        public required int AuthorId { get; set; }
-        public required int MovieId { get; set; }
-        public required string Message { get; set; }
+        public int AuthorId { get; set; }
+        public int MovieId { get; set; }
+        public string Message { get; set; }
         public int LikeCount { get; set; } = 0;
         public int DislikeCount { get; set; } = 0;
         public Movie? Movie { get; set; } = null;

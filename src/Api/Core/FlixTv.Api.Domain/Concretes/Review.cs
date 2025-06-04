@@ -9,11 +9,11 @@ namespace FlixTv.Api.Domain.Concretes
 {
     public class Review : EntityBase
     {
-        public required int AuthorId { get; set; }
-        public required int MovieId { get; set; }
-        public required string Title { get; set; }
-        public required string Message { get; set; }
-        public required byte RatingPoint { get; set; }
+        public int AuthorId { get; set; }
+        public int MovieId { get; set; }
+        public string Title { get; set; }
+        public string Message { get; set; }
+        public byte RatingPoint { get; set; }
         public Movie? Movie { get; set; }
         public User? Author { get; set; }
 

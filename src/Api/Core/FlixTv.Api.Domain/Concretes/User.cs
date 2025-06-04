@@ -10,10 +10,10 @@ namespace FlixTv.Api.Domain.Concretes
 {
     public class User : EntityBase
     {
-        public required string Name { get; set; }
-        public required string Surname { get; set; }
-        public required string Email { get; set; }
-        public required string HashedPassword { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string Email { get; set; }
+        public string HashedPassword { get; set; }
         public bool IsBanned { get; set; } = false;
         public ICollection<UserMovieCatalog>? FavoriteMovies { get; set; }
         public ICollection<Comment>? Comments { get; set; }

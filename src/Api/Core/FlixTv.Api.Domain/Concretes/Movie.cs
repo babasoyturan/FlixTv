@@ -12,17 +12,17 @@ namespace FlixTv.Api.Domain.Concretes
 {
     public class Movie : EntityBase
     {
-        public required string SourceVideoUrl { get; set; }
-        public required string TrailerVideoUrl { get; set; }
-        public required string CoverImageUrl { get; set; }
-        public required string BannerImageUrl { get; set; }
-        public required string Title { get; set; }
-        public required string Description { get; set; }
-        public required int ReleaseYear { get; set; }
-        public required int Duration { get; set; }
-        public required short AgeLimitation { get; set; }
-        public required ICollection<MovieCategory> Categories { get; set; }
+        public string SourceVideoUrl { get; set; }
+        public string TrailerVideoUrl { get; set; }
+        public string CoverImageUrl { get; set; }
+        public string BannerImageUrl { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int ReleaseYear { get; set; }
+        public int Duration { get; set; }
+        public short AgeLimitation { get; set; }
         public bool IsVisible { get; set; } = true;
+        public ICollection<MovieCategory> Categories { get; set; }
         public ICollection<ViewData>? Views { get; set; }
         public ICollection<Comment>? Comments { get; set; }
         public ICollection<Review>? Reviews { get; set; }

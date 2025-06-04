@@ -1,6 +1,8 @@
 ﻿using FlixTv.Api.Application.Interfaces.Repositories;
+using FlixTv.Api.Application.Interfaces.UnitOfWorks;
 using FlixTv.Api.Persistence.Context;
 using FlixTv.Api.Persistence.Repositories;
+using FlixTv.Api.Persistence.UnitOfWorks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,8 @@ namespace FlixTv.Api.Persistence
 
             services.AddScoped(typeof(IReadRepository<>), typeof(ReadRepository<>));
             services.AddScoped(typeof(IWriteRepository<>), typeof(WriteRepository<>));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }
