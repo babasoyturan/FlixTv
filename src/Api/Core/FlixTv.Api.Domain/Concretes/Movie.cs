@@ -1,5 +1,5 @@
 ﻿using FlixTv.Api.Domain.Abstracts;
-using FlixTv.Common.ViewModels;
+using FlixTv.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

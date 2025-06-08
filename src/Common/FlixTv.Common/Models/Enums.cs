@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FlixTv.Common.ViewModels
+namespace FlixTv.Common.Models
 {
     public enum MovieCategory
     {

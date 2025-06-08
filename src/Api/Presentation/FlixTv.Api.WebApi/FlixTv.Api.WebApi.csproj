@@ -12,13 +12,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\Core\FlixTv.Api.Mapper\FlixTv.Api.Mapper.csproj" />
     <ProjectReference Include="..\..\Infrastructure\FlixTv.Api.Persistence\FlixTv.Api.Persistence.csproj" />
   </ItemGroup>
 
