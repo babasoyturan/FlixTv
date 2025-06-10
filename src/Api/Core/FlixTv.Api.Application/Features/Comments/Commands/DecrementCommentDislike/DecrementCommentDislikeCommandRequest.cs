@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FlixTv.Api.Application.Features.Comments.Commands.DecrementCommentDislike
 {
-    public class DecrementCommentDislikeCommandRequest : IRequest
+    public class DecrementCommentDislikeCommandRequest : IRequest<Unit>
     {
         public int CommentId { get; set; }
     }

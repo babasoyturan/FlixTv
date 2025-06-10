@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FlixTv.Api.Application.Features.Comments.Commands.DeleteComment
 {
-    public class DeleteCommentCommandRequest : IRequest
+    public class DeleteCommentCommandRequest : IRequest<Unit>
     {
         public int CommentId { get; set; }
     }

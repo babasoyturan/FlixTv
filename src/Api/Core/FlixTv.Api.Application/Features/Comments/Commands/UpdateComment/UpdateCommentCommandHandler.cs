@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace FlixTv.Api.Application.Features.Comments.Commands.UpdateComment
 {
-    public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommandRequest>
+    public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -23,20 +23,22 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.UpdateComment
             this.mapper = mapper;
         }
 
-        public async Task Handle(UpdateCommentCommandRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(UpdateCommentCommandRequest request, CancellationToken cancellationToken)
         {
             var comment = await unitOfWork.GetReadRepository<Comment>().GetAsync(c => c.Id == request.Id);
 
-            if (comment is not null)
-            {
-                comment.Message = request.Message;
-                comment.DislikeCount = request.DislikeCount;
-                comment.LikeCount = request.LikeCount;
+            if (comment is null)
+                throw new Exception("Comment was not found.");
 
-                await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
+            comment.Message = request.Message;
+            comment.DislikeCount = request.DislikeCount;
+            comment.LikeCount = request.LikeCount;
 
-                await unitOfWork.SaveAsync();
-            }
+            await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
+
+            await unitOfWork.SaveAsync();
+
+            return Unit.Value;
         }
     }
 }

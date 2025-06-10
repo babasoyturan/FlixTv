@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentDislike
 {
-    public class IncrementCommentDislikeCommandHandler : IRequestHandler<IncrementCommentDislikeCommandRequest>
+    public class IncrementCommentDislikeCommandHandler : IRequestHandler<IncrementCommentDislikeCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -22,16 +22,18 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentDisl
             this.mapper = mapper;
         }
 
-        public async Task Handle(IncrementCommentDislikeCommandRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(IncrementCommentDislikeCommandRequest request, CancellationToken cancellationToken)
         {
             var comment = await unitOfWork.GetReadRepository<Comment>().GetAsync(c => c.Id == request.CommentId);
 
-            if (comment is not null)
-            {
-                comment.DislikeCount++;
-                await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
-                await unitOfWork.SaveAsync();
-            }
+            if (comment is null)
+                throw new Exception("Comment was not found.");
+
+            comment.DislikeCount++;
+            await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
+            await unitOfWork.SaveAsync();
+
+            return Unit.Value;
         }
     }
 }

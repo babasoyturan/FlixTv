@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FlixTv.Api.Application.Features.Comments.Commands.CreateComment
 {
-    public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommandRequest>
+    public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -22,13 +22,15 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.CreateComment
             this.mapper = mapper;
         }
 
-        public async Task Handle(CreateCommentCommandRequest request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(CreateCommentCommandRequest request, CancellationToken cancellationToken)
         {
             Comment comment = new(request.AuthorId, request.MovieId, request.Message);
 
             await unitOfWork.GetWriteRepository<Comment>().AddAsync(comment);
 
             await unitOfWork.SaveAsync();
+
+            return Unit.Value;
         }
     }
 }
