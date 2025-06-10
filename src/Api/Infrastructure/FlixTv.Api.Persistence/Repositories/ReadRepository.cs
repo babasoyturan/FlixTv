@@ -23,8 +23,8 @@ namespace FlixTv.Api.Persistence.Repositories
         }
 
         public async Task<IList<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
             bool enableTracking = false)
         {
             IQueryable<T> queryable = Table;
@@ -41,11 +41,11 @@ namespace FlixTv.Api.Persistence.Repositories
         }
 
         public async Task<IList<T>> GetAllByPagingAsync(Expression<Func<T, bool>>? predicate = null,
-            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
             Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-            bool enableTracking = false,
             int currentPage = 1,
-            int pageSize = 10)
+            int pageSize = 10,
+            Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+            bool enableTracking = false)
         {
             IQueryable<T> queryable = Table;
 

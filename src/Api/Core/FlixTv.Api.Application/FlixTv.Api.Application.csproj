@@ -15,8 +15,4 @@
     <ProjectReference Include="..\FlixTv.Api.Domain\FlixTv.Api.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Comments\Commands\" />
-  </ItemGroup>
-
 </Project>
