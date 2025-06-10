@@ -1,6 +1,7 @@
 using FlixTv.Api.Persistence;
 using FlixTv.Api.Application;
 using FlixTv.Api.Mapper;
+using FlixTv.Api.Application.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.ConfigureExceptionHandlingMiddleware();
 app.UseAuthorization();
 
 app.MapControllers();
