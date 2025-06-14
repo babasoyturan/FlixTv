@@ -32,8 +32,8 @@ namespace FlixTv.Api.WebApi.Controllers
         [FromQuery] int? movieId,
         [FromQuery] string? searchText,
         [FromQuery] string? orderBy,
-        [FromQuery] int currentPage = 1,
-        [FromQuery] int pageSize = 10
+        [FromQuery] int currentPage = 0,
+        [FromQuery] int pageSize = 0
         )
         {
             var request = new GetAllCommentsQueryRequest() { 

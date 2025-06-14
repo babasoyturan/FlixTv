@@ -29,6 +29,9 @@ namespace FlixTv.Api.Application.Features.Reviews.Queries.GetReview
         {
             var review = await unitOfWork.GetReadRepository<Review>().GetAsync(r => r.Id == request.ReviewId, x => x.Include(c => c.Author).Include(c => c.Movie));
 
+            if (review == null)
+                throw new Exception("Review was not found.");
+
             mapper.Map<MovieDto, Movie>(new Movie());
             mapper.Map<AuthorDto, User>(new User());
 

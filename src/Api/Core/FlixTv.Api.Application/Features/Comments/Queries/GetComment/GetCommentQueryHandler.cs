@@ -28,6 +28,9 @@ namespace FlixTv.Api.Application.Features.Comments.Queries.GetComment
         {
             var comment = await unitOfWork.GetReadRepository<Comment>().GetAsync(c => c.Id == request.CommentId, x => x.Include(c => c.Author).Include(c => c.Movie));
 
+            if (comment == null)
+                throw new Exception("Comment was not found.");
+
             mapper.Map<MovieDto, Movie>(new Movie());
             mapper.Map<AuthorDto, User>(new User());
 
