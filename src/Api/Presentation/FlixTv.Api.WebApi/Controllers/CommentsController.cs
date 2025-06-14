@@ -78,7 +78,7 @@ namespace FlixTv.Api.WebApi.Controllers
             var response = await mediator.Send(new GetCommentQueryRequest { CommentId = commentId });
 
             if (response is null)
-                return Ok(new { message = "Comment was not found." });
+                throw new Exception("Comment was not found.");
 
             return Ok(response);
         }

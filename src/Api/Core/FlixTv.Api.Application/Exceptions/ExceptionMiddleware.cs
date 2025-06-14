@@ -37,8 +37,7 @@ namespace FlixTv.Api.Application.Exceptions
                 }.ToString());
 
             List<string> errors = new() { 
-                exception.Message,
-                exception.InnerException?.ToString()
+                exception.Message
             };
 
             return httpContext.Response.WriteAsync(new ExceptionModel()

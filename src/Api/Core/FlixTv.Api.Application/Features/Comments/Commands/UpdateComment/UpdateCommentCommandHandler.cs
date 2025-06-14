@@ -30,9 +30,14 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.UpdateComment
             if (comment is null)
                 throw new Exception("Comment was not found.");
 
-            comment.Message = request.Message;
-            comment.DislikeCount = request.DislikeCount;
-            comment.LikeCount = request.LikeCount;
+            if (!string.IsNullOrWhiteSpace(request.Message))
+                comment.Message = request.Message;
+
+            if (comment.DislikeCount >= 0)
+                comment.DislikeCount = request.DislikeCount;
+
+            if (comment.LikeCount >= 0)
+                comment.LikeCount = request.LikeCount;
 
             await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
 
