@@ -75,9 +75,6 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             var response = await mediator.Send(new GetViewDataQueryRequest { ViewDataId = viewDataId });
 
-            if (response is null)
-                throw new Exception("View Data was not found.");
-
             return Ok(response);
         }
 

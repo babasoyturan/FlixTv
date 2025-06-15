@@ -82,9 +82,6 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             var response = await mediator.Send(new GetReviewQueryRequest { ReviewId = reviewId });
 
-            if (response is null)
-                throw new Exception("Review was not found.");
-
             return Ok(response);
         }
 

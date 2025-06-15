@@ -2,6 +2,7 @@
 using FlixTv.Common.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -58,5 +59,7 @@ namespace FlixTv.Api.Domain.Concretes
             Categories = categories;
             IsVisible = isVisible;
         }
+
+        public float GetMovieRating() => Reviews is not null && Reviews.Count() > 0 ? (float)Math.Round((double)Reviews.Sum(r => r.RatingPoint) / Reviews.Count(), 1) : 0;
     }
 }
