@@ -84,6 +84,6 @@ namespace FlixTv.Api.Domain.Concretes
             FeatureVector = vec;
         }
 
-        public void SetMovieRating() => Rating = Reviews is not null && Reviews.Count() > 0 ? (float)Math.Round((double)Reviews.Sum(r => r.RatingPoint) / Reviews.Count(), 1) : 0;
+        public void SetMovieRating() => Rating = Reviews is not null && Reviews.Count() > 0 ? (float)Math.Round((float)Reviews.Sum(r => r.RatingPoint) / Reviews.Count(), 1) : 0;
     }
 }

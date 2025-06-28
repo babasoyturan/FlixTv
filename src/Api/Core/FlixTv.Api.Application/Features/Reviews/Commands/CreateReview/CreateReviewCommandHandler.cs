@@ -3,6 +3,7 @@ using FlixTv.Api.Application.Interfaces.UnitOfWorks;
 using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models.RequestModels.Reviews;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.CreateReview
             if (await unitOfWork.GetReadRepository<User>().GetAsync(u => u.Id == request.AuthorId) is null)
                 throw new Exception("Author was not found");
 
-            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId);
+            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId, x => x.Include(m => m.Reviews));
 
             if (movie is null)
                 throw new Exception("Movie was not found");
@@ -37,6 +38,8 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.CreateReview
             await unitOfWork.GetWriteRepository<Review>().AddAsync(review);
 
             await unitOfWork.SaveAsync();
+
+            movie.Reviews.Add(review);
 
             movie.SetMovieRating();
 

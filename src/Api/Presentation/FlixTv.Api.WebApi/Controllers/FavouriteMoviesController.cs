@@ -91,7 +91,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "The favourite movie was created succesfully." });
+            return Ok(new { message = "The favourite movie was created successfully." });
         }
 
         [HttpPost]

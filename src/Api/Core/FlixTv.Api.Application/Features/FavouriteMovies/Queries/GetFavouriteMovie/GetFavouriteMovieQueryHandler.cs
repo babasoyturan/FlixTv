@@ -36,7 +36,7 @@ namespace FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetFavouriteMo
 
             var response = mapper.Map<GetFavouriteMovieQueryResponse, UserMovieCatalog>(favouriteMovie);
 
-            response.Movie.Rating = favouriteMovie.Movie.GetMovieRating();
+            response.Movie.Rating = favouriteMovie.Movie.Rating;
 
             return response;
         }

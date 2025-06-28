@@ -11,9 +11,9 @@ namespace FlixTv.Common.Models.RequestModels.Movies
 {
     public class CreateMovieCommandRequest : IRequest<Unit>
     {
-        public IFormFile SourceVideo { get; set; }
         public IFormFile CoverImage { get; set; }
         public IFormFile BannerImage { get; set; }
+        public string SourceVideoUrl { get; set; }
         public string TrailerVideoUrl { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

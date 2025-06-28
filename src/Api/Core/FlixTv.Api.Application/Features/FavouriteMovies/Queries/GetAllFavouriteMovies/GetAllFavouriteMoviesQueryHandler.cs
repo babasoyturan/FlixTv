@@ -48,7 +48,7 @@ namespace FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetAllFavourit
             var response = mapper.Map<GetFavouriteMovieQueryResponse, UserMovieCatalog>(favouriteMovies);
 
             for (int i = 0; i < response.Count(); i++)
-                response[0].Movie.Rating = favouriteMovies[0].Movie.GetMovieRating();
+                response[0].Movie.Rating = favouriteMovies[0].Movie.Rating;
 
             return response;
         }

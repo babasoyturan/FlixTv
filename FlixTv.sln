@@ -37,6 +37,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Api.Persistence", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Api.Mapper", "src\Api\Core\FlixTv.Api.Mapper\FlixTv.Api.Mapper.csproj", "{39F3D7D0-E326-4EAE-B4FB-8A63F0A0C747}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Projections.UploadImageService", "src\Projections\FlixTv.Projections.UploadImageService\FlixTv.Projections.UploadImageService.csproj", "{C0B78CAC-FF09-4ADD-A71A-C1BE1191A5A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Projections.UploadVideoService", "src\Projections\FlixTv.Projections.UploadVideoService\FlixTv.Projections.UploadVideoService.csproj", "{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,14 @@ Global
 		{39F3D7D0-E326-4EAE-B4FB-8A63F0A0C747}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39F3D7D0-E326-4EAE-B4FB-8A63F0A0C747}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{39F3D7D0-E326-4EAE-B4FB-8A63F0A0C747}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0B78CAC-FF09-4ADD-A71A-C1BE1191A5A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0B78CAC-FF09-4ADD-A71A-C1BE1191A5A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0B78CAC-FF09-4ADD-A71A-C1BE1191A5A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0B78CAC-FF09-4ADD-A71A-C1BE1191A5A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -96,6 +108,8 @@ Global
 		{6AC23980-C1C5-41CD-A8D7-2AC1E0FE79F9} = {AE2CB53F-A0AA-420F-A3BF-EEB6EBF6C32B}
 		{9428962C-F94C-4B74-87E6-88A71033BCB2} = {F4AB339C-2E23-4E9F-BC6C-2283794C64C6}
 		{39F3D7D0-E326-4EAE-B4FB-8A63F0A0C747} = {87F8365D-9B4D-486B-80D1-E6A0D32EBB06}
+		{C0B78CAC-FF09-4ADD-A71A-C1BE1191A5A2} = {22E1A105-168C-4065-9022-B04CA824BB05}
+		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A} = {22E1A105-168C-4065-9022-B04CA824BB05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF92D6FA-8F55-48A6-97A0-E16FC53DAE6F}

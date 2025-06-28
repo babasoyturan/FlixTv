@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-FlixTv.Projections.UploadVideoService-490d8f47-333f-4bbe-b703-488ddf8cc74a</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="4.0.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\FlixTv.Common\FlixTv.Common.csproj" />
+  </ItemGroup>
+</Project>

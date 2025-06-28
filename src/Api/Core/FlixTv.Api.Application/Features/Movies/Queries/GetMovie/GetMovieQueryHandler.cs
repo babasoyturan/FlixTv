@@ -38,7 +38,7 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMovie
 
             var response = mapper.Map<GetMovieQueryResponse, Movie>(movie);
 
-            response.Rating = movie.GetMovieRating();
+            response.Rating = movie.Rating;
 
             return response;
         }

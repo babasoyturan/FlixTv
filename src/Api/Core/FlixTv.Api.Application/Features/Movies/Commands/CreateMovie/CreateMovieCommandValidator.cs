@@ -50,11 +50,9 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
                 .Must(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
                 .WithMessage("Trailer video URL must be a valid absolute URL.");
 
-            RuleFor(m => m.SourceVideo)
-                .NotNull()
-                .WithMessage("Source video file must not be null.")
-                .Must(file => file.Length > 0)
-                .WithMessage("Source video file must not be empty.");
+            RuleFor(m => m.SourceVideoUrl)
+                .NotEmpty()
+                .WithMessage("Source video url must not be empty.");
 
             RuleFor(m => m.CoverImage)
                 .NotNull()

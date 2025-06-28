@@ -5,6 +5,7 @@ using FlixTv.Api.Application.Features.Movies.Queries.GetMoviesCount;
 using FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies;
 using FlixTv.Api.Application.Utilities;
 using FlixTv.Common.Models;
+using FlixTv.Common.Models.RequestModels.Movies;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -321,6 +322,14 @@ namespace FlixTv.Api.WebApi.Controllers
             var response = await mediator.Send(request);
 
             return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMovie([FromForm] CreateMovieCommandRequest request)
+        {
+            await mediator.Send(request);
+
+            return Ok(new { message = "The Movie was created successfully" });
         }
     }
 }
