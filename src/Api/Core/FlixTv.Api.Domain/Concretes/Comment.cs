@@ -12,8 +12,8 @@ namespace FlixTv.Api.Domain.Concretes
         public int AuthorId { get; set; }
         public int MovieId { get; set; }
         public string Message { get; set; }
-        public int LikeCount { get; set; } = 0;
-        public int DislikeCount { get; set; } = 0;
+        public IList<int> Likes { get; set; } = new List<int>();
+        public IList<int> Dislikes { get; set; } = new List<int>();
         public Movie? Movie { get; set; } = null;
         public User? Author { get; set; } = null;
 

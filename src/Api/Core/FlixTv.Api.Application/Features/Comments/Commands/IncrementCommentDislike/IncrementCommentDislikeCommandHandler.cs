@@ -29,7 +29,10 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentDisl
             if (comment is null)
                 throw new Exception("Comment was not found.");
 
-            comment.DislikeCount++;
+            if (comment.Dislikes.Contains(request.UserId))
+                throw new Exception($"The User which Id is {request.UserId}, was already disliked the comment.");
+
+            comment.Dislikes.Add(request.UserId);
             await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
             await unitOfWork.SaveAsync();
 

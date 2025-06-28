@@ -57,10 +57,10 @@ namespace FlixTv.Api.WebApi.Controllers
                         request.orderBy = x => x.OrderByDescending(c => c.CreatedDate); 
                         break;
                     case "likeCount":
-                        request.orderBy = x => x.OrderByDescending(c => c.LikeCount);
+                        request.orderBy = x => x.OrderByDescending(c => c.Likes.Count());
                         break;
                     case "dislikeCount":
-                        request.orderBy = x => x.OrderByDescending(c => c.DislikeCount);
+                        request.orderBy = x => x.OrderByDescending(c => c.Dislikes.Count());
                         break;
                     default:
                         break;
@@ -129,37 +129,33 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpPost]
-        [Route("{commentId}")]
-        public async Task<IActionResult> IncrementCommentLike(int commentId)
+        public async Task<IActionResult> IncrementCommentLike([FromQuery] int commentId, [FromQuery] int userId)
         {
-            await mediator.Send(new IncrementCommentLikeCommandRequest { CommentId = commentId });
+            await mediator.Send(new IncrementCommentLikeCommandRequest { CommentId = commentId, UserId = userId });
 
             return Ok(new { message = "Like count of the comment was incremented successfully."});
         }
 
         [HttpPost]
-        [Route("{commentId}")]
-        public async Task<IActionResult> DecrementCommentLike(int commentId)
+        public async Task<IActionResult> DecrementCommentLike([FromQuery] int commentId, [FromQuery] int userId)
         {
-            await mediator.Send(new DecrementCommentLikeCommandRequest { CommentId = commentId });
+            await mediator.Send(new DecrementCommentLikeCommandRequest { CommentId = commentId, UserId = userId });
 
             return Ok(new { message = "Like count of the comment was decremented successfully." });
         }
 
         [HttpPost]
-        [Route("{commentId}")]
-        public async Task<IActionResult> IncrementCommentDislike(int commentId)
+        public async Task<IActionResult> IncrementCommentDislike([FromQuery] int commentId, [FromQuery] int userId)
         {
-            await mediator.Send(new IncrementCommentDislikeCommandRequest { CommentId = commentId });
+            await mediator.Send(new IncrementCommentDislikeCommandRequest { CommentId = commentId, UserId = userId });
 
             return Ok(new { message = "Dislike count of the comment was incremented successfully." });
         }
 
         [HttpPost]
-        [Route("{commentId}")]
-        public async Task<IActionResult> DecrementCommentDislike(int commentId)
+        public async Task<IActionResult> DecrementCommentDislike([FromQuery] int commentId, [FromQuery] int userId)
         {
-            await mediator.Send(new DecrementCommentDislikeCommandRequest { CommentId = commentId });
+            await mediator.Send(new DecrementCommentDislikeCommandRequest { CommentId = commentId, UserId = userId });
 
             return Ok(new { message = "Like count of the comment was decremented successfully." });
         }

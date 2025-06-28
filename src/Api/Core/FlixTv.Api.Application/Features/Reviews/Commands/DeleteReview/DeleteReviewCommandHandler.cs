@@ -31,6 +31,11 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.DeleteReview
             await unitOfWork.GetWriteRepository<Review>().DeleteAsync(review);
             await unitOfWork.SaveAsync();
 
+            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == review.MovieId);
+            movie.SetMovieRating();
+            await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(movie);
+            await unitOfWork.SaveAsync();
+
             return Unit.Value;
         }
     }

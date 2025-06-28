@@ -25,6 +25,7 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.UpdateReview
         public async Task<Unit> Handle(UpdateReviewCommandRequest request, CancellationToken cancellationToken)
         {
             var review = await unitOfWork.GetReadRepository<Review>().GetAsync(c => c.Id == request.Id);
+            bool isRatingChanged = false;
 
             if (review is null)
                 throw new Exception("Review was not found.");
@@ -36,11 +37,22 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.UpdateReview
                 review.Title = request.Title;
 
             if (request.RatingPoint >= 0)
+            {
                 review.RatingPoint = request.RatingPoint;
+                isRatingChanged = true;
+            }
 
             await unitOfWork.GetWriteRepository<Review>().UpdateAsync(review);
 
             await unitOfWork.SaveAsync();
+
+            if (!isRatingChanged)
+            {
+                var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == review.MovieId);
+                movie.SetMovieRating();
+                await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(movie);
+                await unitOfWork.SaveAsync();
+            }
 
             return Unit.Value;
         }

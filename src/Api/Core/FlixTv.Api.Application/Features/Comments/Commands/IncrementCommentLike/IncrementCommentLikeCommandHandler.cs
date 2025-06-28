@@ -28,7 +28,10 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentLike
             if (comment is null)
                 throw new Exception("Comment was not found.");
 
-            comment.LikeCount++;
+            if (comment.Likes.Contains(request.UserId))
+                throw new Exception($"The User which Id is {request.UserId}, was already liked the comment.");
+
+            comment.Likes.Add(request.UserId);
             await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
             await unitOfWork.SaveAsync();
 

@@ -28,10 +28,13 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.DecrementCommentDisl
             if (comment is null)
                 throw new Exception("Comment was not found.");
 
-            if (comment.DislikeCount == 0)
+            if (comment.Dislikes.Count() == 0)
                 throw new Exception("Dislike count is 0.");
 
-            comment.DislikeCount--;
+            if (!comment.Dislikes.Contains(request.UserId))
+                throw new Exception($"The User which Id is {request.UserId}, was not disliked the comment.");
+
+            comment.Dislikes.Remove(request.UserId);
             await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
             await unitOfWork.SaveAsync();
 

@@ -2,9 +2,6 @@
 using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetAllFavouriteMovies;
 using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetFavouriteMovie;
 using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetFavouriteMoviesCount;
-using FlixTv.Api.Application.Features.ViewDatas.Commands.DeleteViewData;
-using FlixTv.Api.Application.Features.ViewDatas.Queries.GetAllViewDatas;
-using FlixTv.Api.Application.Features.ViewDatas.Queries.GetViewData;
 using FlixTv.Api.Application.Utilities;
 using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models.RequestModels.FavouriteMovies;

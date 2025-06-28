@@ -15,14 +15,6 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.UpdateComment
             RuleFor(c => c.Message)
                 .NotEmpty()
                 .MaximumLength(1000);
-
-            RuleFor(c => c.LikeCount)
-                .NotNull()
-                .GreaterThanOrEqualTo(0);
-
-            RuleFor(c => c.DislikeCount)
-                .NotNull()
-                .GreaterThanOrEqualTo(0);
         }
     }
 }

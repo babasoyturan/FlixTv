@@ -33,12 +33,6 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.UpdateComment
             if (!string.IsNullOrWhiteSpace(request.Message))
                 comment.Message = request.Message;
 
-            if (comment.DislikeCount >= 0)
-                comment.DislikeCount = request.DislikeCount;
-
-            if (comment.LikeCount >= 0)
-                comment.LikeCount = request.LikeCount;
-
             await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
 
             await unitOfWork.SaveAsync();

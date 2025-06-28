@@ -27,12 +27,20 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.CreateReview
             if (await unitOfWork.GetReadRepository<User>().GetAsync(u => u.Id == request.AuthorId) is null)
                 throw new Exception("Author was not found");
 
-            if (await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId) is null)
+            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId);
+
+            if (movie is null)
                 throw new Exception("Movie was not found");
 
             var review = new Review(request.AuthorId, request.MovieId, request.Title, request.Message, request.RatingPoint);
 
             await unitOfWork.GetWriteRepository<Review>().AddAsync(review);
+
+            await unitOfWork.SaveAsync();
+
+            movie.SetMovieRating();
+
+            await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(movie);
 
             await unitOfWork.SaveAsync();
 

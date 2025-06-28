@@ -36,6 +36,9 @@ namespace FlixTv.Api.Application.Features.Comments.Queries.GetComment
 
             var response = mapper.Map<GetCommentQueryResponse, Comment>(comment);
 
+            response.LikeCount = comment.Likes.Count;
+            response.DislikeCount = comment.Dislikes.Count;
+
             return response;
         }
     }

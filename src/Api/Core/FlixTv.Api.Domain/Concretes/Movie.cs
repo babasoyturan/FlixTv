@@ -23,6 +23,8 @@ namespace FlixTv.Api.Domain.Concretes
         public int Duration { get; set; }
         public short AgeLimitation { get; set; }
         public bool IsVisible { get; set; } = true;
+        public float Rating { get; set; }
+        public double[] FeatureVector { get; set; }
         public ICollection<MovieCategory> Categories { get; set; }
         public ICollection<ViewData>? Views { get; set; }
         public ICollection<Comment>? Comments { get; set; }
@@ -60,6 +62,28 @@ namespace FlixTv.Api.Domain.Concretes
             IsVisible = isVisible;
         }
 
-        public float GetMovieRating() => Reviews is not null && Reviews.Count() > 0 ? (float)Math.Round((double)Reviews.Sum(r => r.RatingPoint) / Reviews.Count(), 1) : 0;
+        public void SetFeatureVector()
+        {
+            List<MovieCategory> _allCategories = Enum.GetValues(typeof(MovieCategory)).Cast<MovieCategory>().ToList();
+            var _minReleaseYear = 1900;
+            var _maxReleaseYear = 3000;
+            var _yearRange = (_maxReleaseYear - _minReleaseYear) > 0 ? (_maxReleaseYear - _minReleaseYear) : 1;
+
+            var vec = new double[_allCategories.Count + 1];
+
+            foreach (var cat in Categories)
+            {
+                int idx = _allCategories.IndexOf(cat);
+                if (idx >= 0)
+                    vec[idx] = 1;
+            }
+
+            double normalizedYear = (ReleaseYear - _minReleaseYear) / _yearRange;
+            vec[^1] = Math.Clamp(normalizedYear, 0.0, 1.0);
+
+            FeatureVector = vec;
+        }
+
+        public void SetMovieRating() => Rating = Reviews is not null && Reviews.Count() > 0 ? (float)Math.Round((double)Reviews.Sum(r => r.RatingPoint) / Reviews.Count(), 1) : 0;
     }
 }
