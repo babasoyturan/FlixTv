@@ -1,4 +1,5 @@
-﻿using FlixTv.Api.Application.Features.Movies.Queries.GetAllMovies;
+﻿using FlixTv.Api.Application.Features.Movies.Commands.DeleteMovie;
+using FlixTv.Api.Application.Features.Movies.Queries.GetAllMovies;
 using FlixTv.Api.Application.Features.Movies.Queries.GetMovie;
 using FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatibility;
 using FlixTv.Api.Application.Features.Movies.Queries.GetMoviesCount;
@@ -25,6 +26,7 @@ namespace FlixTv.Api.WebApi.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllMovies(
+        [FromQuery] int? userId,
         [FromQuery] string? searchText,
         [FromQuery] int? maxReleaseYear,
         [FromQuery] int? minReleaseYear,
@@ -47,6 +49,9 @@ namespace FlixTv.Api.WebApi.Controllers
                 currentPage = currentPage,
                 pageSize = pageSize
             };
+
+            if (!userId.HasValue)
+                request.userId = 0;
 
             if (!string.IsNullOrWhiteSpace(searchText))
                 request.predicate = request.predicate.And(m => m.Title.Contains(searchText));
@@ -315,9 +320,12 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId, [FromQuery] int size)
+        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId, [FromQuery] int? userId, [FromQuery] int size)
         {
-            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, Size = size };
+            if (!userId.HasValue)
+                userId = 0;
+
+            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, UserId = userId.Value, Size = size };
 
             var response = await mediator.Send(request);
 
@@ -330,6 +338,22 @@ namespace FlixTv.Api.WebApi.Controllers
             await mediator.Send(request);
 
             return Ok(new { message = "The Movie was created successfully" });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateMovie([FromForm] UpdateMovieCommandRequest request)
+        {
+            await mediator.Send(request);
+            return Ok(new { message = "The Movie was updated successfully" });
+        }
+
+        [HttpPost]
+        [Route("{movieId}")]
+        public async Task<IActionResult> DeleteMovie(int movieId)
+        {
+            var request = new DeleteMovieCommandRequest { MovieId = movieId };
+            await mediator.Send(request);
+            return Ok(new { message = "The Movie was deleted successfully" });
         }
     }
 }

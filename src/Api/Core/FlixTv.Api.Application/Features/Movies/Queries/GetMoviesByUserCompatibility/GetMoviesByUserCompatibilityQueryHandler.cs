@@ -57,7 +57,15 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatib
             var response = mapper.Map<GetAllMoviesQueryResponse, Movie>(relatedMovies);
 
             for (int i = 0; i < response.Count(); i++)
-                response[0].ViewCount = relatedMovies[0].Views.Count();
+            {
+                response[i].ViewCount = relatedMovies[i].Views.Count();
+
+                var fm = await unitOfWork.GetReadRepository<UserMovieCatalog>().GetAsync(
+                    x => x.MovieId == relatedMovies[i].Id && x.UserId == request.userId);
+
+                response[i].IsFavourite = fm is not null;
+            }
+                
 
             return response;
         }

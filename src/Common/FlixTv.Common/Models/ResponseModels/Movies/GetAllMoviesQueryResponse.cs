@@ -10,6 +10,7 @@ namespace FlixTv.Common.Models.ResponseModels.Movies
     public class GetAllMoviesQueryResponse
     {
         public int Id { get; set; }
+        public bool IsFavourite { get; set; }
         public string CoverImageUrl { get; set; }
         public string Title { get; set; }
         public int ReleaseYear { get; set; }

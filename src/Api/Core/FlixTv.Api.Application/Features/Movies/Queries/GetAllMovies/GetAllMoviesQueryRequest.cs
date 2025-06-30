@@ -16,6 +16,8 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetAllMovies
 
         public Func<IQueryable<Movie>, IOrderedQueryable<Movie>>? orderBy { get; set; } = null;
 
+        public int userId { get; set; }
+
         public int currentPage { get; set; } = 0;
 
         public int pageSize { get; set; } = 0;
