@@ -14,6 +14,10 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatib
             RuleFor(m => m.userId)
                 .NotEmpty()
                 .GreaterThan(0);
+
+            RuleFor(m => m.count)
+                .NotEmpty()
+                .GreaterThan(0);
         }
     }
 }

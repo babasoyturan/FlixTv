@@ -44,24 +44,85 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatib
 
             var userVector = BuildUserProfile(user);
 
-            var relatedMovies = await unitOfWork.GetReadRepository<Movie>()
-                .GetAllByPagingAsync(
-                predicate: request.predicate.And(m => m.IsVisible && !user.WatchedHistory.Any(wh => wh.MovieId == m.Id)),
-                currentPage: request.currentPage, pageSize: request.pageSize,
-                orderBy: x => x.OrderByDescending(m => CosineSimilarity(userVector, m.FeatureVector)),
-                include: x => x.Include(m => m.Reviews).Include(m => m.Views));
+            var allMovies = await unitOfWork.GetReadRepository<Movie>().GetAllAsync(
+                predicate: m => m.IsVisible,
+                include: m => m
+                    .Include(m => m.Views)
+                    .Include(m => m.Reviews)
+                    .Include(m => m.Comments)
+            );
 
-            if (relatedMovies.Count() <= 0)
-                throw new Exception("There are not any related movie.");
+            var watchedIds = user.WatchedHistory?.Select(v => v.MovieId).ToHashSet() ?? new();
+            var candidateMovies = allMovies.Where(m => !watchedIds.Contains(m.Id)).ToList();
 
-            var response = mapper.Map<GetAllMoviesQueryResponse, Movie>(relatedMovies);
+            var twoMonthsAgo = DateTime.UtcNow.AddMonths(-2);
+
+            const double viewWeight = 1.0;
+            const double commentLikeWeight = 2.0;
+            const double commentDislikeWeight = 1.0;
+            const double reviewPosWeight = 8.0;
+            const double reviewNegWeight = 12.0;
+
+            var topPopular = candidateMovies
+                .Select(m => new
+                {
+                    Movie = m,
+                    Score =
+                        m.Views.Count(v => v.CreatedDate >= twoMonthsAgo) * viewWeight
+                        + m.Comments
+                            .Where(c => c.CreatedDate >= twoMonthsAgo)
+                            .Sum(c => c.Likes.Count * commentLikeWeight - c.Dislikes.Count * commentDislikeWeight)
+                        + m.Reviews
+                            .Where(r => r.CreatedDate >= twoMonthsAgo && r.RatingPoint > 0)
+                            .Sum(r => ((double)r.RatingPoint / 10.0) * reviewPosWeight)
+                        - m.Reviews
+                            .Where(r => r.CreatedDate >= twoMonthsAgo && r.RatingPoint < 6)
+                            .Sum(r => ((6.0 - (double)r.RatingPoint) / 6.0) * reviewNegWeight)
+                })
+                .OrderByDescending(x => x.Score)
+                .Take(20)
+                .Select(x => x.Movie)
+                .ToList();
+
+            var random = candidateMovies
+                .Where(m => !topPopular.Contains(m))
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(20)
+                .ToList();
+
+            var longTail = candidateMovies
+                .OrderBy(m => m.Views.Count)
+                .Take(30)
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(10)
+                .ToList();
+
+            var totalPool = topPopular
+                .Concat(random)
+                .Concat(longTail)
+                .GroupBy(m => m.Id)
+                .Select(g => g.First())
+                .ToList();
+
+            var recommended = totalPool
+                .Select(m => new
+                {
+                    Movie = m,
+                    Score = CosineSimilarity(userVector, m.FeatureVector)
+                })
+                .OrderByDescending(x => x.Score)
+                .Take(request.count)
+                .Select(x => x.Movie)
+                .ToList();
+
+            var response = mapper.Map<GetAllMoviesQueryResponse, Movie>(recommended);
 
             for (int i = 0; i < response.Count(); i++)
             {
-                response[i].ViewCount = relatedMovies[i].Views.Count();
+                response[i].ViewCount = recommended[i].Views.Count();
 
                 var fm = await unitOfWork.GetReadRepository<UserMovieCatalog>().GetAsync(
-                    x => x.MovieId == relatedMovies[i].Id && x.UserId == request.userId);
+                    x => x.MovieId == recommended[i].Id && x.UserId == request.userId);
 
                 response[i].IsFavourite = fm is not null;
             }

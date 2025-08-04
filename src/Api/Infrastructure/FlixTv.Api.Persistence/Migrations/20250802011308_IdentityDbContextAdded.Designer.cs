@@ -4,6 +4,7 @@ using FlixTv.Api.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlixTv.Api.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250802011308_IdentityDbContextAdded")]
+    partial class IdentityDbContextAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -430,21 +433,6 @@ namespace FlixTv.Api.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MovieMovie", b =>
-                {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SimilarMoviesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MovieId", "SimilarMoviesId");
-
-                    b.HasIndex("SimilarMoviesId");
-
-                    b.ToTable("MovieSimilarities", (string)null);
-                });
-
             modelBuilder.Entity("FlixTv.Api.Domain.Concretes.Comment", b =>
                 {
                     b.HasOne("FlixTv.Api.Domain.Concretes.User", "Author")
@@ -569,21 +557,6 @@ namespace FlixTv.Api.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MovieMovie", b =>
-                {
-                    b.HasOne("FlixTv.Api.Domain.Concretes.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FlixTv.Api.Domain.Concretes.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("SimilarMoviesId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
                         .IsRequired();
                 });
 

@@ -240,79 +240,15 @@ namespace FlixTv.Api.WebApi.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetMoviesByUserCompatibility(
-        [FromQuery] string? searchText,
-        [FromQuery] int? maxReleaseYear,
-        [FromQuery] int? minReleaseYear,
-        [FromQuery] short? ageLimitation,
-        [FromQuery] int? maxDuration,
-        [FromQuery] int? minDuration,
-        [FromQuery] byte? maxRating,
-        [FromQuery] byte? minRating,
-        [FromQuery] byte? maxViewCount,
-        [FromQuery] byte? minViewCount,
-        [FromQuery] bool? isVisible,
-        [FromQuery] List<string> Categories,
         [FromQuery] int userId,
-        [FromQuery] int currentPage = 0,
-        [FromQuery] int pageSize = 0
+        [FromQuery] int count = 0
         )
         {
             var request = new GetMoviesByUserCompatibilityQueryRequest()
             {
-                currentPage = currentPage,
-                pageSize = pageSize,
+                count = count,
                 userId = userId
             };
-
-            if (!string.IsNullOrWhiteSpace(searchText))
-                request.predicate = request.predicate.And(m => m.Title.Contains(searchText));
-
-            if (minReleaseYear.HasValue)
-                request.predicate = request.predicate.And(m => m.ReleaseYear >= minReleaseYear);
-
-            if (maxReleaseYear.HasValue)
-                request.predicate = request.predicate.And(m => m.ReleaseYear <= maxReleaseYear);
-
-            if (ageLimitation.HasValue)
-                request.predicate = request.predicate.And(m => m.AgeLimitation <= ageLimitation);
-
-            if (minDuration.HasValue)
-                request.predicate = request.predicate.And(m => m.Duration >= minDuration);
-
-            if (maxDuration.HasValue)
-                request.predicate = request.predicate.And(m => m.Duration <= maxDuration);
-
-            if (minViewCount.HasValue)
-                request.predicate = request.predicate.And(m => m.Views.Count() >= minViewCount);
-
-            if (maxViewCount.HasValue)
-                request.predicate = request.predicate.And(m => m.Views.Count() <= maxViewCount);
-
-            if (minRating.HasValue)
-                request.predicate = request.predicate.And(m => m.Rating >= minRating);
-
-            if (maxRating.HasValue)
-                request.predicate = request.predicate.And(m => m.Rating <= maxRating);
-
-            if (isVisible.HasValue)
-                request.predicate = request.predicate.And(m => m.IsVisible == isVisible);
-
-            if (Categories != null && Categories.Any())
-            {
-                List<MovieCategory> categoryEnums = new();
-
-                foreach (var cat in Categories)
-                {
-                    if (Enum.TryParse<MovieCategory>(cat, true, out var parsed))
-                        categoryEnums.Add(parsed);
-                    else
-                        throw new Exception($"The {cat} category is not exist");
-                }
-
-                request.predicate = request.predicate.And(m =>
-                    categoryEnums.All(c => m.Categories.Contains(c))
-                );
-            }
 
             var response = await mediator.Send(request);
 
@@ -320,12 +256,12 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId, [FromQuery] int? userId, [FromQuery] int size)
+        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId, [FromQuery] int? userId, [FromQuery] int count)
         {
             if (!userId.HasValue)
                 userId = 0;
 
-            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, UserId = userId.Value, Size = size };
+            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, UserId = userId.Value, Count = count };
 
             var response = await mediator.Send(request);
 

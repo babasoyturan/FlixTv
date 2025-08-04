@@ -1,5 +1,6 @@
 ﻿using FlixTv.Api.Application.Interfaces.Repositories;
 using FlixTv.Api.Application.Interfaces.UnitOfWorks;
+using FlixTv.Api.Domain.Concretes;
 using FlixTv.Api.Persistence.Context;
 using FlixTv.Api.Persistence.Repositories;
 using FlixTv.Api.Persistence.UnitOfWorks;
@@ -25,6 +26,18 @@ namespace FlixTv.Api.Persistence
             services.AddScoped(typeof(IWriteRepository<>), typeof(WriteRepository<>));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddIdentityCore<User>(opt =>
+            {
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequiredLength = 2;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireDigit = false;
+                opt.SignIn.RequireConfirmedEmail = false;
+            })
+                .AddRoles<Role>()
+                .AddEntityFrameworkStores<AppDbContext>();
         }
     }
 }

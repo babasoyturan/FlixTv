@@ -19,7 +19,7 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
                 .NotNull()
                 .GreaterThan(0);
 
-            RuleFor(m => m.Size)
+            RuleFor(m => m.Count)
                 .NotEmpty()
                 .GreaterThan(0);
         }

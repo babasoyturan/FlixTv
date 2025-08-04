@@ -30,6 +30,7 @@ namespace FlixTv.Api.Domain.Concretes
         public ICollection<Comment>? Comments { get; set; }
         public ICollection<Review>? Reviews { get; set; }
         public ICollection<UserMovieCatalog>? FavoriteMovieUsers { get; set; }
+        public ICollection<Movie>? SimilarMovies { get; set; }
 
         public Movie()
         {

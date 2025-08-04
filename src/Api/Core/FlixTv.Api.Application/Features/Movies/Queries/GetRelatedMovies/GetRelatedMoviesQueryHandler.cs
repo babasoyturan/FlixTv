@@ -29,19 +29,14 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
 
         public async Task<IList<GetAllMoviesQueryResponse>> Handle(GetRelatedMoviesQueryRequest request, CancellationToken cancellationToken)
         {
-            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId);
+            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId, x => x.Include(m => m.SimilarMovies).ThenInclude(m => m.Views));
 
             if (movie is null)
                 throw new Exception("The movie is not found.");
 
-            var relatedMovies = await unitOfWork.GetReadRepository<Movie>()
-                .GetAllByPagingAsync(
-                predicate: m => m.IsVisible && m.Id != movie.Id, 
-                currentPage: 1, pageSize: request.Size,
-                orderBy: x => x.OrderByDescending(m => CosineSimilarity(movie.FeatureVector, m.FeatureVector)),
-                include: x => x.Include(m => m.Reviews).Include(m => m.Views));
+            var relatedMovies = movie.SimilarMovies?.Where(m => m.IsVisible).ToList();
 
-            if (relatedMovies.Count() <= 0)
+            if (relatedMovies is null || relatedMovies.Count() <= 0)
                 throw new Exception("There are not any related movie.");
 
             var response = mapper.Map<GetAllMoviesQueryResponse, Movie>(relatedMovies);
@@ -63,18 +58,6 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
             }
 
             return response;
-        }
-
-        private double CosineSimilarity(double[] a, double[] b)
-        {
-            double dot = 0, na = 0, nb = 0;
-            for (int i = 0; i < a.Length; i++)
-            {
-                dot += a[i] * b[i];
-                na += a[i] * a[i];
-                nb += b[i] * b[i];
-            }
-            return (na == 0 || nb == 0) ? 0 : dot / (Math.Sqrt(na) * Math.Sqrt(nb));
         }
     }
 }

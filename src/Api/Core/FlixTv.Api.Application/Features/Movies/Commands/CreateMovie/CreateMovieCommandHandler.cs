@@ -7,6 +7,7 @@ using FlixTv.Common.Models.DTOs;
 using FlixTv.Common.Models.RequestModels.Movies;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,31 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
             movie.SetFeatureVector();
             movie.SetMovieRating();
 
+            var allMovies = await unitOfWork.GetReadRepository<Movie>()
+                .GetAllAsync(include: x => x.Include(m => m.SimilarMovies));
+
             await unitOfWork.GetWriteRepository<Movie>().AddAsync(movie);
+            await unitOfWork.SaveAsync();
+
+
+
+            double similarityThreshold = 0.5;
+
+            if (allMovies != null)
+                foreach (var m in allMovies)
+                {
+                    double score = CosineSimilarity(movie.FeatureVector, m.FeatureVector);
+
+                    if (score >= similarityThreshold)
+                    {
+                        movie.SimilarMovies.Add(m);
+                        m.SimilarMovies.Add(movie);
+
+                        await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(m);
+                    }
+                }
+
+            await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(movie);
             await unitOfWork.SaveAsync();
 
 
@@ -77,6 +102,17 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
             using var ms = new MemoryStream();
             await stream.CopyToAsync(ms);
             return ms.ToArray();
+        }
+        private double CosineSimilarity(double[] a, double[] b)
+        {
+            double dot = 0, na = 0, nb = 0;
+            for (int i = 0; i < a.Length; i++)
+            {
+                dot += a[i] * b[i];
+                na += a[i] * a[i];
+                nb += b[i] * b[i];
+            }
+            return (na == 0 || nb == 0) ? 0 : dot / (Math.Sqrt(na) * Math.Sqrt(nb));
         }
     }
 }

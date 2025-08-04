@@ -12,12 +12,8 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatib
 {
     public class GetMoviesByUserCompatibilityQueryRequest : IRequest<IList<GetAllMoviesQueryResponse>>
     {
-        public Expression<Func<Movie, bool>> predicate { get; set; } = p => true;
-
         public int userId { get; set; }
 
-        public int currentPage { get; set; } = 0;
-
-        public int pageSize { get; set; } = 0;
+        public int count { get; set; } = 10;
     }
 }

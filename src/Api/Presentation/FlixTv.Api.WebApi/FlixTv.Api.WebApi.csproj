@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\FlixTv.Api.Mapper\FlixTv.Api.Mapper.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\FlixTv.Api.Infrastructure\FlixTv.Api.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\FlixTv.Api.Persistence\FlixTv.Api.Persistence.csproj" />
   </ItemGroup>
 
