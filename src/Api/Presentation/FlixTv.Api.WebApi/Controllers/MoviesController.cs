@@ -8,6 +8,7 @@ using FlixTv.Api.Application.Utilities;
 using FlixTv.Common.Models;
 using FlixTv.Common.Models.RequestModels.Movies;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = ("admin, user"))]
         public async Task<IActionResult> GetAllMovies(
         [FromQuery] int? userId,
         [FromQuery] string? searchText,
