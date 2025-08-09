@@ -1,10 +1,14 @@
 ﻿using FlixTv.Api.Application.Interfaces.AutoMapper;
 using FlixTv.Api.Application.Interfaces.UnitOfWorks;
 using FlixTv.Api.Domain.Concretes;
+using FlixTv.Common;
+using FlixTv.Common.Infrastructure;
+using FlixTv.Common.Models.DTOs;
 using FlixTv.Common.Models.RequestModels.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,14 +49,34 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Register
 
             if (result.Succeeded)
             {
-                if (!await roleManager.RoleExistsAsync("user"))
+                if (!await roleManager.RoleExistsAsync("User"))
                     await roleManager.CreateAsync(new Role
                     {
-                        Name = "user",
+                        Name = "User",
                         NormalizedName = "USER",
                     });
 
-                await userManager.AddToRoleAsync(user, "user");
+                await userManager.AddToRoleAsync(user, "User");
+
+                var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                var param = new Dictionary<string, string>
+                {
+                    { "token", token },
+                    { "email", user.Email }
+                };
+
+                var callback = QueryHelpers.AddQueryString(request.ClientUri!, param);
+
+                QueueFactory.SendMessageToExchange(
+                exchangeName: FlixTvConstants.MovieExchangeName,
+                exchangeType: FlixTvConstants.DefaultExchangeType,
+                queueName: FlixTvConstants.SendEmailQueueName,
+                obj: new EmailMessageDto
+                {
+                    To = request.Email,
+                    Subject = "Email Confirmation Token",
+                    Body = callback
+                });
             }
 
 

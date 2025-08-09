@@ -10,6 +10,5 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentLike
     public class IncrementCommentLikeCommandRequest : IRequest<Unit>
     {
         public int CommentId { get; set; }
-        public int UserId { get; set; }
     }
 }

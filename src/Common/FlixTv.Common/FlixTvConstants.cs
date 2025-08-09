@@ -14,6 +14,7 @@ namespace FlixTv.Common
         public const string MovieExchangeName = "movieExchange";
         public const string UploadImageQueueName = "movieImageQueue";
         public const string UploadVideoQueueName = "movieSourceVideoQueue";
+        public const string SendEmailQueueName = "movieEmailMessageQueue";
 
 
         // AWS VOD constants

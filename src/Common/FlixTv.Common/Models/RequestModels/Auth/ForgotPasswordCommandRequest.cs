@@ -7,13 +7,9 @@ using System.Threading.Tasks;
 
 namespace FlixTv.Common.Models.RequestModels.Auth
 {
-    public class RegisterCommandRequest : IRequest<Unit>
+    public class ForgotPasswordCommandRequest : IRequest<Unit>
     {
-        public string Name { get; set; }
-        public string Surname { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
         public string? ClientUri { get; set; }
     }
 }

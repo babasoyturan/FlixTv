@@ -2,9 +2,11 @@
 using FlixTv.Api.Application.Interfaces.UnitOfWorks;
 using FlixTv.Api.Domain.Concretes;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,12 +15,14 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentLike
     public class IncrementCommentLikeCommandHandler : IRequestHandler<IncrementCommentLikeCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly int userId;
 
-        public IncrementCommentLikeCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public IncrementCommentLikeCommandHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
+            this.httpContextAccessor = httpContextAccessor;
+            userId = int.Parse(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
 
         public async Task<Unit> Handle(IncrementCommentLikeCommandRequest request, CancellationToken cancellationToken)
@@ -28,10 +32,10 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentLike
             if (comment is null)
                 throw new Exception("Comment was not found.");
 
-            if (comment.Likes.Contains(request.UserId))
-                throw new Exception($"The User which Id is {request.UserId}, was already liked the comment.");
+            if (comment.Likes.Contains(userId))
+                throw new Exception($"The User which Id is {userId}, was already liked the comment.");
 
-            comment.Likes.Add(request.UserId);
+            comment.Likes.Add(userId);
             await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
             await unitOfWork.SaveAsync();
 

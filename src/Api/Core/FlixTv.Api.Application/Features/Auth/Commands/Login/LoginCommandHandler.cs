@@ -41,15 +41,16 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Login
 
         public async Task<LoginCommandResponse> Handle(LoginCommandRequest request, CancellationToken cancellationToken)
         {
-            var errorMessage = "Email or password is wrong";
+            const string errorMessage = "Email or password is wrong";
             var user = await userManager.FindByEmailAsync(request.Email);
 
             if (user is null)
                 throw new Exception(errorMessage);
 
-            var checkPassword = await userManager.CheckPasswordAsync(user, request.Password);
+            if (!await userManager.IsEmailConfirmedAsync(user))
+                throw new Exception("Email is not confirmed");
 
-            if (!checkPassword)
+            if (!await userManager.CheckPasswordAsync(user, request.Password))
                 throw new Exception(errorMessage);
 
             var roles = await userManager.GetRolesAsync(user);

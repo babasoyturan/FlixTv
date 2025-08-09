@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Projections.UploadIm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Projections.UploadVideoService", "src\Projections\FlixTv.Projections.UploadVideoService\FlixTv.Projections.UploadVideoService.csproj", "{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlixTv.Projections.SendEmailService", "src\Projections\FlixTv.Projections.SendEmailService\FlixTv.Projections.SendEmailService.csproj", "{017FDE56-96A2-4933-AACA-7173E1B666F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{017FDE56-96A2-4933-AACA-7173E1B666F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{017FDE56-96A2-4933-AACA-7173E1B666F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{017FDE56-96A2-4933-AACA-7173E1B666F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{017FDE56-96A2-4933-AACA-7173E1B666F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -110,6 +116,7 @@ Global
 		{39F3D7D0-E326-4EAE-B4FB-8A63F0A0C747} = {87F8365D-9B4D-486B-80D1-E6A0D32EBB06}
 		{C0B78CAC-FF09-4ADD-A71A-C1BE1191A5A2} = {22E1A105-168C-4065-9022-B04CA824BB05}
 		{6A7A7B43-B7C9-42D7-90DD-0B1DE0A4523A} = {22E1A105-168C-4065-9022-B04CA824BB05}
+		{017FDE56-96A2-4933-AACA-7173E1B666F8} = {22E1A105-168C-4065-9022-B04CA824BB05}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BF92D6FA-8F55-48A6-97A0-E16FC53DAE6F}

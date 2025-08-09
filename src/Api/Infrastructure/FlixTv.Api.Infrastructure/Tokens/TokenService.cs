@@ -51,8 +51,6 @@ namespace FlixTv.Api.Infrastructure.Tokens
                 signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha256)
             );
 
-            await userManager.AddClaimsAsync(user, claims);
-
             return token;
         }
 

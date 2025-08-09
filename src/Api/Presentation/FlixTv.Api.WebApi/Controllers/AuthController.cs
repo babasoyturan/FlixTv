@@ -16,6 +16,20 @@ namespace FlixTv.Api.WebApi.Controllers
             this.mediator = mediator;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EmailConfirmation([FromQuery] string Email, [FromQuery] string Token)
+        {
+            var request = new EmailConfirmationCommandRequest
+            {
+                Email = Email,
+                Token = Token
+            };
+
+            await mediator.Send(request);
+
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterCommandRequest request)
         {
@@ -42,6 +56,22 @@ namespace FlixTv.Api.WebApi.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Revoke([FromBody] RevokeCommandRequest request)
+        {
+            await mediator.Send(request);
+
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordCommandRequest request)
+        {
+            await mediator.Send(request);
+
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommandRequest request)
         {
             await mediator.Send(request);
 

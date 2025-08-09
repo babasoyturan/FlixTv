@@ -129,9 +129,9 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> IncrementCommentLike([FromQuery] int commentId, [FromQuery] int userId)
+        public async Task<IActionResult> IncrementCommentLike([FromQuery] int commentId)
         {
-            await mediator.Send(new IncrementCommentLikeCommandRequest { CommentId = commentId, UserId = userId });
+            await mediator.Send(new IncrementCommentLikeCommandRequest { CommentId = commentId });
 
             return Ok(new { message = "Like count of the comment was incremented successfully."});
         }
