@@ -13,12 +13,10 @@ namespace FlixTv.Api.Application.Features.Reviews.Queries.GetReviewsCount
     public class GetReviewsCountQueryHandler : IRequestHandler<GetReviewsCountQueryRequest, int>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
 
-        public GetReviewsCountQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetReviewsCountQueryHandler(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
         }
 
         public async Task<int> Handle(GetReviewsCountQueryRequest request, CancellationToken cancellationToken)

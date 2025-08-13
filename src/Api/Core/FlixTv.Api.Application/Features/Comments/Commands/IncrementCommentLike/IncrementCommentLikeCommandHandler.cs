@@ -15,13 +15,11 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentLike
     public class IncrementCommentLikeCommandHandler : IRequestHandler<IncrementCommentLikeCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly int userId;
 
         public IncrementCommentLikeCommandHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
-            this.httpContextAccessor = httpContextAccessor;
             userId = int.Parse(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
 

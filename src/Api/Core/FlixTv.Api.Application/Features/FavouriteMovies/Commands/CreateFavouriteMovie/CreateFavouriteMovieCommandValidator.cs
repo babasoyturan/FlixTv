@@ -12,10 +12,6 @@ namespace FlixTv.Api.Application.Features.FavouriteMovies.Commands.CreateFavouri
     {
         public CreateFavouriteMovieCommandValidator()
         {
-            RuleFor(f => f.UserId)
-                .NotEmpty()
-                .GreaterThan(0);
-
             RuleFor(f => f.MovieId)
                 .NotEmpty()
                 .GreaterThan(0);

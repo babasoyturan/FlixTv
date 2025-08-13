@@ -26,9 +26,7 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = ("Admin, Moderator, User"))]
         public async Task<IActionResult> GetAllMovies(
-        [FromQuery] int? userId,
         [FromQuery] string? searchText,
         [FromQuery] int? maxReleaseYear,
         [FromQuery] int? minReleaseYear,
@@ -51,9 +49,6 @@ namespace FlixTv.Api.WebApi.Controllers
                 currentPage = currentPage,
                 pageSize = pageSize
             };
-
-            if (!userId.HasValue)
-                request.userId = 0;
 
             if (!string.IsNullOrWhiteSpace(searchText))
                 request.predicate = request.predicate.And(m => m.Title.Contains(searchText));
@@ -167,6 +162,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetMoviesCount(
         [FromQuery] string? searchText,
@@ -240,17 +236,13 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Uer, Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetMoviesByUserCompatibility(
-        [FromQuery] int userId,
-        [FromQuery] int count = 0
+        [FromQuery] int count = 10
         )
         {
-            var request = new GetMoviesByUserCompatibilityQueryRequest()
-            {
-                count = count,
-                userId = userId
-            };
+            var request = new GetMoviesByUserCompatibilityQueryRequest() { count = count };
 
             var response = await mediator.Send(request);
 
@@ -258,18 +250,16 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId, [FromQuery] int? userId, [FromQuery] int count)
+        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId, [FromQuery] int count)
         {
-            if (!userId.HasValue)
-                userId = 0;
-
-            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, UserId = userId.Value, Count = count };
+            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, Count = count };
 
             var response = await mediator.Send(request);
 
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<IActionResult> CreateMovie([FromForm] CreateMovieCommandRequest request)
         {
@@ -278,6 +268,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(new { message = "The Movie was created successfully" });
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<IActionResult> UpdateMovie([FromForm] UpdateMovieCommandRequest request)
         {
@@ -285,6 +276,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(new { message = "The Movie was updated successfully" });
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         [Route("{movieId}")]
         public async Task<IActionResult> DeleteMovie(int movieId)

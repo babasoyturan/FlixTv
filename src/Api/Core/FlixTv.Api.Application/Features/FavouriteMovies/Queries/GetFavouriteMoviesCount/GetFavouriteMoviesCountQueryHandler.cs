@@ -13,12 +13,10 @@ namespace FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetFavouriteMo
     public class GetFavouriteMoviesCountQueryHandler : IRequestHandler<GetFavouriteMoviesCountQueryRequest, int>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
 
-        public GetFavouriteMoviesCountQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetFavouriteMoviesCountQueryHandler(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
         }
 
         public async Task<int> Handle(GetFavouriteMoviesCountQueryRequest request, CancellationToken cancellationToken)

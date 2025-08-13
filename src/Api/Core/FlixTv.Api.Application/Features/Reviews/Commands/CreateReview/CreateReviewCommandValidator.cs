@@ -12,10 +12,6 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.CreateReview
     {
         public CreateReviewCommandValidator()
         {
-            RuleFor(r => r.AuthorId)
-                .NotEmpty()
-                .GreaterThan(0);
-
             RuleFor(r => r.MovieId)
                 .NotEmpty()
                 .GreaterThan(0);

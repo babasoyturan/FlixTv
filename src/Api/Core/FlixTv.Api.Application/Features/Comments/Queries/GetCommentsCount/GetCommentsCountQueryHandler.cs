@@ -13,12 +13,10 @@ namespace FlixTv.Api.Application.Features.Comments.Queries.GetCommentsCount
     public class GetCommentsCountQueryHandler : IRequestHandler<GetCommentsCountQueryRequest, int>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
 
-        public GetCommentsCountQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetCommentsCountQueryHandler(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
         }
 
         public async Task<int> Handle(GetCommentsCountQueryRequest request, CancellationToken cancellationToken)

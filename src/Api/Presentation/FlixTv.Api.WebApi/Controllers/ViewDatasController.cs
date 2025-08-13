@@ -9,6 +9,7 @@ using FlixTv.Api.Application.Utilities;
 using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models.RequestModels.ViewDatas;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace FlixTv.Api.WebApi.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetAllViewDatas(
         [FromQuery] int? userId,
@@ -69,6 +71,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpGet]
         [Route("{viewDataId}")]
         public async Task<IActionResult> GetViewData(int viewDataId)
@@ -78,6 +81,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetViewDatasCount(
         [FromQuery] int? userId,
@@ -105,6 +109,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<IActionResult> CreateViewData([FromBody] CreateViewDataCommandRequest request)
         {
@@ -113,6 +118,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(new { message = "View Data was created succesfully." });
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         [Route("{viewDataId}")]
         public async Task<IActionResult> DeleteViewData(int viewDataId)

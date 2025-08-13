@@ -5,6 +5,7 @@ using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models;
 using FlixTv.Common.Models.ResponseModels.Movies;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,22 +19,24 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatib
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly int userId;
 
         private static readonly List<MovieCategory> _allCategories = Enum.GetValues(typeof(MovieCategory)).Cast<MovieCategory>().ToList();
         private const int _minReleaseYear = 1900;
         private const int _maxReleaseYear = 3000;
         private static readonly double _yearRange = (_maxReleaseYear - _minReleaseYear) > 0 ? (_maxReleaseYear - _minReleaseYear) : 1;
 
-        public GetMoviesByUserCompatibilityQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetMoviesByUserCompatibilityQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst("id")?.Value ?? "0");
         }
 
         public async Task<IList<GetAllMoviesQueryResponse>> Handle(GetMoviesByUserCompatibilityQueryRequest request, CancellationToken cancellationToken)
         {
             var user = await unitOfWork.GetReadRepository<User>().GetAsync(
-                u => u.Id == request.userId, 
+                u => u.Id == userId, 
                 x => x
                 .Include(u => u.WatchedHistory).ThenInclude(vd => vd.Movie)
                 .Include(u => u.Reviews).ThenInclude(r => r.Movie)
@@ -122,7 +125,7 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatib
                 response[i].ViewCount = recommended[i].Views.Count();
 
                 var fm = await unitOfWork.GetReadRepository<UserMovieCatalog>().GetAsync(
-                    x => x.MovieId == recommended[i].Id && x.UserId == request.userId);
+                    x => x.MovieId == recommended[i].Id && x.UserId == userId);
 
                 response[i].IsFavourite = fm is not null;
             }

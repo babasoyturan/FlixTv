@@ -3,11 +3,13 @@ using FlixTv.Api.Application.Features.Comments.Queries.GetAllComments;
 using FlixTv.Api.Application.Features.Comments.Queries.GetComment;
 using FlixTv.Api.Application.Features.Reviews.Commands.DeleteReview;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetAllReviews;
+using FlixTv.Api.Application.Features.Reviews.Queries.GetMyReviews;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetReview;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetReviewsCount;
 using FlixTv.Api.Application.Utilities;
 using FlixTv.Common.Models.RequestModels.Reviews;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Writers;
@@ -76,6 +78,38 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpGet]
+        public async Task<IActionResult> GetMyReviews(
+        [FromQuery] string? orderBy,
+        [FromQuery] int currentPage = 0,
+        [FromQuery] int pageSize = 0
+        )
+        {
+            var request = new GetMyReviewsQueryRequest()
+            {
+                pageSize = pageSize,
+                currentPage = currentPage,
+            };
+
+            if (!string.IsNullOrWhiteSpace(orderBy))
+                switch (orderBy)
+                {
+                    case "createdDate":
+                        request.orderBy = x => x.OrderByDescending(c => c.CreatedDate);
+                        break;
+                    case "rating":
+                        request.orderBy = x => x.OrderByDescending(c => c.RatingPoint);
+                        break;
+                    default:
+                        break;
+                }
+
+            var response = await mediator.Send(request);
+
+            return Ok(response);
+        }
+
         [HttpGet]
         [Route("{reviewId}")]
         public async Task<IActionResult> GetReview(int reviewId)
@@ -116,6 +150,16 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpGet]
+        public async Task<IActionResult> GetMyReviewsCount()
+        {
+            var response = await mediator.Send(new GetReviewsCountQueryRequest());
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "User, Admin, Moderator")]
         [HttpPost]
         public async Task<IActionResult> CreateReview([FromBody] CreateReviewCommandRequest request)
         {
@@ -124,6 +168,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(new { message = "Review was created succesfully." });
         }
 
+        [Authorize(Roles = "User, Admin, Moderator")]
         [HttpPost]
         public async Task<IActionResult> UpdateReview([FromBody] UpdateReviewCommandRequest request)
         {
@@ -132,6 +177,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(new { message = "Review was updated succesfully." });
         }
 
+        [Authorize(Roles = "User, Admin, Moderator")]
         [HttpPost]
         [Route("{reviewId}")]
         public async Task<IActionResult> DeleteReview(int reviewId)

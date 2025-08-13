@@ -11,10 +11,6 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
     {
         public GetRelatedMoviesQueryValidator()
         {
-            RuleFor(m => m.UserId)
-                .NotNull()
-                .GreaterThanOrEqualTo(0);
-
             RuleFor(m => m.MovieId)
                 .NotNull()
                 .GreaterThan(0);

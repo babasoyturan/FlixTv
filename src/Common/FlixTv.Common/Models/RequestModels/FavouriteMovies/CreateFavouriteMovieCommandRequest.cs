@@ -9,7 +9,6 @@ namespace FlixTv.Common.Models.RequestModels.FavouriteMovies
 {
     public class CreateFavouriteMovieCommandRequest : IRequest<Unit>
     {
-        public int UserId { get; set; }
         public int MovieId { get; set; }
     }
 }

@@ -11,7 +11,6 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
     public class GetRelatedMoviesQueryRequest : IRequest<IList<GetAllMoviesQueryResponse>>
     {
         public int MovieId { get; set; }
-        public int UserId { get; set; }
         public int Count { get; set; }
     }
 }

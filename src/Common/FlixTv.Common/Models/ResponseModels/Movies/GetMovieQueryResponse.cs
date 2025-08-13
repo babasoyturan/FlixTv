@@ -22,7 +22,5 @@ namespace FlixTv.Common.Models.ResponseModels.Movies
         public short AgeLimitation { get; set; }
         public float Rating { get; set; }
         public ICollection<string> Categories { get; set; }
-        public ICollection<CommentDto>? Comments { get; set; }
-        public ICollection<ReviewDto>? Reviews { get; set; }
     }
 }

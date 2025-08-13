@@ -12,10 +12,6 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.CreateComment
     {
         public CreateCommentCommandValidator()
         {
-            RuleFor(c => c.AuthorId)
-                .NotEmpty()
-                .GreaterThan(0);
-
             RuleFor(c => c.MovieId)
                 .NotEmpty()
                 .GreaterThan(0);

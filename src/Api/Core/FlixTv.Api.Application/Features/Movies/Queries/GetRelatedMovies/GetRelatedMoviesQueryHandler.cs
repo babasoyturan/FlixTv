@@ -3,6 +3,7 @@ using FlixTv.Api.Application.Interfaces.UnitOfWorks;
 using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models.ResponseModels.Movies;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,15 +17,17 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly int userId;
 
         private const double wCat = 1.0;
         private const double wYear = 0.1;
         private const double wAge = 0.2;
 
-        public GetRelatedMoviesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetRelatedMoviesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst("id")?.Value ?? "0");
         }
 
         public async Task<IList<GetAllMoviesQueryResponse>> Handle(GetRelatedMoviesQueryRequest request, CancellationToken cancellationToken)
@@ -45,14 +48,14 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
             {
                 response[i].ViewCount = relatedMovies[i].Views.Count();
 
-                if (request.UserId == 0)
+                if (userId == 0)
                 {
                     response[i].IsFavourite = false;
                     continue;
                 }
 
                 var fm = await unitOfWork.GetReadRepository<UserMovieCatalog>().GetAsync(
-                    x => x.MovieId == relatedMovies[i].Id && x.UserId == request.UserId);
+                    x => x.MovieId == relatedMovies[i].Id && x.UserId == userId);
 
                 response[i].IsFavourite = fm is not null;
             }

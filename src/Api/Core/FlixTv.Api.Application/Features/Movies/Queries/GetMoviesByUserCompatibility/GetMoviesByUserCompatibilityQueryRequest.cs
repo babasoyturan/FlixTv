@@ -12,8 +12,6 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatib
 {
     public class GetMoviesByUserCompatibilityQueryRequest : IRequest<IList<GetAllMoviesQueryResponse>>
     {
-        public int userId { get; set; }
-
-        public int count { get; set; } = 10;
+        public int count { get; set; }
     }
 }

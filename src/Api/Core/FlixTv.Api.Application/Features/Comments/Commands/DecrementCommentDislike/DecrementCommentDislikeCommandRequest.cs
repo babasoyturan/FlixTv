@@ -10,6 +10,5 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.DecrementCommentDisl
     public class DecrementCommentDislikeCommandRequest : IRequest<Unit>
     {
         public int CommentId { get; set; }
-        public int UserId { get; set; }
     }
 }
