@@ -15,6 +15,7 @@ namespace FlixTv.Api.Domain.Concretes
         public string Surname { get; set; }
         public bool IsBanned { get; set; } = false;
         public string? RefreshToken { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime? RefreshTokenExpiryTime { get; set; }
         public ICollection<UserMovieCatalog>? FavoriteMovies { get; set; }
         public ICollection<Comment>? Comments { get; set; }

@@ -33,6 +33,7 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Revoke
             user.RefreshTokenExpiryTime = null;
 
             await userManager.UpdateAsync(user);
+            await userManager.UpdateSecurityStampAsync(user);
 
             return Unit.Value;
         }

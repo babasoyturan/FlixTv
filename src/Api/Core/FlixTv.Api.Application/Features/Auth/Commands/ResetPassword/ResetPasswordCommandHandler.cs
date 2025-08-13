@@ -29,6 +29,14 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.ResetPassword
             if (!result.Succeeded)
                 throw new Exception("Invalid Reset Password Request.");
 
+            user.RefreshToken = null;
+            user.RefreshTokenExpiryTime = null;
+
+            await userManager.UpdateAsync(user);
+
+
+            await userManager.UpdateSecurityStampAsync(user);
+
             return Unit.Value;
         }
     }

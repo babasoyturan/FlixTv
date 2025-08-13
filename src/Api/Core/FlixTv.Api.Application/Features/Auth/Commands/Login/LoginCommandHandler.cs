@@ -53,6 +53,9 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Login
             if (!await userManager.CheckPasswordAsync(user, request.Password))
                 throw new Exception(errorMessage);
 
+            if (user.IsBanned)
+                throw new Exception("User is banned");
+
             var roles = await userManager.GetRolesAsync(user);
 
             var token = await tokenService.CreateToken(user, roles);
@@ -63,9 +66,6 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Login
 
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenValidityInDays);
-
-            await userManager.UpdateAsync(user);
-            await userManager.UpdateSecurityStampAsync(user);
 
             var _token = new JwtSecurityTokenHandler().WriteToken(token);
 

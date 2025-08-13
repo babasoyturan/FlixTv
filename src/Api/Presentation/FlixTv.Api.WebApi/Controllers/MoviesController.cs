@@ -26,7 +26,7 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = ("admin, user"))]
+        [Authorize(Roles = ("Admin, Moderator, User"))]
         public async Task<IActionResult> GetAllMovies(
         [FromQuery] int? userId,
         [FromQuery] string? searchText,

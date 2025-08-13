@@ -41,6 +41,10 @@ namespace FlixTv.Api.Infrastructure.Tokens
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
+            var securityStamp = await userManager.GetSecurityStampAsync(user);
+            if (!string.IsNullOrEmpty(securityStamp))
+                claims.Add(new Claim("security_stamp", securityStamp));
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.SecretKey));
 
             var token = new JwtSecurityToken(
