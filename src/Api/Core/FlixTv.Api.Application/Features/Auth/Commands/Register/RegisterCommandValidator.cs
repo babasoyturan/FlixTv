@@ -47,6 +47,12 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Register
                 .WithMessage("Confirm Password must match Password.")
                 .MaximumLength(100)
                 .WithMessage("Confirm Password must not exceed 100 characters.");
+
+            RuleFor(u => u.ClientUri)
+                .NotEmpty()
+                .WithMessage("Client URI is required.")
+                .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+                .WithMessage("Client URI must be a valid absolute URL.");
         }
     }
 }

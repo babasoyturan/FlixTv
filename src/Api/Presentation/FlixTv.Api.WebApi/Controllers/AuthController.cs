@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace FlixTv.Api.WebApi.Controllers
 {
@@ -27,7 +28,7 @@ namespace FlixTv.Api.WebApi.Controllers
 
             await mediator.Send(request);
 
-            return StatusCode(StatusCodes.Status200OK);
+            return StatusCode(StatusCodes.Status200OK, "Email was confirmed successfully");
         }
 
         [HttpPost]
@@ -35,7 +36,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return StatusCode(StatusCodes.Status201Created);
+            return StatusCode(StatusCodes.Status201Created, "User was created successfully");
         }
 
         [HttpPost]
@@ -67,7 +68,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return StatusCode(StatusCodes.Status200OK);
+            return StatusCode(StatusCodes.Status200OK, "Confirmation link was sent to your email.");
         }
 
         [HttpPost]
@@ -75,7 +76,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return StatusCode(StatusCodes.Status200OK);
+            return StatusCode(StatusCodes.Status200OK, "Password was reset successfully");
         }
     }
 }

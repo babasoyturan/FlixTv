@@ -8,6 +8,7 @@ using FlixTv.Common.Models.RequestModels.Movies;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,8 +35,8 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
 
             var movie = mapper.Map<Movie, CreateMovieCommandRequest>(request);
 
-            movie.CoverImageUrl = coverImageId;
-            movie.BannerImageUrl = bannerImageId;
+            movie.CoverImageUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/images/{coverImageId}.png";
+            movie.BannerImageUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/images/{bannerImageId}.png";
             movie.SetFeatureVector();
             movie.SetMovieRating();
 

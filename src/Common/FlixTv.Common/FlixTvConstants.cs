@@ -20,8 +20,8 @@ namespace FlixTv.Common
         // AWS VOD constants
         public const string Region = "us-east-1";
         public const string CdnName = "dlg82512ftdc3";
-        public const string AccessKey = "AKIAYMMUDGSVJRK6HU7B";
-        public const string SecretKey = "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";
+        public const string AccessKey = "hakuna";
+        public const string SecretKey = "matata";
         public const string InputBucket = "flix-vod-solution-source71e471f1-ite6qfaomflb";
         public const string OutputBucket = "flix-vod-solution-destination920a3c57-b6uptcsoegsj";
     }

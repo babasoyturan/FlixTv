@@ -19,17 +19,13 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Register
 {
     public class RegisterCommandHandler : IRequestHandler<RegisterCommandRequest, Unit>
     {
-        private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        private readonly IHttpContextAccessor httpContextAccessor;
         private readonly UserManager<User> userManager;
         private readonly RoleManager<Role> roleManager;
 
-        public RegisterCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public RegisterCommandHandler(IMapper mapper, UserManager<User> userManager, RoleManager<Role> roleManager)
         {
-            this.unitOfWork = unitOfWork;
             this.mapper = mapper;
-            this.httpContextAccessor = httpContextAccessor;
             this.userManager = userManager;
             this.roleManager = roleManager;
         }
