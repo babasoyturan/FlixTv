@@ -21,4 +21,14 @@ namespace FlixTv.Common.Models
         Thriller,
         Western
     }
+
+    public enum RowType
+    {
+        SpecialKey,
+        TopGenres,
+        ComboGenres,
+        SimilarToMovie,
+        Decade,
+        ContinueWatching
+    }
 }

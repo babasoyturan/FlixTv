@@ -4,6 +4,7 @@ using FlixTv.Api.Application.Features.Movies.Queries.GetMovie;
 using FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatibility;
 using FlixTv.Api.Application.Features.Movies.Queries.GetMoviesCount;
 using FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies;
+using FlixTv.Api.Application.Features.Movies.Queries.GetRowModels;
 using FlixTv.Api.Application.Utilities;
 using FlixTv.Common.Models;
 using FlixTv.Common.Models.RequestModels.Movies;
@@ -256,6 +257,14 @@ namespace FlixTv.Api.WebApi.Controllers
 
             var response = await mediator.Send(request);
 
+            return Ok(response);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetRowModels([FromQuery] int count)
+        {
+            var request = new GetRowModelsQueryRequest { Count = count };
+            var response = await mediator.Send(request);
             return Ok(response);
         }
 
