@@ -30,13 +30,14 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
 
         public async Task<Unit> Handle(CreateMovieCommandRequest request, CancellationToken cancellationToken)
         {
-            var coverImageId = Guid.NewGuid().ToString();
-            var bannerImageId = Guid.NewGuid().ToString();
-
             var movie = mapper.Map<Movie, CreateMovieCommandRequest>(request);
 
-            movie.CoverImageUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/images/{coverImageId}.png";
-            movie.BannerImageUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/images/{bannerImageId}.png";
+            //var coverImageId = Guid.NewGuid().ToString();
+            //var bannerImageId = Guid.NewGuid().ToString();
+
+            //movie.CoverImageUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/images/{coverImageId}.png";
+            //movie.BannerImageUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/images/{bannerImageId}.png";
+
             movie.SetFeatureVector();
             movie.SetMovieRating();
 
@@ -68,30 +69,30 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
             await unitOfWork.SaveAsync();
 
 
-            var coverBytes = await ToByteArray(request.CoverImage);
-            var bannerBytes = await ToByteArray(request.BannerImage);
+            //var coverBytes = await ToByteArray(request.CoverImage);
+            //var bannerBytes = await ToByteArray(request.BannerImage);
 
-            QueueFactory.SendMessageToExchange(
-                exchangeName: FlixTvConstants.MovieExchangeName,
-                exchangeType: FlixTvConstants.DefaultExchangeType,
-                queueName: FlixTvConstants.UploadImageQueueName,
-                obj: new FormFileDto { 
-                    Key = coverImageId, 
-                    FileName = request.CoverImage.FileName, 
-                    ContentType = request.CoverImage.ContentType, 
-                    FileData = coverBytes 
-                });
+            //QueueFactory.SendMessageToExchange(
+            //    exchangeName: FlixTvConstants.MovieExchangeName,
+            //    exchangeType: FlixTvConstants.DefaultExchangeType,
+            //    queueName: FlixTvConstants.UploadImageQueueName,
+            //    obj: new FormFileDto { 
+            //        Key = coverImageId, 
+            //        FileName = request.CoverImage.FileName, 
+            //        ContentType = request.CoverImage.ContentType, 
+            //        FileData = coverBytes 
+            //    });
 
-            QueueFactory.SendMessageToExchange(
-                exchangeName: FlixTvConstants.MovieExchangeName,
-                exchangeType: FlixTvConstants.DefaultExchangeType,
-                queueName: FlixTvConstants.UploadImageQueueName,
-                obj: new FormFileDto { 
-                    Key = bannerImageId, 
-                    FileName = request.BannerImage.FileName, 
-                    ContentType = request.BannerImage.ContentType, 
-                    FileData = bannerBytes
-                });
+            //QueueFactory.SendMessageToExchange(
+            //    exchangeName: FlixTvConstants.MovieExchangeName,
+            //    exchangeType: FlixTvConstants.DefaultExchangeType,
+            //    queueName: FlixTvConstants.UploadImageQueueName,
+            //    obj: new FormFileDto { 
+            //        Key = bannerImageId, 
+            //        FileName = request.BannerImage.FileName, 
+            //        ContentType = request.BannerImage.ContentType, 
+            //        FileData = bannerBytes
+            //    });
 
 
             return Unit.Value;

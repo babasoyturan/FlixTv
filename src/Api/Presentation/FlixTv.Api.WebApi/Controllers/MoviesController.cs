@@ -280,7 +280,7 @@ namespace FlixTv.Api.WebApi.Controllers
 
         [Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
-        public async Task<IActionResult> CreateMovie([FromForm] CreateMovieCommandRequest request)
+        public async Task<IActionResult> CreateMovie([FromBody] CreateMovieCommandRequest request)
         {
             await mediator.Send(request);
 

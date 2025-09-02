@@ -54,17 +54,17 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
                 .NotEmpty()
                 .WithMessage("Source video url must not be empty.");
 
-            RuleFor(m => m.CoverImage)
-                .NotNull()
-                .WithMessage("Cover image file must not be null.")
-                .Must(file => file.Length > 0)
-                .WithMessage("Cover image file must not be empty.");
+            RuleFor(RuleFor => RuleFor.CoverImageUrl)
+                .NotEmpty()
+                .WithMessage("Cover image URL must not be empty.")
+                .Must(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                .WithMessage("Cover image URL must be a valid absolute URL.");
 
-            RuleFor(m => m.BannerImage)
-                .NotNull()
-                .WithMessage("Banner image file must not be null.")
-                .Must(file => file.Length > 0)
-                .WithMessage("Banner image file must not be empty.");
+            RuleFor(RuleFor => RuleFor.BannerImageUrl)
+                .NotEmpty()
+                .WithMessage("Banner image URL must not be empty.")
+                .Must(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                .WithMessage("Banner image URL must be a valid absolute URL.");
 
 
         }
