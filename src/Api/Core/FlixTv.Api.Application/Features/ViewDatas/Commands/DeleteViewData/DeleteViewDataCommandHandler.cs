@@ -13,12 +13,10 @@ namespace FlixTv.Api.Application.Features.ViewDatas.Commands.DeleteViewData
     public class DeleteViewDataCommandHandler : IRequestHandler<DeleteViewDataCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
 
-        public DeleteViewDataCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public DeleteViewDataCommandHandler(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
         }
 
         public async Task<Unit> Handle(DeleteViewDataCommandRequest request, CancellationToken cancellationToken)

@@ -3,9 +3,12 @@ using FlixTv.Api.Application.Interfaces.UnitOfWorks;
 using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models.RequestModels.ViewDatas;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,28 +17,59 @@ namespace FlixTv.Api.Application.Features.ViewDatas.Commands.CreateViewData
     public class CreateViewDataCommandHandler : IRequestHandler<CreateViewDataCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
+        private readonly int userId;
 
-        public CreateViewDataCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public CreateViewDataCommandHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
+            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
 
         public async Task<Unit> Handle(CreateViewDataCommandRequest request, CancellationToken cancellationToken)
         {
-            if (await unitOfWork.GetReadRepository<User>().GetAsync(u => u.Id == request.UserId) is null)
+            if (await unitOfWork.GetReadRepository<User>().GetAsync(u => u.Id == userId) is null)
                 throw new Exception("User was not found");
 
-            if (await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId) is null)
+
+            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == request.MovieId);
+
+            if (movie is null)
                 throw new Exception("Movie was not found");
 
-            var viewData = new ViewData(request.UserId, request.MovieId);
+            var vd = await unitOfWork.GetReadRepository<ViewData>().GetAsync(x => x.UserId == userId && x.MovieId == request.MovieId);
 
-            await unitOfWork.GetWriteRepository<ViewData>().AddAsync(viewData);
+            var now = DateTime.UtcNow;
+
+            if (vd is null)
+            {
+                vd = new ViewData(userId, request.MovieId)
+                {
+                    LastPositionSeconds = request.LastPositionSeconds,
+                    MaxPositionSeconds = request.MaxPositionSeconds,
+                    WatchedSeconds = request.WatchedSeconds,
+                    LastWatchedAt = now,
+                };
+
+                if (request.WatchedSeconds >= movie.Duration * 0.8 && request.MaxPositionSeconds >= movie.Duration * 0.8)
+                    vd.IsCompleted = true;
+
+                await unitOfWork.GetWriteRepository<ViewData>().AddAsync(vd);
+            }
+            else
+            {
+                vd.LastPositionSeconds = request.LastPositionSeconds;
+                vd.MaxPositionSeconds = Math.Max(vd.MaxPositionSeconds, request.MaxPositionSeconds);
+                vd.WatchedSeconds += request.WatchedSeconds;
+
+                vd.LastWatchedAt = now;
+
+                if (!vd.IsCompleted && vd.WatchedSeconds >= movie.Duration * 0.8 && vd.MaxPositionSeconds >= movie.Duration * 0.8)
+                    vd.IsCompleted = true;
+
+                await unitOfWork.GetWriteRepository<ViewData>().UpdateAsync(vd);
+            }
 
             await unitOfWork.SaveAsync();
-
             return Unit.Value;
         }
     }

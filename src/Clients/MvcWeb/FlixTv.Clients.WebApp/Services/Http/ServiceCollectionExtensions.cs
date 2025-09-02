@@ -58,6 +58,7 @@ namespace FlixTv.Clients.WebApp.Services.Http
 
             // Domain servisləri (typed deyil, BaseApiClient istifadə edəcəklər)
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IMoviesService, MoviesService>();
 
             return services;
         }

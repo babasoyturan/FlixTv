@@ -9,7 +9,12 @@ namespace FlixTv.Common.Models.RequestModels.ViewDatas
 {
     public class CreateViewDataCommandRequest : IRequest<Unit>
     {
-        public int UserId { get; set; }
         public int MovieId { get; set; }
+
+        public int LastPositionSeconds { get; set; }
+
+        public int MaxPositionSeconds { get; set; }
+
+        public int WatchedSeconds { get; set; }
     }
 }

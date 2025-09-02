@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
         public GetRowModelsQueryHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
-            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst("id")?.Value ?? "0");
+            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
         }
 
         public async Task<IList<GetRowModelsQueryResponse>> Handle(GetRowModelsQueryRequest request, CancellationToken ct)
@@ -199,18 +200,8 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
 
             sig.FavGenresTop3 = favGenreIds;
 
-            // ContinueWatching siqnalı (HAL-HAZIRDA ViewData-da progress sahəsi yoxdur)
-            // TODO: ViewData-ya aşağıdakı sahələrdən birini əlavə et, sonra bu şərhi aç:
-            //   public int WatchedMinutes { get; set; }
-            //   public int LastPositionSeconds { get; set; }
-            //   public DateTime? LastWatchedAt { get; set; }
-            // və buranı belə yaz:
-            // sig.HasInProgress = views.Any(v => v.Movie != null && v.Movie.Duration > 0
-            //                                   && v.WatchedMinutes > 0
-            //                                   && v.WatchedMinutes < v.Movie.Duration);
-            sig.HasInProgress = false;
+            sig.HasInProgress = views.Any(v => !v.IsCompleted);
 
-            // Dominant decade (baxış tarixçəsinə görə orta il)
             var years = views
                 .Where(v => v.Movie != null)
                 .Select(v => v.Movie!.ReleaseYear)

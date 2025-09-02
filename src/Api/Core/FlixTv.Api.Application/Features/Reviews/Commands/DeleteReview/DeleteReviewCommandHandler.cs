@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.DeleteReview
         {
             this.unitOfWork = unitOfWork;
             this.userManager = userManager;
-            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst("id")?.Value ?? "0");
+            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
         }
 
         public async Task<Unit> Handle(DeleteReviewCommandRequest request, CancellationToken cancellationToken)

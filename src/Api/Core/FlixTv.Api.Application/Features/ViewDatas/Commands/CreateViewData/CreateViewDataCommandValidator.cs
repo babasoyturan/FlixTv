@@ -12,13 +12,22 @@ namespace FlixTv.Api.Application.Features.ViewDatas.Commands.CreateViewData
     {
         public CreateViewDataCommandValidator()
         {
-            RuleFor(v => v.UserId)
-                .NotEmpty()
-                .GreaterThan(0);
-
             RuleFor(v => v.MovieId)
-                .NotEmpty()
-                .GreaterThan(0);
+                .NotEmpty().WithMessage("MovieId must not be empty.")
+                .GreaterThan(0).WithMessage("MovieId must be greater than 0.");
+
+            RuleFor(v => v.LastPositionSeconds)
+                .GreaterThanOrEqualTo(0).WithMessage("LastPositionSeconds cannot be negative.");
+
+            RuleFor(v => v.MaxPositionSeconds)
+                .GreaterThanOrEqualTo(0).WithMessage("MaxPositionSeconds cannot be negative.");
+
+            RuleFor(v => v.WatchedSeconds)
+                .GreaterThanOrEqualTo(0).WithMessage("WatchedSeconds cannot be negative.");
+
+            RuleFor(v => v)
+                .Must(v => v.MaxPositionSeconds >= v.LastPositionSeconds)
+                .WithMessage("MaxPositionSeconds cannot be less than LastPositionSeconds.");
         }
     }
 }

@@ -5,6 +5,7 @@ using FlixTv.Api.Application.Features.Movies.Queries.GetMoviesByUserCompatibilit
 using FlixTv.Api.Application.Features.Movies.Queries.GetMoviesCount;
 using FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies;
 using FlixTv.Api.Application.Features.Movies.Queries.GetRowModels;
+using FlixTv.Api.Application.Features.Movies.Queries.GetUnfinishedMovies;
 using FlixTv.Api.Application.Utilities;
 using FlixTv.Common.Models;
 using FlixTv.Common.Models.RequestModels.Movies;
@@ -237,7 +238,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Uer, Admin, Moderator")]
+        [Authorize(Roles = "User, Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetMoviesByUserCompatibility(
         [FromQuery] int count = 10
@@ -256,6 +257,15 @@ namespace FlixTv.Api.WebApi.Controllers
             var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, Count = count };
 
             var response = await mediator.Send(request);
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpGet]
+        public async Task<IActionResult> GetUnfinishedMovies()
+        {
+            var response = await mediator.Send(new GetUnfinishedMoviesQueryRequest());
 
             return Ok(response);
         }

@@ -109,7 +109,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Admin, Moderator")]
+        [Authorize(Roles = "Admin, Moderator, User")]
         [HttpPost]
         public async Task<IActionResult> CreateViewData([FromBody] CreateViewDataCommandRequest request)
         {
