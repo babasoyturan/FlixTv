@@ -40,9 +40,9 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
 
                 var sk = SeasonalKey();
                 if (!string.IsNullOrWhiteSpace(sk))
-                    pool.Add((MakeSpecial(sk!, PrettyKey(sk!), true, seed), 0.7, $"key:{sk}"));
+                    pool.Add((MakeSpecial(sk!, PrettyKey(sk!), true, seed), 0.7, $"key_{sk}"));
 
-                pool.Add((MakeSpecial("gems", "Hidden gems", true, seed), 0.6, "key:gems"));
+                pool.Add((MakeSpecial("gems", "Hidden gems", true, seed), 0.6, "key_gems"));
 
                 return Finalize(must, pool, request.Count, seed);
             }
@@ -74,13 +74,13 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
                     {
                         Type = RowType.TopGenres,
                         Title = TitleForGenre(g),
-                        RowKey = $"genre:{g}",
+                        RowKey = $"genre_{g}",
                         ExcludeWatched = true,
                         Genres = new() { g },
                         Seed = seed
                     },
                     1.0,
-                    $"genre:{g}"
+                    $"genre_{g}"
                 ));
             }
 
@@ -97,13 +97,13 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
                             {
                                 Type = RowType.ComboGenres,
                                 Title = $"When {GenreName(a)} meets {GenreName(b)}",
-                                RowKey = $"combo:{a}-{b}",
+                                RowKey = $"combo_{a}_{b}",
                                 ExcludeWatched = true,
                                 Genres = new() { a, b },
                                 Seed = seed
                             },
                             1.1,
-                            $"combo:{a}-{b}"
+                            $"combo_{a}_{b}"
                         ));
                     }
             }
@@ -117,13 +117,13 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
                     {
                         Type = RowType.SimilarToMovie,
                         Title = $"Because you watched {mtitle}",
-                        RowKey = $"sim:{mid}",
+                        RowKey = $"sim_{mid}",
                         ExcludeWatched = true,
                         SeedMovieId = mid,
                         Seed = seed
                     },
                     1.2,
-                    $"sim:{mid}"
+                    $"sim_{mid}"
                 ));
             }
 
@@ -135,14 +135,14 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
                     {
                         Type = RowType.Decade,
                         Title = $"{ShortLabel(d)} binge",
-                        RowKey = $"dec:{d}",
+                        RowKey = $"dec_{d}",
                         ExcludeWatched = true,
                         YearFrom = d,
                         YearTo = d + 9,
                         Seed = seed
                     },
                     0.9,
-                    $"dec:{d}"
+                    $"dec_{d}"
                 ));
 
                 var explore = d >= 1990 ? 1980 : 2000;
@@ -151,24 +151,24 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
                     {
                         Type = RowType.Decade,
                         Title = $"Time travel to the {ShortLabel(explore)}",
-                        RowKey = $"dec:{explore}",
+                        RowKey = $"dec_{explore}",
                         ExcludeWatched = true,
                         YearFrom = explore,
                         YearTo = explore + 9,
                         Seed = seed
                     },
                     0.7,
-                    $"dec:{explore}"
+                    $"dec_{explore}"
                 ));
             }
 
             // Mövsümi / Classics / Gems → SpecialKey
             var sKey = SeasonalKey();
             if (!string.IsNullOrWhiteSpace(sKey))
-                pool.Add((MakeSpecial(sKey!, PrettyKey(sKey!), true, seed), 0.7, $"key:{sKey}"));
+                pool.Add((MakeSpecial(sKey!, PrettyKey(sKey!), true, seed), 0.7, $"key_{sKey}"));
 
-            pool.Add((MakeSpecial("classics", "Timeless classics", true, seed), 0.6, "key:classics"));
-            pool.Add((MakeSpecial("gems", "Hidden gems for you", true, seed), 0.6, "key:gems"));
+            pool.Add((MakeSpecial("classics", "Timeless classics", true, seed), 0.6, "key_classics"));
+            pool.Add((MakeSpecial("gems", "Hidden gems for you", true, seed), 0.6, "key_gems"));
 
             return Finalize(must, pool, request.Count, seed);
         }
@@ -241,7 +241,7 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRowModels
         {
             Type = RowType.SpecialKey,
             Title = title,
-            RowKey = key.StartsWith("key:", StringComparison.OrdinalIgnoreCase) ? key : $"key:{key}",
+            RowKey = key.StartsWith("key_", StringComparison.OrdinalIgnoreCase) ? key : $"key_{key}",
             Key = key,
             ExcludeWatched = excludeWatched,
             Seed = seed

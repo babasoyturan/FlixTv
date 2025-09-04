@@ -57,6 +57,8 @@ namespace FlixTv.Clients.WebApp.Services.Http
                 new BaseApiClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient("flix-api")));
 
             // Domain servisləri (typed deyil, BaseApiClient istifadə edəcəklər)
+            services.AddHttpContextAccessor();
+            services.AddScoped<IPerRequestTokenStore, PerRequestTokenStore>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IMoviesService, MoviesService>();
 

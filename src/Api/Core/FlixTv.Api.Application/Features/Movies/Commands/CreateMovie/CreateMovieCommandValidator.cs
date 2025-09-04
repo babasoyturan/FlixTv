@@ -66,6 +66,11 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
                 .Must(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
                 .WithMessage("Banner image URL must be a valid absolute URL.");
 
+            RuleFor(m => m.InitialRating)
+                .NotEmpty()
+                .InclusiveBetween(0, 10)
+                .WithMessage("Initial rating must be between 0 and 10.");
+
 
         }
     }

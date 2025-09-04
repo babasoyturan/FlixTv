@@ -50,7 +50,7 @@ namespace FlixTv.Api.Application.Features.ViewDatas.Commands.CreateViewData
                     LastWatchedAt = now,
                 };
 
-                if (request.WatchedSeconds >= movie.Duration * 0.8 && request.MaxPositionSeconds >= movie.Duration * 0.8)
+                if (request.WatchedSeconds >= movie.Duration * 60 * 0.8 && request.MaxPositionSeconds >= movie.Duration * 60 * 0.8)
                     vd.IsCompleted = true;
 
                 await unitOfWork.GetWriteRepository<ViewData>().AddAsync(vd);
@@ -63,7 +63,7 @@ namespace FlixTv.Api.Application.Features.ViewDatas.Commands.CreateViewData
 
                 vd.LastWatchedAt = now;
 
-                if (!vd.IsCompleted && vd.WatchedSeconds >= movie.Duration * 0.8 && vd.MaxPositionSeconds >= movie.Duration * 0.8)
+                if (!vd.IsCompleted && vd.WatchedSeconds >= movie.Duration * 60 * 0.8 && vd.MaxPositionSeconds >= movie.Duration * 60 * 0.8)
                     vd.IsCompleted = true;
 
                 await unitOfWork.GetWriteRepository<ViewData>().UpdateAsync(vd);

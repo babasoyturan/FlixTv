@@ -58,6 +58,8 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Login
 
             var roles = await userManager.GetRolesAsync(user);
 
+            await userManager.UpdateSecurityStampAsync(user);
+
             var token = await tokenService.CreateToken(user, roles);
 
             var refreshToken = tokenService.GenerateRefreshToken();
@@ -67,13 +69,15 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.Login
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenValidityInDays);
 
+            await userManager.UpdateAsync(user);
+
             var _token = new JwtSecurityTokenHandler().WriteToken(token);
 
             return new LoginCommandResponse
             {
                 Token = _token,
                 RefreshToken = refreshToken,
-                Expiration = token.ValidTo
+                Expiration = user.RefreshTokenExpiryTime!.Value
             };
         }
     }

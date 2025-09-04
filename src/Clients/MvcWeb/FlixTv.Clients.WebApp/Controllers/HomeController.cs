@@ -1,5 +1,6 @@
 using FlixTv.Clients.WebApp.Services.Abstractions;
 using FlixTv.Clients.WebApp.Services.Implementations;
+using FlixTv.Clients.WebApp.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -17,14 +18,37 @@ namespace FlixTv.Clients.WebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var response = await moviesService.GetRowModelsAsync(10);
+            var model = new HomeViewModel();
 
-            foreach (var row in response.Data)
+            var recommendedMoviesResponse = await moviesService.GetMoviesByUserCompatibilityAsync();
+
+            if (recommendedMoviesResponse.IsSuccess)
+                model.RecommendedMovies = recommendedMoviesResponse.Data;
+
+            model.Rows = new List<RowViewModel>();
+
+            var rowsResponse = await moviesService.GetRowModelsAsync(15);
+
+            if (rowsResponse.IsSuccess)
             {
-                Console.WriteLine(row.Title);
+                foreach (var row in rowsResponse.Data)
+                {
+                    var rowModel = new RowViewModel
+                    {
+                        RowTitle = row.Title,
+                        RowKey = row.RowKey
+                    };
+
+                    var rowMoviesResponse = await moviesService.GetMoviesForRowAsync(row, 12);
+
+                    if (rowMoviesResponse.IsSuccess)
+                        rowModel.Movies = rowMoviesResponse.Data;
+
+                    model.Rows.Add(rowModel);
+                }
             }
 
-            return View();
+            return View(model);
         }
 
         [Authorize(Roles = "Admin")]

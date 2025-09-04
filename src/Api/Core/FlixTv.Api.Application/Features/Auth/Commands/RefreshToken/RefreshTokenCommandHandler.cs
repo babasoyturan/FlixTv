@@ -52,7 +52,8 @@ namespace FlixTv.Api.Application.Features.Auth.Commands.RefreshToken
             return new RefreshTokenCommandResponse
             {
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
-                RefreshToken = newRefreshToken
+                RefreshToken = newRefreshToken,
+                Expiration = user.RefreshTokenExpiryTime!.Value
             };
         }
     }

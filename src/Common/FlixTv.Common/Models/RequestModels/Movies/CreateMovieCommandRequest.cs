@@ -11,6 +11,7 @@ namespace FlixTv.Common.Models.RequestModels.Movies
 {
     public class CreateMovieCommandRequest : IRequest<Unit>
     {
+        public int? TmdbId { get; set; }
         public string CoverImageUrl { get; set; }
         public string BannerImageUrl { get; set; }
         public string SourceVideoUrl { get; set; }
@@ -21,6 +22,7 @@ namespace FlixTv.Common.Models.RequestModels.Movies
         public int Duration { get; set; }
         public short AgeLimitation { get; set; }
         public bool IsVisible { get; set; }
+        public float? InitialRating { get; set; }
         public ICollection<MovieCategory> Categories { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace FlixTv.Api.Domain.Concretes
 {
     public class Movie : EntityBase
     {
+        public int? TmdbId { get; set; }
         public string SourceVideoUrl { get; set; }
         public string TrailerVideoUrl { get; set; }
         public string CoverImageUrl { get; set; }
@@ -85,6 +86,6 @@ namespace FlixTv.Api.Domain.Concretes
             FeatureVector = vec;
         }
 
-        public void SetMovieRating() => Rating = Reviews is not null && Reviews.Count() > 0 ? (float)Math.Round((float)Reviews.Sum(r => r.RatingPoint) / Reviews.Count(), 1) : 0;
+        public void SetMovieRating() => Rating = Reviews is not null && Reviews.Count() > 0 ? (float)Math.Round((float)Reviews.Sum(r => r.RatingPoint) / Reviews.Count(), 1) : 5;
     }
 }

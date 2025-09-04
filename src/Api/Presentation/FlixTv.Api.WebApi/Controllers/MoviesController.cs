@@ -127,7 +127,7 @@ namespace FlixTv.Api.WebApi.Controllers
                         const double reviewNegWeight = 12.0;
 
                         request.orderBy = q => q.OrderByDescending(m =>
-                            (double)m.Views.Count(v => v.CreatedDate >= twoMonthsAgo)
+                            (double)m.Views.Count(v => v.CreatedDate >= twoMonthsAgo && v.IsCompleted)
                                 * viewWeight
 
                             + (double)m.Comments
@@ -136,12 +136,14 @@ namespace FlixTv.Api.WebApi.Controllers
                                        - c.Dislikes.Count() * commentDislikeWeight)
 
                             + m.Reviews
-                                .Where(r => r.CreatedDate >= twoMonthsAgo && r.RatingPoint > 0)
+                                .Where(r => r.CreatedDate >= twoMonthsAgo && r.RatingPoint >= 6)
                                 .Sum(r => ((double)r.RatingPoint / 10.0) * reviewPosWeight)
 
                             - m.Reviews
                                 .Where(r => r.CreatedDate >= twoMonthsAgo && r.RatingPoint < 6)
                                 .Sum(r => ((6.0 - (double)r.RatingPoint) / 6.0) * reviewNegWeight)
+
+                            + m.Rating * 80
                         );
                         break;
                     default:
@@ -252,9 +254,9 @@ namespace FlixTv.Api.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId, [FromQuery] int count)
+        public async Task<IActionResult> GetRelatedMovies([FromQuery] int movieId)
         {
-            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId, Count = count };
+            var request = new GetRelatedMoviesQueryRequest { MovieId = movieId };
 
             var response = await mediator.Send(request);
 

@@ -12,10 +12,39 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         private const string GetAllMoviesEndpoint = "Movies/GetAllMovies";
         private const string RelatedEndpoint = "Movies/GetRelatedMovies";
         private const string UnfinishedEndpoint = "Movies/GetUnfinishedMovies";
+        private const string CompatibilityEndpoint = "Movies/GetMoviesByUserCompatibility";
+        private const string GetMovieEndpoint = "Movies/GetMovie";
 
 
         public MoviesService(IHttpClientFactory factory)
             : base(factory.CreateClient("flix-api")) { }
+
+        public Task<ApiResult<GetMovieQueryResponse>> GetMovieAsync(
+            int id, 
+            CancellationToken ct = default)
+        {
+            if (id <= 0)
+                return Task.FromResult(
+                    ApiResult<GetMovieQueryResponse>.Fail(
+                        new[] { "Invalid movie id." }, System.Net.HttpStatusCode.BadRequest));
+
+            var url = $"{GetMovieEndpoint}/{id}"; // api/Movies/GetMovie/{id}
+            return GetAsync<GetMovieQueryResponse>(url, ct);
+        }
+
+        public Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetRelatedMoviesAsync(
+            int movieId,
+            CancellationToken ct = default)
+        {
+            if (movieId <= 0)
+                return Task.FromResult(
+                    ApiResult<IList<GetAllMoviesQueryResponse>>.Fail(
+                        new[] { "Invalid movie id." },
+                        System.Net.HttpStatusCode.BadRequest));
+
+            var url = $"{RelatedEndpoint}?movieId={movieId}";
+            return GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
+        }
 
         public Task<ApiResult<IList<GetRowModelsQueryResponse>>> GetRowModelsAsync(
             int count = 12,
@@ -23,6 +52,13 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         {
             var url = $"{RowsEndpoint}?count={count}";
             return GetAsync<IList<GetRowModelsQueryResponse>>(url, ct);
+        }
+
+        public Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetMoviesByUserCompatibilityAsync(
+        int count = 10, CancellationToken ct = default)
+        {
+            var url = $"{CompatibilityEndpoint}?count={count}";
+            return GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
         }
 
         public async Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetMoviesForRowAsync(
@@ -37,7 +73,7 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
                         if (row.SeedMovieId is not int mid)
                             return ApiResult<IList<GetAllMoviesQueryResponse>>.Fail(new[] { "SeedMovieId does not exist." }, System.Net.HttpStatusCode.BadRequest);
 
-                        var url = $"{RelatedEndpoint}?movieId={mid}&count={count}";
+                        var url = $"{RelatedEndpoint}?movieId={mid}";
                         return await GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
                     }
 
@@ -84,7 +120,9 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
             }
         }
 
-        private static (Dictionary<string, string?> qs, List<string>? categories)
+        private static (
+            Dictionary<string, string?> qs, 
+            List<string>? categories)
             BuildSpecialKeyQuery(string? key, int count)
         {
             var nowYear = DateTime.UtcNow.Year;
@@ -181,7 +219,8 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
             return sb.ToString();
         }
 
-        private static List<string> ToCategoryNames(List<int>? genreIds)
+        private static List<string> ToCategoryNames(
+            List<int>? genreIds)
         {
             var list = new List<string>();
             if (genreIds is null) return list;

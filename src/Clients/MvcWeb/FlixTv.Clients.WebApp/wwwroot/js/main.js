@@ -363,15 +363,15 @@ $(document).ready(function () {
 	/*==============================
 	Player
 	==============================*/
-	function initializePlayer() {
-		if ($('#player').length) {
-			const player = new Plyr('#player');
-		} else {
-			return false;
-		}
-		return false;
-	}
-	$(window).on('load', initializePlayer());
+	//function initializePlayer() {
+	//	if ($('#player').length) {
+	//		const player = new Plyr('#player');
+	//	} else {
+	//		return false;
+	//	}
+	//	return false;
+	//}
+	//$(window).on('load', initializePlayer());
 
 	/*==============================
 	Modal

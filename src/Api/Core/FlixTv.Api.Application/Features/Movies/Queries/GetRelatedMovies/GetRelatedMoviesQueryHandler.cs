@@ -20,10 +20,6 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetRelatedMovies
         private readonly IMapper mapper;
         private readonly int userId;
 
-        private const double wCat = 1.0;
-        private const double wYear = 0.1;
-        private const double wAge = 0.2;
-
         public GetRelatedMoviesQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
