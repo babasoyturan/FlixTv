@@ -4,10 +4,12 @@ using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models.DTOs;
 using FlixTv.Common.Models.ResponseModels.Comments;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,11 +19,13 @@ namespace FlixTv.Api.Application.Features.Comments.Queries.GetComment
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly int userId;
 
-        public GetCommentQueryHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetCommentQueryHandler(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
         }
 
         public async Task<GetCommentQueryResponse> Handle(GetCommentQueryRequest request, CancellationToken cancellationToken)
@@ -38,6 +42,8 @@ namespace FlixTv.Api.Application.Features.Comments.Queries.GetComment
 
             response.LikeCount = comment.Likes.Count;
             response.DislikeCount = comment.Dislikes.Count;
+            response.HasLiked = userId == 0 ? false : comment.Likes.Contains(userId);
+            response.HasDisliked = userId == 0 ? false : comment.Dislikes.Contains(userId);
 
             return response;
         }

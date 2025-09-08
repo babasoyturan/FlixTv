@@ -1,0 +1,145 @@
+﻿@model MovieCommentsPartialViewModel
+@using System.Globalization
+@using System.Security.Claims
+
+@{
+    var canReact = User?.Identity?.IsAuthenticated == true;
+
+    var isAuth = canReact;
+    int? currentUserId = null;
+    if (isAuth)
+    {
+        var s = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(s, out var uid)) currentUserId = uid;
+    }
+}
+<input type="hidden" id="js-comments-total" value="@Model.TotalCount" />
+
+@functions{
+    // 1 ... (curr-2 .. curr+2) ... last
+    List<int?> BuildPages(int current, int total)
+    {
+        var list = new List<int?>();
+        if (total <= 1) return list;
+
+        int start = Math.Max(2, current - 2);
+        int end   = Math.Min(total - 1, current + 2);
+
+        list.Add(1);
+        if (start > 2) list.Add(null);
+        for (int i = start; i <= end; i++) list.Add(i);
+        if (end < total - 1) list.Add(null);
+        list.Add(total);
+
+        return list.Distinct().ToList();
+    }
+}
+
+@{
+    // Burada hesablamaları əvvəlcədən edirik
+    var totalPages = Model.TotalPages;
+    var current = Math.Min(Math.Max(1, Model.Page), Math.Max(1, totalPages));
+    var pages = BuildPages(current, totalPages);
+
+    var shown = Model.Comments?.Count ?? 0;
+    var fromIndex = shown == 0 ? 0 : (Model.Page - 1) * Model.PageSize + 1;
+    var toIndex = shown == 0 ? 0 : fromIndex + shown - 1;
+}
+
+@if (Model.TotalCount == 0)
+{
+    <h1 style="color:white">No Comments</h1>
+}
+else
+{
+    <ul class="comments__list">
+        @foreach (var comment in Model.Comments)
+        {
+            var canDeleteThis = isAuth && currentUserId.HasValue && comment.Author?.Id == currentUserId.Value;
+            var delStyle = canDeleteThis ? "" : "visibility:hidden";
+
+            <li class="comments__item" data-comment-id="@comment.Id">
+                <div class="comments__autor">
+                    <img class="comments__avatar" src="~/img/avatar.svg" alt="">
+                    <span class="comments__name">@comment.Author.Name @comment.Author.Surname</span>
+                    <span class="comments__time">
+                        <time class="js-local-time"
+                              datetime="@comment.CreatedDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fff'Z'")"
+                              data-utc="@(new DateTimeOffset(comment.CreatedDate.Kind == DateTimeKind.Utc
+                                ? comment.CreatedDate
+                                : DateTime.SpecifyKind(comment.CreatedDate, DateTimeKind.Utc)).ToUnixTimeMilliseconds())">
+                            @comment.CreatedDate.ToUniversalTime().ToString("dd.MM.yyyy, HH:mm 'UTC'")
+                        </time>
+                    </span>
+                </div>
+
+                <p class="comments__text">@comment.Message</p>
+
+                <div class="comments__actions">
+                    <div class="comments__rate">
+                        <button type="button" class="js-like @(comment.HasLiked ? "active" : "") @(canReact ? "" : "is-disabled")" data-comment-id="@comment.Id" @(canReact ? null : "disabled")>
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 7.3273V14.6537" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M14.6667 10.9905H7.33333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M15.6857 1H6.31429C3.04762 1 1 3.31208 1 6.58516V15.4148C1 18.6879 3.0381 21 6.31429 21H15.6857C18.9619 21 21 18.6879 21 15.4148V6.58516C21 3.31208 18.9619 1 15.6857 1Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                            <span class="js-like-count">@comment.LikeCount</span>
+                        </button>
+
+                        <button type="button" class="js-dislike @(comment.HasDisliked ? "active" : "") @(canReact ? "" : "is-disabled")" data-comment-id="@comment.Id" @(canReact ? null : "disabled")>
+                            <span class="js-dislike-count">@comment.DislikeCount</span>
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.6667 10.9905H7.33333" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M15.6857 1H6.31429C3.04762 1 1 3.31208 1 6.58516V15.4148C1 18.6879 3.0381 21 6.31429 21H15.6857C18.9619 21 21 18.6879 21 15.4148V6.58516C21 3.31208 18.9619 1 15.6857 1Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        </button>
+                    </div>
+                    <div class="main__table-btns">
+                        <a href="#modal-delete"
+                           class="main__table-btn main__table-btn--delete open-modal js-comment-del"
+                           data-comment-id="@comment.Id"
+                           style="@delStyle">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18ZM20,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H4A1,1,0,0,0,4,8H5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V8h1a1,1,0,0,0,0-2ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm7,14a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V8H17Zm-3-1a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z" /></svg>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+
+    @if (totalPages > 1)
+    {
+        <div class="catalog__paginator-wrap catalog__paginator-wrap--comments">
+            <span class="catalog__pages">@fromIndex-@toIndex from @Model.TotalCount</span>
+
+            <ul class="catalog__paginator js-comments-pager">
+                <li class="@(current == 1 ? "disabled" : "")">
+                    <a href="@Url.Action("MovieComments", "Movies", new { movieId = Model.MovieId, page = Math.Max(1, current - 1), pageSize = Model.PageSize })">
+                        <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </a>
+                </li>
+
+                @foreach (var p in pages)
+                {
+                    if (p is null)
+                    {
+                        <li class="disabled"><span style="color:white">…</span></li>
+                    }
+                    else
+                    {
+                        <li class="@(p == current ? "active" : "")">
+                            <a href="@Url.Action("MovieComments", "Movies", new { movieId = Model.MovieId, page = p, pageSize = Model.PageSize })">@p</a>
+                        </li>
+                    }
+                }
+
+                <li class="@(current == totalPages ? "disabled" : "")">
+                    <a href="@Url.Action("MovieComments", "Movies", new { movieId = Model.MovieId, page = Math.Min(totalPages, current + 1), pageSize = Model.PageSize })">
+                        <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    }
+}
+
+<style>
+    .is-disabled {
+        opacity: .4;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+</style>

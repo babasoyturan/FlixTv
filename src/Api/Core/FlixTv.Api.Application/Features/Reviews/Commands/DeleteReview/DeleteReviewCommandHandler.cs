@@ -4,6 +4,7 @@ using FlixTv.Api.Domain.Concretes;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.DeleteReview
             await unitOfWork.GetWriteRepository<Review>().DeleteAsync(review);
             await unitOfWork.SaveAsync();
 
-            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == review.MovieId);
+            var movie = await unitOfWork.GetReadRepository<Movie>().GetAsync(m => m.Id == review.MovieId, x => x.Include(m => m.Reviews));
             movie.SetMovieRating();
             await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(movie);
             await unitOfWork.SaveAsync();

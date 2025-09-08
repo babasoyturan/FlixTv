@@ -35,6 +35,10 @@ namespace FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentDisl
                 throw new Exception($"The User which Id is {userId}, was already disliked the comment.");
 
             comment.Dislikes.Add(userId);
+
+            if (comment.Likes.Contains(userId))
+                comment.Likes.Remove(userId);
+
             await unitOfWork.GetWriteRepository<Comment>().UpdateAsync(comment);
             await unitOfWork.SaveAsync();
 

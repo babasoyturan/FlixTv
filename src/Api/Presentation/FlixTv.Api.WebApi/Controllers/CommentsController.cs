@@ -155,7 +155,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "Comment was created successfully!" });
+            return Ok("Comment was created successfully!");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -164,7 +164,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "Comment was updated succesfully." });
+            return Ok("Comment was updated succesfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -174,7 +174,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new DeleteCommentCommandRequest { CommentId = commentId });
 
-            return Ok(new { message = "Comment was deleted successfully!" });
+            return Ok("Comment was deleted successfully!");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -183,7 +183,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new IncrementCommentLikeCommandRequest { CommentId = commentId });
 
-            return Ok(new { message = "Like count of the comment was incremented successfully."});
+            return Ok("Like count of the comment was incremented successfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -192,7 +192,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new DecrementCommentLikeCommandRequest { CommentId = commentId });
 
-            return Ok(new { message = "Like count of the comment was decremented successfully." });
+            return Ok("Like count of the comment was decremented successfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -201,7 +201,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new IncrementCommentDislikeCommandRequest { CommentId = commentId });
 
-            return Ok(new { message = "Dislike count of the comment was incremented successfully." });
+            return Ok("Dislike count of the comment was incremented successfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -210,7 +210,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new DecrementCommentDislikeCommandRequest { CommentId = commentId });
 
-            return Ok(new { message = "Like count of the comment was decremented successfully." });
+            return Ok("Like count of the comment was decremented successfully.");
         }
     }
 }

@@ -165,7 +165,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "Review was created succesfully." });
+            return Ok("Review was created succesfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -174,7 +174,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "Review was updated succesfully." });
+            return Ok("Review was updated succesfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -184,7 +184,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new DeleteReviewCommandRequest { ReviewId = reviewId });
 
-            return Ok(new { message = "Review was deleted successfully!" });
+            return Ok("Review was deleted successfully!");
         }
     }
 }

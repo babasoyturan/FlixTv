@@ -13,6 +13,8 @@ namespace FlixTv.Common.Models.ResponseModels.Comments
         public string Message { get; set; }
         public int LikeCount { get; set; } = 0;
         public int DislikeCount { get; set; } = 0;
+        public bool HasLiked { get; set; } = false;
+        public bool HasDisliked { get; set; } = false;
         public DateTime CreatedDate { get; set; }
         public AuthorDto Author { get; set; }
         public MovieDto Movie { get; set; }

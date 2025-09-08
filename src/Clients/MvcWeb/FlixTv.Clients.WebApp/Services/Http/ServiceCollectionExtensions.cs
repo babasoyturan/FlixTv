@@ -61,6 +61,8 @@ namespace FlixTv.Clients.WebApp.Services.Http
             services.AddScoped<IPerRequestTokenStore, PerRequestTokenStore>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IMoviesService, MoviesService>();
+            services.AddScoped<ICommentsService, CommentsService>();
+            services.AddScoped<IReviewsService, ReviewsService>();
 
             return services;
         }

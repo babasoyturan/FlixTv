@@ -1,37 +1,124 @@
 ﻿using FlixTv.Clients.WebApp.Services.Abstractions;
+using FlixTv.Clients.WebApp.Services.Implementations;
 using FlixTv.Clients.WebApp.ViewModels;
+using FlixTv.Common.Models.ResponseModels.Comments;
+using FlixTv.Common.Models.ResponseModels.Reviews;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace FlixTv.Clients.WebApp.Controllers
 {
     public class MoviesController : Controller
     {
         private readonly IMoviesService moviesService;
+        private readonly ICommentsService commentsService;
+        private readonly IReviewsService reviewsService;
 
-        public MoviesController(IMoviesService moviesService)
+        public MoviesController(IMoviesService moviesService, ICommentsService commentsService, IReviewsService reviewsService)
         {
             this.moviesService = moviesService;
+            this.commentsService = commentsService;
+            this.reviewsService = reviewsService;
         }
 
         public async Task<IActionResult> Watch(int id)
         {
+            var model = new WatchViewModel()
+            {
+                CommentsPage = 1,
+                CommentsPageSize = 5,
+                ReviewsPage = 1,
+                ReviewsPageSize = 5
+            };
+
             var movieRepsponse = await moviesService.GetMovieAsync(id);
 
             if (!movieRepsponse.IsSuccess)
                 return RedirectToAction("Index", "Home");
 
+            model.Movie = movieRepsponse.Data;
+
             var similiarMoviesResponse = await moviesService.GetRelatedMoviesAsync(id);
 
-            if (!similiarMoviesResponse.IsSuccess)
-                return RedirectToAction("Index", "Home");
+            if (similiarMoviesResponse.IsSuccess)
+                model.SimiliarMovies = similiarMoviesResponse.Data;
 
-            var model = new WatchViewModel()
+
+            var commentsCountResponse = await commentsService.GetMovieCommentsCountAsync(id);
+            if (commentsCountResponse.IsSuccess)
+                model.CommentsCount = commentsCountResponse.Data;
+
+            if (model.CommentsCount > 0)
             {
-                Movie = movieRepsponse.Data,
-                SimiliarMovies = similiarMoviesResponse.Data
-            };
+                var commentsResponse = await commentsService.GetMovieCommentsAsync(id, model.CommentsPage, model.CommentsPageSize);
+                if (commentsResponse.IsSuccess) model.Comments = commentsResponse.Data ?? new List<GetCommentQueryResponse>();
+            }
+
+
+            var reviewsCountResponse = await reviewsService.GetMovieReviewsCountAsync(id);
+            if (reviewsCountResponse.IsSuccess) model.ReviewsCount = reviewsCountResponse.Data;
+
+            if (model.ReviewsCount > 0)
+            {
+                var reviewsResponse = await reviewsService.GetMovieReviewsAsync(id, model.ReviewsPage, model.ReviewsPageSize, "createdDate");
+                if (reviewsResponse.IsSuccess) model.Reviews = reviewsResponse.Data ?? new List<GetReviewQueryResponse>();
+            }
+
+            model.CanAddReview = false;
+            if (User?.Identity?.IsAuthenticated == true)
+            {
+                var uidStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(uidStr, out var uid))
+                {
+                    var myCountRes = await reviewsService.GetMovieUserReviewCountAsync(id, uid);
+                    model.CanAddReview = myCountRes.IsSuccess && myCountRes.Data == 0;
+                }
+            }
+
 
             return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MovieComments(int movieId, int page = 1, int pageSize = 10)
+        {
+            var countRes = await commentsService.GetMovieCommentsCountAsync(movieId);
+            var listRes = await commentsService.GetMovieCommentsAsync(movieId, page, pageSize, "createdDate");
+
+            if (!listRes.IsSuccess || !countRes.IsSuccess)
+                return StatusCode(500, "Could not load comments.");
+
+            var vm = new MovieCommentsPartialViewModel
+            {
+                MovieId = movieId,
+                TotalCount = countRes.Data,
+                Comments = listRes.Data ?? new List<GetCommentQueryResponse>(),
+                Page = page,
+                PageSize = pageSize
+            };
+
+            return PartialView("_MovieComments", vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MovieReviews(int movieId, int page = 1, int pageSize = 5)
+        {
+            var countRes = await reviewsService.GetMovieReviewsCountAsync(movieId);
+            var listRes = await reviewsService.GetMovieReviewsAsync(movieId, page, pageSize, "createdDate");
+
+            if (!listRes.IsSuccess || !countRes.IsSuccess)
+                return StatusCode(500, "Could not load reviews.");
+
+            var vm = new MovieReviewsPartialViewModel
+            {
+                MovieId = movieId,
+                TotalCount = countRes.Data,
+                Reviews = listRes.Data ?? new List<GetReviewQueryResponse>(),
+                Page = page,
+                PageSize = pageSize
+            };
+
+            return PartialView("_MovieReviews", vm);
         }
     }
 }

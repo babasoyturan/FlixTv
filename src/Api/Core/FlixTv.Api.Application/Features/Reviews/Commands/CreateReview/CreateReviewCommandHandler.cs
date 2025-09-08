@@ -33,6 +33,11 @@ namespace FlixTv.Api.Application.Features.Reviews.Commands.CreateReview
             if (movie is null)
                 throw new Exception("Movie was not found");
 
+            var r  = await unitOfWork.GetReadRepository<Review>().GetAsync(r => r.MovieId == request.MovieId && r.AuthorId == userId);
+
+            if (r is not null)
+                throw new Exception("You have already reviewed this movie.");
+
             var review = new Review(userId, request.MovieId, request.Title, request.Message, request.RatingPoint);
 
             await unitOfWork.GetWriteRepository<Review>().AddAsync(review);

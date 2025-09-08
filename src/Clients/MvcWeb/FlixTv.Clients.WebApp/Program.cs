@@ -1,5 +1,6 @@
 using FlixTv.Clients.WebApp.Options;
 using FlixTv.Clients.WebApp.Services.Http;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +25,19 @@ builder.Services.AddAuthentication("Cookies")
         opt.SlidingExpiration = true;
         opt.ExpireTimeSpan = TimeSpan.FromHours(12);
         opt.Cookie.HttpOnly = true;
-        opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         opt.Cookie.SameSite = SameSiteMode.Lax;
+
+        opt.Events = new CookieAuthenticationEvents
+        {
+            OnRedirectToLogin = ctx =>
+            {
+                if (ctx.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                { ctx.Response.StatusCode = 401; return Task.CompletedTask; }
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization();

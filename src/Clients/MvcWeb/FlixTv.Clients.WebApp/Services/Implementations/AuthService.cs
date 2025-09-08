@@ -63,7 +63,7 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
 
         private static void SaveTokens(HttpContext ctx, LoginCommandResponse data)
         {
-            var opts = new CookieOptions { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax, Expires = data.Expiration };
+            var opts = new CookieOptions { HttpOnly = true, Secure = false, SameSite = SameSiteMode.Lax, Expires = data.Expiration };
             ctx.Response.Cookies.Append("flix_access_token", data.Token, opts);
             ctx.Response.Cookies.Append("flix_refresh_token", data.RefreshToken, opts);
         }
