@@ -55,7 +55,8 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         }
 
         public Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetMoviesByUserCompatibilityAsync(
-        int count = 10, CancellationToken ct = default)
+            int count = 10, 
+            CancellationToken ct = default)
         {
             var url = $"{CompatibilityEndpoint}?count={count}";
             return GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
@@ -118,6 +119,23 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
                         return await GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
                     }
             }
+        }
+
+        public Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetLatestMoviesAsync(
+            int pool = 50,
+            CancellationToken ct = default)
+        {
+            var qs = new Dictionary<string, string?>
+            {
+                ["orderBy"] = "releaseYear",
+                ["currentPage"] = "1",
+                ["pageSize"] = Math.Max(1, pool).ToString()
+            };
+
+            qs["minReleaseYear"] = (DateTime.UtcNow.Year - 2).ToString();
+
+            var url = BuildGetAllMoviesUrl(qs, categories: null);
+            return GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
         }
 
         private static (

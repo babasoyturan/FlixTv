@@ -44,6 +44,12 @@ namespace FlixTv.Clients.WebApp.Controllers
                 model.SimiliarMovies = similiarMoviesResponse.Data;
 
 
+            var latestPoolRes = await moviesService.GetLatestMoviesAsync(pool: 50);
+            if (latestPoolRes.IsSuccess && latestPoolRes.Data != null && latestPoolRes.Data.Count > 0)
+            {
+                model.NewItems = PickRandom(latestPoolRes.Data, take: 6);
+            }
+
             var commentsCountResponse = await commentsService.GetMovieCommentsCountAsync(id);
             if (commentsCountResponse.IsSuccess)
                 model.CommentsCount = commentsCountResponse.Data;
@@ -119,6 +125,23 @@ namespace FlixTv.Clients.WebApp.Controllers
             };
 
             return PartialView("_MovieReviews", vm);
+        }
+
+
+        private static IList<T> PickRandom<T>(IList<T> source, int take)
+        {
+            if (source == null || source.Count == 0) return new List<T>();
+            var list = source.ToList();
+            var n = list.Count;
+            take = Math.Min(Math.Max(1, take), n);
+
+            var rng = Random.Shared; // .NET 6+
+            for (int i = 0; i < take; i++)
+            {
+                int j = rng.Next(i, n); // [i, n)
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+            return list.Take(take).ToList();
         }
     }
 }

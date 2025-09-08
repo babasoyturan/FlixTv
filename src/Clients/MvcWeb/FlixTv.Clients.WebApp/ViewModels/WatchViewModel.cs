@@ -8,6 +8,8 @@ namespace FlixTv.Clients.WebApp.ViewModels
     {
         public GetMovieQueryResponse Movie { get; set; }
 
+        public IList<GetAllMoviesQueryResponse> NewItems { get; set; } = new List<GetAllMoviesQueryResponse>();
+
         public IList<GetAllMoviesQueryResponse> SimiliarMovies { get; set; }
 
         public IList<GetCommentQueryResponse> Comments { get; set; }
