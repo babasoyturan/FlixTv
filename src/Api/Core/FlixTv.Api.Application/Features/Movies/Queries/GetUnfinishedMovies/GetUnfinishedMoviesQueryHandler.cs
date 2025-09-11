@@ -32,7 +32,7 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetUnfinishedMovies
             var movies = await unitOfWork.GetReadRepository<Movie>().GetAllAsync(
                     m => m.Views != null && m.Views.Any(v => v.UserId == userId &&
                          !v.IsCompleted &&
-                         v.MaxPositionSeconds > m.Duration * 0.05),
+                         v.WatchedSeconds > 120),
                     x => x.OrderByDescending(m => m.Views.FirstOrDefault(v => v.UserId == userId).LastWatchedAt),
                     x => x.Include(m => m.Reviews).Include(m => m.Views));
 

@@ -31,4 +31,10 @@ namespace FlixTv.Common.Models
         Decade,
         ContinueWatching
     }
+
+    public enum SourceType
+    {
+        FlixTv = 0,
+        Tmdb = 1
+    }
 }

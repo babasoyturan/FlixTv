@@ -50,7 +50,14 @@ namespace FlixTv.Api.Application.Features.ViewDatas.Commands.CreateViewData
                     LastWatchedAt = now,
                 };
 
-                if (request.WatchedSeconds >= movie.Duration * 60 * 0.8 && request.MaxPositionSeconds >= movie.Duration * 60 * 0.8)
+                if ((((movie.TmdbId.HasValue
+                    && movie.TmdbId.Value <= 0)
+                    || !movie.TmdbId.HasValue)
+                    && request.WatchedSeconds >= movie.Duration * 60 * 0.7
+                    && request.MaxPositionSeconds >= movie.Duration * 60 * 0.8)
+                    || (movie.TmdbId.HasValue
+                    && movie.TmdbId.Value > 0
+                    && request.WatchedSeconds >= movie.Duration * 60 * 0.9))
                     vd.IsCompleted = true;
 
                 await unitOfWork.GetWriteRepository<ViewData>().AddAsync(vd);
@@ -63,7 +70,15 @@ namespace FlixTv.Api.Application.Features.ViewDatas.Commands.CreateViewData
 
                 vd.LastWatchedAt = now;
 
-                if (!vd.IsCompleted && vd.WatchedSeconds >= movie.Duration * 60 * 0.8 && vd.MaxPositionSeconds >= movie.Duration * 60 * 0.8)
+                if (!vd.IsCompleted 
+                    && ((((movie.TmdbId.HasValue 
+                    && movie.TmdbId.Value <= 0)
+                    || !movie.TmdbId.HasValue)
+                    && vd.WatchedSeconds >= movie.Duration * 60 * 0.7 
+                    && vd.MaxPositionSeconds >= movie.Duration * 60 * 0.8)
+                    || (movie.TmdbId.HasValue
+                    && movie.TmdbId.Value > 0
+                    && vd.WatchedSeconds >= movie.Duration * 60 * 0.9)))
                     vd.IsCompleted = true;
 
                 await unitOfWork.GetWriteRepository<ViewData>().UpdateAsync(vd);

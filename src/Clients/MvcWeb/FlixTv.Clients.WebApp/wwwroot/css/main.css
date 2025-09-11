@@ -6645,3 +6645,66 @@ button.js-dislike.active svg {
 .my-mfp-zoom-in.mfp-removing.mfp-bg {
     opacity: 0;
 }
+
+
+
+.media-block {
+    margin-top: 30px;
+}
+
+@media (min-width: 768px) {
+    .media-block {
+        margin-top: 40px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .media-block {
+        margin-right: 30px;
+    }
+}
+
+/* IFRAME "korpus"u – plyr-? b?nz?r */
+.iframe-player {
+    background: #0b0f19;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    overflow: hidden; /* radius k?narlar?n? k?s */
+}
+
+/* 16:9 qutu + radius */
+.iframe-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9; /* modern, padding hack-? ehtiyac yoxdu */
+    border-radius: 16px;
+    overflow: hidden; /* iç skrolu gizl?t */
+}
+    
+/* Frame-in özünd? skrolu gizl?t + k?nar bo?luqlar? s?rala */
+.iframe-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block; /* baseline bo?lu?unu götürür */
+    background: #000;
+    overflow: hidden;
+    /* Scrollbar gizl?t – brauzerl?r? uy?un */
+    -ms-overflow-style: none; /* IE/Edge köhn? */
+    scrollbar-width: none; /* Firefox */
+}
+
+.iframe-wrap iframe::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+/* Plyr video il? vizual eynilik üçün */
+#player {
+    width: 100%;
+    border-radius: 16px;
+    background: #0b0f19;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+}

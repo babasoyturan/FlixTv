@@ -115,7 +115,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "View Data was created succesfully." });
+            return Ok("View Data was created succesfully.");
         }
 
         [Authorize(Roles = "Admin, Moderator")]
@@ -125,7 +125,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new DeleteViewDataCommandRequest { ViewDataId = viewDataId });
 
-            return Ok(new { message = "View Data was deleted successfully!" });
+            return Ok("View Data was deleted successfully!");
         }
     }
 }

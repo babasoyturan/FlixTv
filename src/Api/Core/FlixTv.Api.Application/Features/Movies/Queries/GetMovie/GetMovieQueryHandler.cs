@@ -2,6 +2,7 @@
 using FlixTv.Api.Application.Interfaces.UnitOfWorks;
 using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common;
+using FlixTv.Common.Models;
 using FlixTv.Common.Models.DTOs;
 using FlixTv.Common.Models.ResponseModels.Movies;
 using FlixTv.Common.Models.ResponseModels.Reviews;
@@ -48,9 +49,18 @@ namespace FlixTv.Api.Application.Features.Movies.Queries.GetMovie
                     response.LastPositionSeconds = vd.LastPositionSeconds;
                 }
             }
-
-            response.SourceVideoUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/{movie.SourceVideoUrl}/hls/{movie.SourceVideoUrl}.m3u8";
-            response.SubtitleUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/subtitles/{movie.SourceVideoUrl}.vtt";
+            if (movie.TmdbId.HasValue && movie.TmdbId.Value > 0)
+            {
+                response.SourceType = SourceType.Tmdb;
+                response.TmdbId = movie.TmdbId.Value;
+                response.SourceVideoUrl = $"https://vidsrc.icu/embed/movie/{movie.TmdbId.Value}";
+            }
+            else
+            {
+                response.SourceType = SourceType.FlixTv;
+                response.SourceVideoUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/{movie.SourceVideoUrl}/hls/{movie.SourceVideoUrl}.m3u8";
+                response.SubtitleUrl = $"https://{FlixTvConstants.CdnName}.cloudfront.net/subtitles/{movie.SourceVideoUrl}.vtt";
+            }
 
             return response;
         }

@@ -12,7 +12,7 @@
         int end = Math.Min(total - 1, current + 2);
 
         list.Add(1);
-        if (start > 2) list.Add(null);           // null → ellipsis
+        if (start > 2) list.Add(null);
 
         for (int i = start; i <= end; i++) list.Add(i);
 
@@ -62,10 +62,35 @@
 
                 <!-- video player -->
                 <div class="col-12 col-xl-8">
-                    <video controls crossorigin="anonymous" id="player" src="@Model.Movie.SourceVideoUrl">
-                        <track kind="captions" label="English" srclang="en" src="@Model.Movie.SubtitleUrl"
-                               default>
-                    </video>
+                    @* FLIXTV (HLS) *@
+                    @if (Model.Movie.SubtitleUrl != null)
+                    {
+                        <!-- praktik siqnal: FlixTV olanda subtitle var -->
+                        <div class="media-block">
+                            <!-- eyni boşluqlar üçün ümumi class -->
+                            <video controls crossorigin="anonymous" id="player" src="@Model.Movie.SourceVideoUrl">
+                                <track kind="captions" label="English" srclang="en" src="@Model.Movie.SubtitleUrl" default>
+                            </video>
+                        </div>
+                    }
+                    else
+                    {
+                        @* TMDB / iframe *@
+                        <div class="iframe-player media-block">
+                            <div class="iframe-wrap">
+                                <iframe id="tmdbFrame"
+                                        src="@Model.Movie.SourceVideoUrl"
+                                        title="@Model.Movie.Title"
+                                        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                                        allowfullscreen
+                                        referrerpolicy="no-referrer"
+                                        loading="lazy"
+                                        scrolling="no">
+                                </iframe>
+                            </div>
+                        </div>
+                    }
+
                 </div>
                 <!-- end video player -->
 
@@ -311,7 +336,7 @@
                                 {
                                     <div class="card" style="visibility: hidden">
                                         <a href="" class="card__cover">
-                                            <img src="img/card/13.png" alt="">
+                                            <img>
                                         </a>
                                     </div>
                                 }
@@ -341,6 +366,225 @@
 
 @section Scripts {
 
+    @if (Model.Movie.SourceType == SourceType.FlixTv)
+    {
+        <script>
+            addEventListener("DOMContentLoaded", () => {
+                var player;
+                var source = "@Model.Movie.SourceVideoUrl";
+                const video = document.getElementById("player");
+
+                const resumeAt = Math.max(0, @Model.Movie.LastPositionSeconds);
+
+                // Yüklənən kimi qaldığı yerə atla (metadata hazır olanda işləyir)
+                function seekToResume() {
+                  // duration-dan 2s əvvəl dayanıbsa, son 2 saniyəyə ilişməsin deyə bir az geriyə çəkirik
+                  const d = Math.floor(video.duration || 0);
+                  const s = Math.min(resumeAt, Math.max(0, d - 2));
+                  if (s > 0 && Math.abs((video.currentTime || 0) - s) > 0.5) {
+                    try { video.currentTime = s; } catch {}
+                  }
+                }
+
+                video.addEventListener('loadedmetadata', () => setTimeout(seekToResume, 0));
+
+                const movieId = @Model.Movie.Id;
+                let playedSeconds = new Set();   // session ərzində unikal saniyələr
+                let maxPos = 0;                  // görülmüş ən uzaq saniyə
+                let sent = false;                // göndərildi-mi?
+                let isSeeking = false;           // seek zamanı saniyə toplama
+
+                function nowSec() {
+                  return Math.floor(video.currentTime || 0);
+                }
+
+                function onTimeUpdate() {
+                  const s = nowSec();
+                  if (!video.paused && !video.ended && !isSeeking) {
+                    playedSeconds.add(s);        // unikal saniyə
+                  }
+                  if (s > maxPos) maxPos = s;    // maksimum mövqe
+                }
+
+                video.addEventListener('timeupdate', onTimeUpdate);
+                video.addEventListener('seeking', () => { isSeeking = true; });
+                video.addEventListener('seeked',  () => { isSeeking = false; });
+                // Tam bitəndə dərhal göndər
+                video.addEventListener('ended', sendViewDataBeacon);
+
+                function buildPayload() {
+                  const last = nowSec();
+                  return {
+                    movieId: movieId,
+                    lastPositionSeconds: last,
+                    maxPositionSeconds: Math.max(maxPos, last),
+                    watchedSeconds: playedSeconds.size
+                  };
+                }
+
+                function sendViewDataBeacon() {
+                  if (sent) return; // page unload üçün birdəfəlik
+                  sent = true;
+
+                  const url = '@Url.Action("Create", "ViewDatas")';
+                  const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+                  const data = buildPayload();
+
+                  // sendBeacon üçün FormData ən stabil yoldur
+                  const fd = new FormData();
+                  if (token) fd.append('__RequestVerificationToken', token);
+                  fd.append('movieId',              String(data.movieId));
+                  fd.append('lastPositionSeconds',  String(data.lastPositionSeconds));
+                  fd.append('maxPositionSeconds',   String(data.maxPositionSeconds));
+                  fd.append('watchedSeconds',       String(data.watchedSeconds));
+
+                  // Beacon – səhifədən çıxarkən etibarlı işləyir
+                  if (!navigator.sendBeacon || !navigator.sendBeacon(url, fd)) {
+                    // Fallback – normal POST (artıq unload-da həmişə işləmir, amma cəhd edirik)
+                    fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' }).catch(()=>{});
+                  }
+                }
+
+                // Səhifədən çıxış üçün güvənilən event-lər
+                window.addEventListener('pagehide', sendViewDataBeacon, { capture: true });
+                window.addEventListener('beforeunload', sendViewDataBeacon, { capture: true });
+
+
+                const defaultOptions = {};
+
+                if (!Hls.isSupported()) {
+                    video.src = source;
+                    return;
+                }
+
+                const hls = new Hls();
+                hls.loadSource(source);
+
+                hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+
+                    const aviableQualities = hls.levels.map(l => l.height).sort((a, b) => b - a)
+                    aviableQualities.unshift(0)
+                    defaultOptions.controls = [
+                        'play-large',
+                        'play',
+                        'progress',
+                        'current-time',
+                        'duration',
+                        'mute',
+                        'volume',
+                        'captions',
+                        'settings',
+                        'fullscreen',
+                    ];
+
+                    defaultOptions.captions = {
+                        active: true,
+                        update: true,
+                        language: 'en'
+                    };
+
+                    defaultOptions.quality = {
+                        default: 0,
+                        options: aviableQualities,
+                        forced: true,
+                        onChange: (e) => updateQuality(e)
+                    }
+
+                    defaultOptions.i18n = {
+                        qualityLabel: {
+                            0: "Auto",
+                        },
+                    }
+
+                    player = new Plyr(video, defaultOptions);
+
+                    if (video.readyState >= 1) seekToResume();
+
+                });
+
+                hls.attachMedia(video);
+                window.hls = hls;
+
+                function updateQuality(newQuality) {
+                    if (newQuality === 0) {
+                        window.hls.currentLevel    = -1;
+                    }
+                    else {
+                        window.hls.levels.forEach((level, levelIndex) => {
+                            if(level.height === newQuality){
+                                window.hls.currentLevel = levelIndex;
+                            }
+                        })
+                    }
+                }
+            });
+        </script>
+    }
+    else if (Model.Movie.SourceType == SourceType.Tmdb)
+    {
+        <script>
+            addEventListener('DOMContentLoaded', () => {
+              const iframe = document.getElementById('tmdbFrame');
+              if (!iframe) return;
+
+              const MOVIE_ID = @Model.Movie.Id;
+              const POST_URL = '@Url.Action("Create", "ViewDatas")';
+              const TOKEN    = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+              const TICK_MS  = 1000;   // saniyə sayğacı
+              const MIN_SEND = 120;    // 120 san. altını göndərmirik
+
+              let pageVisible = !document.hidden;
+              let inViewport  = true;
+              let pendingSec  = 0;
+              let sendOnce    = false; // dublikatların qarşısı
+
+              // Görünmə payı (25%-dən çox olanda say)
+              const io = new IntersectionObserver((entries) => {
+                for (const e of entries) {
+                  if (e.target === iframe) inViewport = e.isIntersecting && e.intersectionRatio >= 0.25;
+                }
+              }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+              io.observe(iframe);
+
+              document.addEventListener('visibilitychange', () => {
+                pageVisible = !document.hidden;
+                if (!pageVisible) flush('hidden');
+              });
+
+              // Saniyəlik sayğac — heç bir ping YOXDUR
+              setInterval(() => {
+                if (pageVisible && inViewport) pendingSec += 1;
+              }, TICK_MS);
+
+              // Səhifədən çıxış
+              window.addEventListener('pagehide',     () => flush('pagehide'),     { capture:true });
+              window.addEventListener('beforeunload', () => flush('beforeunload'), { capture:true });
+
+              function flush(reason){
+                if (sendOnce) return;
+                if (pendingSec < MIN_SEND) return;  // 120 saniyədən azsa göndərmə
+                sendOnce = true;
+
+                const fd = new FormData();
+                if (TOKEN) fd.append('__RequestVerificationToken', TOKEN);
+                fd.append('movieId', String(MOVIE_ID));
+                fd.append('lastPositionSeconds', '0'); // iframe-də mövqe yoxdur
+                fd.append('maxPositionSeconds',  '0');
+                fd.append('watchedSeconds',      String(pendingSec));
+
+                // unload-da işləsin deyə keepalive + antiforgery header
+                fetch(POST_URL, {
+                  method: 'POST',
+                  body: fd,
+                  credentials: 'same-origin',
+                  headers: TOKEN ? { 'RequestVerificationToken': TOKEN } : {},
+                  keepalive: true
+                }).catch(()=>{});
+              }
+            });
+        </script>
+    }
     <script>
         function scrollToBlockTop($wrap){
           var headerH = $('header.header').outerHeight() || 0;
@@ -390,97 +634,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => localizeTimes());
-    </script>
-    <script>
-        addEventListener("DOMContentLoaded", () => {
-            var player;
-            var source = "@Model.Movie.SourceVideoUrl";
-            const video = document.getElementById("player");
-            const defaultOptions = {};
-
-            let watchedSeconds = new Set();
-
-            video.addEventListener("timeupdate", () => {
-                const second = Math.floor(video.currentTime);
-                watchedSeconds.add(second);
-                console.log(`Current time: ${second} seconds`);
-                console.log(`Video watched: ${watchedSeconds.size} seconds`);
-            });
-
-            const sendViewData = () => {
-                const duration = Math.floor(video.duration || 0);
-                const watched = watchedSeconds.size;
-
-                console.log(`Video watched: ${watched} seconds out of ${duration} seconds.`);
-            };
-
-            video.addEventListener("ended", sendViewData);
-            window.addEventListener("beforeunload", sendViewData);
-
-            if (!Hls.isSupported()) {
-                video.src = source;
-                return;
-            }
-
-            const hls = new Hls();
-            hls.loadSource(source);
-
-            hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-
-                const aviableQualities = hls.levels.map(l => l.height).sort((a, b) => b - a)
-                aviableQualities.unshift(0)
-                defaultOptions.controls = [
-                    'play-large',
-                    'play',
-                    'progress',
-                    'current-time',
-                    'duration',
-                    'mute',
-                    'volume',
-                    'captions',
-                    'settings',
-                    'fullscreen',
-                ];
-
-                defaultOptions.captions = {
-                    active: true,
-                    update: true,
-                    language: 'en'
-                };
-
-                defaultOptions.quality = {
-                    default: 0,
-                    options: aviableQualities,
-                    forced: true,
-                    onChange: (e) => updateQuality(e)
-                }
-
-                defaultOptions.i18n = {
-                    qualityLabel: {
-                        0: "Auto",
-                    },
-                }
-
-                player = new Plyr(video, defaultOptions);
-
-            });
-
-            hls.attachMedia(video);
-            window.hls = hls;
-
-            function updateQuality(newQuality) {
-                if (newQuality === 0) {
-                    window.hls.currentLevel    = -1;
-                }
-                else {
-                    window.hls.levels.forEach((level, levelIndex) => {
-                        if(level.height === newQuality){
-                            window.hls.currentLevel = levelIndex;
-                        }
-                    })
-                }
-            }
-        });
     </script>
     <script>
         // MVC endpoint

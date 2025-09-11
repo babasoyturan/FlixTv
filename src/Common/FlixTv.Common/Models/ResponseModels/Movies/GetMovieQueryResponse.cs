@@ -11,6 +11,8 @@ namespace FlixTv.Common.Models.ResponseModels.Movies
     public class GetMovieQueryResponse
     {
         public int Id { get; set; }
+        public SourceType SourceType { get; set; }
+        public int? TmdbId { get; set; }
         public string SourceVideoUrl { get; set; }
         public string SubtitleUrl { get; set; } 
         public string TrailerVideoUrl { get; set; }
