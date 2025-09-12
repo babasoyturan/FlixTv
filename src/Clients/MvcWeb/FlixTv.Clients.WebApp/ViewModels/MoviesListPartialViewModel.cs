@@ -13,5 +13,9 @@ namespace FlixTv.Clients.WebApp.ViewModels
 
         // filtrləri paging linklərinə yapışdırmaq üçün (querystring)
         public Dictionary<string, string?> Query { get; set; } = new();
+
+        public string ListController { get; set; } = "Movies";
+
+        public string ListAction { get; set; } = "MoviesGrid";
     }
 }

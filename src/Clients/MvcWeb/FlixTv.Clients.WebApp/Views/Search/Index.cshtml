@@ -1,0 +1,99 @@
+﻿@model MoviesListPartialViewModel
+@{
+    ViewData["Title"] = "Search";
+    var q = (ViewBag.QueryText as string) ?? "";
+}
+
+<section class="section section--head section--head-fixed">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-8">
+                <h1 class="section__title section__title--head">Search Results for: <strong>@q</strong></h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="catalog catalog--page">
+    <div class="container">
+        <div class="row">
+            <div class="col-12" id="searchContainer" data-q="@q">
+                <div id="searchGridWrap">
+                    @await Html.PartialAsync("_MoviesGrid", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function(){
+          const $grid  = $('#searchGridWrap');
+          const $wrap  = $('#searchContainer');
+          const query  = ($wrap.data('q') || '').toString();
+
+          function buildQs(page=1){
+            const qs = new URLSearchParams();
+            if (query) qs.append('q', query);
+            qs.append('page', String(page));
+            const ps = ($grid.data('page-size') || $('#js-movies-page-size').val() || 24);
+            qs.append('pageSize', String(ps));
+            return qs.toString();
+          }
+
+          let loading = false;
+          function loadGrid(qs, {scroll=true}={}){
+            if (loading) return; loading = true;
+
+            const prevH = $grid.height();
+            $grid.css({ minHeight: prevH }).addClass('loading');
+
+            $.get('/Search/SearchResults?' + qs)
+              .done(html => {
+                $grid.html(html);
+
+                const ps = $('#js-movies-page-size').val();
+                if (ps) $grid.data('page-size', parseInt(ps,10));
+
+                const url = location.pathname + '?' + qs;
+                window.history.replaceState({}, '', url);
+
+                if (scroll) {
+                  requestAnimationFrame(() => setTimeout(() => scrollToBlockTop($wrap), 0));
+                }
+              })
+              .fail(() => alert('Could not load results.'))
+              .always(() => {
+                $grid.removeClass('loading').css({ minHeight: '' });
+                loading = false;
+              });
+          }
+
+          // paginator klikləri
+          $(document).on('click', '#searchGridWrap .js-movies-pager a', function(e){
+            e.preventDefault();
+            const href = $(this).attr('href') || '';
+            const u = new URL(href, location.origin);
+            const page = parseInt(u.searchParams.get('page') || '1', 10);
+            loadGrid(buildQs(page), { scroll:true });
+          });
+        })();
+    </script>
+
+    <script>
+        function scrollToBlockTop($wrap){
+          var headerH = $('header.header').outerHeight() || 0;
+          var y = Math.max(0, $wrap.offset().top - headerH*2);
+          $('html, body').stop(false,false).animate({ scrollTop: y }, 350, 'swing');
+        }
+    </script>
+
+    <style>
+        #searchGridWrap.loading {
+            opacity: .6;
+            pointer-events: none;
+            transition: opacity .2s;
+        }
+    </style>
+}

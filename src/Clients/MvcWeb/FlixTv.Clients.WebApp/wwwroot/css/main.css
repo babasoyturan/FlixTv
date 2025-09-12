@@ -1107,7 +1107,7 @@ body::-webkit-scrollbar-thumb {
     }
 
     .home--title .home__nav {
-        height: 280px;
+        height: 525px;
         top: auto;
     }
 
@@ -1151,7 +1151,7 @@ body::-webkit-scrollbar-thumb {
 
 @media (min-width: 1440px) {
     .home--title .home__nav {
-        height: 330px;
+        height: 620px;
     }
 
     .home__card {
@@ -6717,18 +6717,4 @@ button.js-dislike.active svg {
 /* jQuery animate i?l?y?n anda qlobal CSS smooth-u müv?qq?ti söndürm?k üçün */
 html.no-css-smooth {
     scroll-behavior: auto !important;
-}
-
-
-.card__cover {
-    display: block;
-    position: relative;
-    overflow: hidden;
-}
-
-.card__cover img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 2/3; /* t?xmini poster nisb?ti */
-    display: block;
 }

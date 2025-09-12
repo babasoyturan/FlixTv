@@ -17,15 +17,16 @@
 
     string BuildUrl(int page)
     {
-        var url = Url.Action("MoviesGrid", "Movies")!;
+        // DƏYİŞDİ: hardcode yox, modeldən gəlir
+        var url = Url.Action(Model.ListAction, Model.ListController)!;
+
         var parts = new List<string>();
         foreach (var kv in Model.Query)
         {
             if (!string.IsNullOrWhiteSpace(kv.Value))
                 parts.Add($"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(kv.Value!)}");
         }
-        // categories ayrıca gələ bilər (Query-də saxlamamışıq)
-        // Əgər lazım olsa, ViewData-dan və ya Query-dən ötürə bilərsən.
+
         parts.Add($"page={page}");
         parts.Add($"pageSize={Model.PageSize}");
         var qs = string.Join("&", parts);
@@ -41,6 +42,8 @@
     var fromIndex = shown == 0 ? 0 : (Model.Page - 1) * Model.PageSize + 1;
     var toIndex = shown == 0 ? 0 : fromIndex + shown - 1;
 }
+
+<input type="hidden" id="js-movies-page-size" value="@Model.PageSize" />
 
 <div class="row row--grid" id="moviesGrid__list">
     @foreach (var m in Model.Movies)
@@ -76,12 +79,12 @@
     }
 </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="catalog__paginator-wrap">
-            <span class="catalog__pages">@fromIndex-@toIndex from @Model.TotalCount</span>
-            @if (totalPages > 1)
-            {
+@if (totalPages > 1)
+{
+    <div class="row">
+        <div class="col-12">
+            <div class="catalog__paginator-wrap">
+                <span class="catalog__pages">@fromIndex-@toIndex from @Model.TotalCount</span>
                 <ul class="catalog__paginator js-movies-pager">
                     <li class="@(current == 1 ? "disabled" : "")">
                         <a href="@BuildUrl(Math.Max(1, current - 1))">
@@ -109,7 +112,7 @@
                         </a>
                     </li>
                 </ul>
-            }
+            </div>
         </div>
     </div>
-</div>
+}
