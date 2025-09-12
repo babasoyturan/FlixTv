@@ -64,6 +64,7 @@ namespace FlixTv.Clients.WebApp.Services.Http
             services.AddScoped<ICommentsService, CommentsService>();
             services.AddScoped<IReviewsService, ReviewsService>();
             services.AddScoped<IViewDatasService, ViewDatasService>();
+            services.AddScoped<IFavouriteMoviesService, FavouriteMoviesService>();
 
             return services;
         }

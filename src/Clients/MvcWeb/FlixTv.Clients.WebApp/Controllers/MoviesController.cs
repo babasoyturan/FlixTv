@@ -2,6 +2,7 @@
 using FlixTv.Clients.WebApp.Services.Implementations;
 using FlixTv.Clients.WebApp.ViewModels;
 using FlixTv.Common.Models.ResponseModels.Comments;
+using FlixTv.Common.Models.ResponseModels.FavouriteMovies;
 using FlixTv.Common.Models.ResponseModels.Movies;
 using FlixTv.Common.Models.ResponseModels.Reviews;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +15,18 @@ namespace FlixTv.Clients.WebApp.Controllers
         private readonly IMoviesService moviesService;
         private readonly ICommentsService commentsService;
         private readonly IReviewsService reviewsService;
+        private readonly IFavouriteMoviesService favouriteMoviesService;
 
-        public MoviesController(IMoviesService moviesService, ICommentsService commentsService, IReviewsService reviewsService)
+        public MoviesController(
+            IMoviesService moviesService, 
+            ICommentsService commentsService, 
+            IReviewsService reviewsService,
+            IFavouriteMoviesService favouriteMoviesService)
         {
             this.moviesService = moviesService;
             this.commentsService = commentsService;
             this.reviewsService = reviewsService;
+            this.favouriteMoviesService = favouriteMoviesService;
         }
 
         [HttpGet]
@@ -147,6 +154,62 @@ namespace FlixTv.Clients.WebApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Favourites(int page = 1, int pageSize = 12)
+        {
+            if (!(User?.Identity?.IsAuthenticated ?? false))
+                return RedirectToAction("Signin", "Account",
+                    new { returnUrl = Url.Action("Favourites", "Movies") });
+
+            var listRes = await favouriteMoviesService.GetMyFavouriteMoviesAsync(page, pageSize);
+            var countRes = await favouriteMoviesService.GetMyFavouriteMoviesCountAsync();
+
+            var list = (listRes.IsSuccess ? listRes.Data : new List<GetFavouriteMovieQueryResponse>())
+                       .Select(MapFav).ToList();
+            var total = countRes.IsSuccess ? countRes.Data : list.Count;
+
+            var vm = new MoviesViewModel
+            {
+                List = new MoviesListPartialViewModel
+                {
+                    Movies = list,
+                    TotalCount = total,
+                    Page = page,
+                    PageSize = pageSize,
+                    Query = new Dictionary<string, string?>(),
+                    ListController = "Movies",
+                    ListAction = "FavouritesGrid"
+                }
+            };
+
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> FavouritesGrid(int page = 1, int pageSize = 12)
+        {
+            if (!(User?.Identity?.IsAuthenticated ?? false))
+                return Unauthorized();
+
+            var listRes = await favouriteMoviesService.GetMyFavouriteMoviesAsync(page, pageSize);
+            var countRes = await favouriteMoviesService.GetMyFavouriteMoviesCountAsync();
+            if (!listRes.IsSuccess || !countRes.IsSuccess)
+                return StatusCode(500, "Could not load favourites.");
+
+            var vm = new MoviesListPartialViewModel
+            {
+                Movies = (listRes.Data ?? new List<GetFavouriteMovieQueryResponse>()).Select(MapFav).ToList(),
+                TotalCount = countRes.Data,
+                Page = page,
+                PageSize = pageSize,
+                Query = new Dictionary<string, string?>(),
+                ListController = "Movies",
+                ListAction = "FavouritesGrid"
+            };
+
+            return PartialView("_MoviesGrid", vm);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> ContinueGrid(int page = 1, int pageSize = 12)
         {
             if (!(User?.Identity?.IsAuthenticated ?? false))
@@ -270,6 +333,21 @@ namespace FlixTv.Clients.WebApp.Controllers
                 (list[i], list[j]) = (list[j], list[i]);
             }
             return list.Take(take).ToList();
+        }
+
+        private static GetAllMoviesQueryResponse MapFav(GetFavouriteMovieQueryResponse fav)
+        {
+            var m = fav.Movie;
+            return new GetAllMoviesQueryResponse
+            {
+                Id = m.Id,
+                Title = m.Title,
+                CoverImageUrl = m.CoverImageUrl,
+                ReleaseYear = m.ReleaseYear,
+                Rating = m.Rating,
+                Categories = m.Categories?.ToList() ?? new List<string>(),
+                IsFavourite = true
+            };
         }
     }
 }

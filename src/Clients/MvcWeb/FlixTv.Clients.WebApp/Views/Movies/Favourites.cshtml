@@ -1,0 +1,82 @@
+﻿@model FlixTv.Clients.WebApp.ViewModels.MoviesViewModel
+@{
+    ViewData["Title"] = "Favourites";
+}
+
+
+<section class="section section--head section--head-fixed">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-6">
+                <h1 class="section__title section__title--head">Favourites</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="catalog catalog--page">
+    <div class="container">
+        <div class="row">
+            <div class="col-12" id="favContainer">
+                <div id="moviesGridWrap">
+                    @await Html.PartialAsync("_MoviesGrid", Model.List)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function(){
+          const $grid = $('#moviesGridWrap');
+          const $wrap = $('#favContainer');
+
+          function scrollToBlockTop($el){
+            var headerH = $('header.header').outerHeight() || 0;
+            var y = Math.max(0, $el.offset().top - headerH*2);
+            $('html, body').stop(false,false).animate({ scrollTop: y }, 350, 'swing');
+          }
+
+          let loading = false;
+          function loadGrid(url){
+            if (loading) return;
+            loading = true;
+
+            const prevH = $grid.height();
+            $grid.css({ minHeight: prevH }).addClass('loading');
+
+            $.get(url)
+              .done(function(html){
+                $grid.html(html);
+                const ps = $('#js-movies-page-size').val();
+                if (ps) $grid.data('page-size', parseInt(ps,10));
+                scrollToBlockTop($wrap);
+              })
+              .fail(function(xhr){
+                if (xhr.status === 401){
+                  window.location = '@Url.Action("Signin", "Account")' + '?returnUrl=' + encodeURIComponent(location.href);
+                } else {
+                  alert('Could not load favourites.');
+                }
+              })
+              .always(function(){
+                $grid.removeClass('loading').css({ minHeight: '' });
+                loading = false;
+              });
+          }
+
+          $(document).on('click', '#moviesGridWrap .js-movies-pager a', function(e){
+            e.preventDefault();
+            loadGrid($(this).attr('href') || '');
+          });
+        })();
+    </script>
+    <style>
+        #moviesGridWrap.loading {
+            opacity: .6;
+            pointer-events: none;
+            transition: opacity .2s;
+        }
+    </style>
+}

@@ -6718,3 +6718,18 @@ button.js-dislike.active svg {
 html.no-css-smooth {
     scroll-behavior: auto !important;
 }
+
+
+
+/*.card__cover {
+    display: block;
+    position: relative;
+    overflow: hidden;
+}*/
+
+.card__cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/3;
+    display: block;
+}
