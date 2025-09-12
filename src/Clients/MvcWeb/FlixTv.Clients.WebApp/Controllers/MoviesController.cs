@@ -2,6 +2,7 @@
 using FlixTv.Clients.WebApp.Services.Implementations;
 using FlixTv.Clients.WebApp.ViewModels;
 using FlixTv.Common.Models.ResponseModels.Comments;
+using FlixTv.Common.Models.ResponseModels.Movies;
 using FlixTv.Common.Models.ResponseModels.Reviews;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -19,6 +20,37 @@ namespace FlixTv.Clients.WebApp.Controllers
             this.moviesService = moviesService;
             this.commentsService = commentsService;
             this.reviewsService = reviewsService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(
+        string? searchText, List<string>? categories, string? orderBy,
+        int? minReleaseYear, int? maxReleaseYear, int page = 1, int pageSize = 54)
+        {
+            var filter = new MoviesFilter
+            {
+                SearchText = searchText,
+                Categories = categories ?? new(),
+                OrderBy = string.IsNullOrWhiteSpace(orderBy) ? "rating" : orderBy,
+                MinReleaseYear = minReleaseYear,
+                MaxReleaseYear = maxReleaseYear,
+                Page = page,
+                PageSize = pageSize
+            };
+
+            var model = new MoviesViewModel { Filter = filter };
+
+            var listRes = await moviesService.GetAllMoviesAsync(filter);
+            var countRes = await moviesService.GetMoviesCountAsync(filter);
+
+            if (listRes.IsSuccess) model.List.Movies = listRes.Data ?? new List<GetAllMoviesQueryResponse>();
+            if (countRes.IsSuccess) model.List.TotalCount = countRes.Data;
+
+            model.List.Page = filter.Page;
+            model.List.PageSize = filter.PageSize;
+            model.List.Query = BuildQueryDict(filter);
+
+            return View(model);
         }
 
         public async Task<IActionResult> Watch(int id)
@@ -86,6 +118,39 @@ namespace FlixTv.Clients.WebApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> MoviesGrid(
+        string? searchText, List<string>? categories, string? orderBy,
+        int? minReleaseYear, int? maxReleaseYear, int page = 1, int pageSize = 12)
+        {
+            var filter = new MoviesFilter
+            {
+                SearchText = searchText,
+                Categories = categories ?? new(),
+                OrderBy = string.IsNullOrWhiteSpace(orderBy) ? "rating" : orderBy,
+                MinReleaseYear = minReleaseYear,
+                MaxReleaseYear = maxReleaseYear,
+                Page = page,
+                PageSize = pageSize
+            };
+
+            var listRes = await moviesService.GetAllMoviesAsync(filter);
+            var countRes = await moviesService.GetMoviesCountAsync(filter);
+            if (!listRes.IsSuccess || !countRes.IsSuccess)
+                return StatusCode(500, "Could not load movies.");
+
+            var vm = new MoviesListPartialViewModel
+            {
+                Movies = listRes.Data ?? new List<GetAllMoviesQueryResponse>(),
+                TotalCount = countRes.Data,
+                Page = filter.Page,
+                PageSize = filter.PageSize,
+                Query = BuildQueryDict(filter)
+            };
+
+            return PartialView("_MoviesGrid", vm);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> MovieComments(int movieId, int page = 1, int pageSize = 10)
         {
             var countRes = await commentsService.GetMovieCommentsCountAsync(movieId);
@@ -127,6 +192,15 @@ namespace FlixTv.Clients.WebApp.Controllers
             return PartialView("_MovieReviews", vm);
         }
 
+        private static Dictionary<string, string?> BuildQueryDict(MoviesFilter f) => new()
+        {
+            ["searchText"] = f.SearchText,
+            ["orderBy"] = f.OrderBy,
+            ["minReleaseYear"] = f.MinReleaseYear?.ToString(),
+            ["maxReleaseYear"] = f.MaxReleaseYear?.ToString(),
+            // Categories çoxlu gəlir – paging linklərində ayrıca əlavə edəcəyik
+            // Page və PageSize linklərdə ayrıca yazılır
+        };
 
         private static IList<T> PickRandom<T>(IList<T> source, int take)
         {

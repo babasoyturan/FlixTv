@@ -1,5 +1,6 @@
 ﻿using FlixTv.Clients.WebApp.Services.Abstractions;
 using FlixTv.Clients.WebApp.Services.Http;
+using FlixTv.Clients.WebApp.ViewModels;
 using FlixTv.Common.Models;
 using FlixTv.Common.Models.ResponseModels.Movies;
 using System.Text;
@@ -14,6 +15,7 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         private const string UnfinishedEndpoint = "Movies/GetUnfinishedMovies";
         private const string CompatibilityEndpoint = "Movies/GetMoviesByUserCompatibility";
         private const string GetMovieEndpoint = "Movies/GetMovie";
+        private const string GetMoviesCountEndpoint = "Movies/GetMoviesCount";
 
 
         public MoviesService(IHttpClientFactory factory)
@@ -138,6 +140,80 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
             return GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
         }
 
+        public Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetAllMoviesAsync(
+            MoviesFilter f, 
+            CancellationToken ct = default)
+        {
+            var (qs, cats) = BuildQueryFromFilter(f, includePaging: true);
+            var url = BuildGetAllMoviesUrl(qs, cats);
+            return GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
+        }
+
+        public Task<ApiResult<int>> GetMoviesCountAsync(
+            MoviesFilter f, 
+            CancellationToken ct = default)
+        {
+            var (qs, cats) = BuildQueryFromFilter(f, includePaging: false);
+            var url = BuildUrl(GetMoviesCountEndpoint, qs, cats);
+            return GetAsync<int>(url, ct);
+        }
+
+        private static (
+            Dictionary<string, string?> qs, 
+            List<string>? cats) 
+            BuildQueryFromFilter(MoviesFilter f, bool includePaging)
+        {
+            var qs = new Dictionary<string, string?>();
+
+            if (!string.IsNullOrWhiteSpace(f.SearchText)) qs["searchText"] = f.SearchText;
+            if (f.MinReleaseYear.HasValue) qs["minReleaseYear"] = f.MinReleaseYear.Value.ToString();
+            if (f.MaxReleaseYear.HasValue) qs["maxReleaseYear"] = f.MaxReleaseYear.Value.ToString();
+            if (f.AgeLimitation.HasValue) qs["ageLimitation"] = f.AgeLimitation.Value.ToString();
+            if (f.MinDuration.HasValue) qs["minDuration"] = f.MinDuration.Value.ToString();
+            if (f.MaxDuration.HasValue) qs["maxDuration"] = f.MaxDuration.Value.ToString();
+            if (f.MinRating.HasValue) qs["minRating"] = f.MinRating.Value.ToString();
+            if (f.MaxRating.HasValue) qs["maxRating"] = f.MaxRating.Value.ToString();
+            if (!string.IsNullOrWhiteSpace(f.OrderBy)) qs["orderBy"] = f.OrderBy;
+
+            if (includePaging)
+            {
+                qs["currentPage"] = Math.Max(1, f.Page).ToString();
+                qs["pageSize"] = Math.Max(1, f.PageSize).ToString();
+            }
+
+            var cats = (f.Categories?.Count ?? 0) > 0 ? new List<string>(f.Categories) : null;
+            return (qs, cats);
+        }
+
+        private static string BuildUrl(string endpoint, IDictionary<string, string?> qs, IEnumerable<string>? categories)
+        {
+            var sb = new StringBuilder();
+            sb.Append(endpoint).Append('?');
+
+            var first = true;
+            foreach (var kv in qs)
+            {
+                if (string.IsNullOrWhiteSpace(kv.Value)) continue;
+                if (!first) sb.Append('&'); first = false;
+                sb.Append(Uri.EscapeDataString(kv.Key)).Append('=').Append(Uri.EscapeDataString(kv.Value!));
+            }
+
+            if (categories != null)
+            {
+                foreach (var cat in categories)
+                {
+                    if (string.IsNullOrWhiteSpace(cat)) continue;
+                    if (!first) sb.Append('&'); first = false;
+                    sb.Append("Categories=").Append(Uri.EscapeDataString(cat));
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        private static string BuildGetAllMoviesUrl(IDictionary<string, string?> qs, IEnumerable<string>? categories)
+            => BuildUrl(GetAllMoviesEndpoint, qs, categories);
+
         private static (
             Dictionary<string, string?> qs, 
             List<string>? categories)
@@ -202,39 +278,6 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
             }
 
             return (qs, cats);
-        }
-
-        private static string BuildGetAllMoviesUrl(
-            IDictionary<string, string?> qs,
-            IEnumerable<string>? categories)
-        {
-            var sb = new StringBuilder();
-            sb.Append(GetAllMoviesEndpoint);
-            sb.Append('?');
-
-            var first = true;
-
-            foreach (var kv in qs)
-            {
-                if (string.IsNullOrWhiteSpace(kv.Value)) continue;
-                if (!first) sb.Append('&'); first = false;
-                sb.Append(Uri.EscapeDataString(kv.Key));
-                sb.Append('=');
-                sb.Append(Uri.EscapeDataString(kv.Value!));
-            }
-
-            if (categories != null)
-            {
-                foreach (var cat in categories)
-                {
-                    if (string.IsNullOrWhiteSpace(cat)) continue;
-                    if (!first) sb.Append('&'); first = false;
-                    sb.Append("Categories=");
-                    sb.Append(Uri.EscapeDataString(cat));
-                }
-            }
-
-            return sb.ToString();
         }
 
         private static List<string> ToCategoryNames(

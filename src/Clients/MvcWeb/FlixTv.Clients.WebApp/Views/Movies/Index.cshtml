@@ -1,0 +1,228 @@
+﻿@model MoviesViewModel
+
+@{
+    ViewData["Title"] = "Movies";
+}
+
+<section class="section section--head section--head-fixed">
+	<div class="container">
+		<div class="row">
+			<div class="col-12 col-xl-6">
+				<h1 class="section__title section__title--head">Movies</h1>
+			</div>
+		</div>
+	</div>
+</section>
+
+
+
+<div class="catalog catalog--page">
+    <div class="container">
+        <div class="row">
+            <div class="col-12" id="moviesContainer">
+                <div class="catalog__nav catalog__nav--relative">
+                    <div class="catalog__select-wrap">
+                        <!-- GENRE -->
+                        <select class="catalog__select" name="genres" id="genreSelect">
+                            <option value="">All genres</option>
+                            <!-- Qeyd: option value-ları backend enum adları ilə EYNİ OLMALIDIR -->
+                            <option value="Action">Action/Adventure</option>
+                            <option value="Animation">Animation</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Crime">Crime</option>
+                            <option value="Drama">Drama</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Historical">Historical</option>
+                            <option value="Horror">Horror</option>
+                            <option value="Romance">Romance</option>
+                            <option value="ScienceFiction">Science Fiction</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Western">Western</option>
+                        </select>
+
+                        <!-- YEARS -->
+                        <select class="catalog__select" name="years" id="yearSelect">
+                            <!-- JS bu select-i avtomatik dolduracaq (’70s, ’80s… + son 5 il) -->
+                        </select>
+                    </div>
+
+                    <!-- ORDERING: visual eyni qalır -->
+                    <div class="slider-radio" id="orderGroup">
+                        <input type="radio" name="grade" id="featured" checked="checked"><label for="featured">Rating</label>
+                        <input type="radio" name="grade" id="popular"><label for="popular">Popular</label>
+                        <input type="radio" name="grade" id="newest"><label for="newest">Newest</label>
+                    </div>
+                </div>
+
+                <div id="moviesGridWrap">
+                    @await Html.PartialAsync("_MoviesGrid", Model.List)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+          const $grid = $('#moviesGridWrap');
+          const $moviesContainer = $('#moviesContainer');
+          const $genre = $('#genreSelect');
+          const $year  = $('#yearSelect');
+          const $order = $('#orderGroup input[type=radio]');
+
+          // ===== 3.1 Years dropdown-u dinamik doldur =====
+                  const now = new Date().getFullYear();
+
+        // massivə yığırıq (sonra DOM-a tökəcəyik)
+        const years = [];
+        years.push({ key:'',           text:'All the years' });
+        years.push({ key:'1970:1979',  text:"'70s" });
+        years.push({ key:'1980:1989',  text:"'80s" });
+        years.push({ key:'1990:1999',  text:"'90s" });
+        years.push({ key:'2000:2010',  text:'2000-10' });
+        years.push({ key:'2010:2020',  text:'2010-20' });
+
+        // 2020-dən sonrakı məntiq:
+        // - Əgər tam 10 illik məsafə keçibsə (yəni now >= 2031) → 2020–2030 aralığını göstər,
+        //   qalan illəri 2031..now dəqiq illər kimi əlavə et.
+        // - Yoxdursa (now <= 2030) → 2021..now dəqiq illər kimi əlavə et.
+        if (now >= 2031) {
+          years.push({ key:'2020:2030', text:'2020-30' });
+          for (let y = 2031; y <= now; y++) years.push({ key:`${y}:${y}`, text:String(y) });
+        } else {
+          for (let y = 2021; y <= now; y++) years.push({ key:`${y}:${y}`, text:String(y) });
+        }
+
+        // DOM-a yaz
+        $year.empty();
+        years.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r.key;      // "min:max" və ya boş
+          opt.textContent = r.text;
+          $year.append(opt);
+        });
+
+          // ===== 3.2 Paramları qur =====
+          function parseYear(val){
+            if (!val) return { min:null, max:null };
+            const [min,max] = val.split(':').map(x => parseInt(x,10));
+            return { min: isFinite(min)?min:null, max: isFinite(max)?max:null };
+          }
+          function currentOrder(){
+            // vizual id → API orderBy
+            const id = $('#orderGroup input[type=radio]:checked').attr('id');
+            if (id === 'popular')  return 'popular';
+            if (id === 'newest')   return 'releaseYear';
+            return 'rating';
+          }
+
+          function buildQs(page=1){
+            const genre = ($genre.val() || '').trim();
+            const {min,max} = parseYear($year.val() || '');
+            const orderBy = currentOrder();
+
+            const qs = new URLSearchParams();
+            if (genre) qs.append('categories', genre);   // API: List<string> categories
+            if (min)   qs.append('minReleaseYear', String(min));
+            if (max)   qs.append('maxReleaseYear', String(max));
+            qs.append('orderBy', orderBy);
+
+            // paging
+            qs.append('page', String(page));
+            // hazırkı griddən pageSize oxuyaq (səndə default 24/12 olur)
+            const pageSize = ($grid.data('page-size') || '@Model.List.PageSize') || 24;
+            qs.append('pageSize', String(pageSize));
+
+            return qs.toString();
+          }
+
+          // ===== 3.3 Grid-i yüklə =====
+        let loading = false;
+        function loadGrid(qs, { scroll = true } = {}) {
+          if (loading) return;
+          loading = true;
+
+          const prevH = $grid.height();
+          $grid.css({ minHeight: prevH }).addClass('loading');
+
+          $.get('/Movies/MoviesGrid?' + qs)
+            .done(html => {
+              $grid.html(html);
+
+              const ps = $('#js-movies-page-size').val();
+              if (ps) $grid.data('page-size', parseInt(ps, 10));
+
+              const url = location.pathname + '?' + qs;
+              window.history.replaceState({}, '', url);
+
+              // ---- yalnız burda və yüngül gecikmə ilə scroll et
+              if (scroll) {
+                document.documentElement.classList.add('no-css-smooth'); // CSS smooth-u söndür
+                requestAnimationFrame(() => setTimeout(() => {
+                  scrollToBlockTop($moviesContainer);
+                  document.documentElement.classList.remove('no-css-smooth');
+                }, 0));
+              }
+            })
+            .fail(() => alert('Could not load movies.'))
+            .always(() => {
+              $grid.removeClass('loading').css({ minHeight: '' });
+              loading = false;
+            });
+        }
+
+          // ===== 3.4 Eventlər =====
+          $genre.on('change', () => loadGrid(buildQs(1), { scroll:true }));
+          $year.on('change',  () => loadGrid(buildQs(1), { scroll:true }));
+          $order.on('change', () => loadGrid(buildQs(1), { scroll:true }));
+          
+          $(document).on('click', '#moviesGridWrap .js-movies-pager a', function(e){
+            e.preventDefault();
+            const href = $(this).attr('href') || '';
+            const url  = new URL(href, location.origin);
+            const page = parseInt(url.searchParams.get('page') || '1', 10);
+            loadGrid(buildQs(page), { scroll:true });
+          });
+
+          // ===== 3.5 İlk yüklənmə — varsa URL-dən state-i UI-ə vur =====
+          (function initFromQs(){
+            const url = new URL(location.href);
+            const c = url.searchParams.getAll('categories');
+            const min = url.searchParams.get('minReleaseYear');
+            const max = url.searchParams.get('maxReleaseYear');
+            const orderBy = (url.searchParams.get('orderBy') || '').toLowerCase();
+
+            if (c && c.length>0) $genre.val(c[0]);
+
+            // year select value-nu "min:max" kimi axtar
+            if (min || max){
+              const v = `${min||''}:${max||''}`;
+              const found = [...$year[0].options].find(o => o.value === v);
+              if (found) $year.val(v);
+            }
+
+            if (orderBy==='popular') $('#popular').prop('checked', true);
+            else if (orderBy==='releaseyear') $('#newest').prop('checked', true);
+            else $('#featured').prop('checked', true);
+          })();
+        })();
+    </script>
+    <script>
+        function scrollToBlockTop($wrap){
+          var headerH = $('header.header').outerHeight() || 0;
+          var y = Math.max(0, $wrap.offset().top - headerH*2);
+
+          // jQuery animate + aktiv animasiyanı dayandırma (jump olmasın)
+          $('html, body').stop(false, false).animate({ scrollTop: y }, 350, 'swing');
+        }
+    </script>
+
+    <style>
+        #moviesGridWrap.loading {
+            opacity: .6;
+            pointer-events: none;
+            transition: opacity .2s;
+        }
+    </style>
+}

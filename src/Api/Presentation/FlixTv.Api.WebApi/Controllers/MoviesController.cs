@@ -166,7 +166,6 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(response);
         }
 
-        [Authorize(Roles = "Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetMoviesCount(
         [FromQuery] string? searchText,

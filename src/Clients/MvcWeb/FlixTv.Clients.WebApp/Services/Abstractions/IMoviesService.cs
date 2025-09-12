@@ -1,4 +1,5 @@
 ﻿using FlixTv.Clients.WebApp.Services.Http;
+using FlixTv.Clients.WebApp.ViewModels;
 using FlixTv.Common.Models.ResponseModels.Movies;
 using System.Threading.Tasks;
 
@@ -29,6 +30,14 @@ namespace FlixTv.Clients.WebApp.Services.Abstractions
 
         Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetLatestMoviesAsync(
             int pool = 50,
+            CancellationToken ct = default);
+
+        Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetAllMoviesAsync(
+            MoviesFilter filter, 
+            CancellationToken ct = default);
+
+        Task<ApiResult<int>> GetMoviesCountAsync(
+            MoviesFilter filter, 
             CancellationToken ct = default);
     }
 }

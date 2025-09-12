@@ -6708,3 +6708,27 @@ button.js-dislike.active svg {
     background: #0b0f19;
     box-shadow: 0 8px 32px rgba(0,0,0,.35);
 }
+
+
+#moviesContainer, #moviesGridWrap {
+    overflow-anchor: none;
+}
+
+/* jQuery animate i?l?y?n anda qlobal CSS smooth-u müv?qq?ti söndürm?k üçün */
+html.no-css-smooth {
+    scroll-behavior: auto !important;
+}
+
+
+.card__cover {
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.card__cover img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2/3; /* t?xmini poster nisb?ti */
+    display: block;
+}
