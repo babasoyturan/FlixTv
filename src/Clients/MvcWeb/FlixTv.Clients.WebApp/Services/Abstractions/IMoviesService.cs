@@ -33,7 +33,10 @@ namespace FlixTv.Clients.WebApp.Services.Abstractions
             CancellationToken ct = default);
 
         Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetAllMoviesAsync(
-            MoviesFilter filter, 
+            MoviesFilter filter,
+            CancellationToken ct = default);
+
+        Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetUnfinishedMoviesAsync(
             CancellationToken ct = default);
 
         Task<ApiResult<int>> GetMoviesCountAsync(

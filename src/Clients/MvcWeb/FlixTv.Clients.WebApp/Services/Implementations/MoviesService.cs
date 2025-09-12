@@ -141,12 +141,18 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         }
 
         public Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetAllMoviesAsync(
-            MoviesFilter f, 
+            MoviesFilter f,
             CancellationToken ct = default)
         {
             var (qs, cats) = BuildQueryFromFilter(f, includePaging: true);
             var url = BuildGetAllMoviesUrl(qs, cats);
             return GetAsync<IList<GetAllMoviesQueryResponse>>(url, ct);
+        }
+
+        public Task<ApiResult<IList<GetAllMoviesQueryResponse>>> GetUnfinishedMoviesAsync(
+            CancellationToken ct = default)
+        {
+            return GetAsync<IList<GetAllMoviesQueryResponse>>(UnfinishedEndpoint, ct);
         }
 
         public Task<ApiResult<int>> GetMoviesCountAsync(

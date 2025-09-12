@@ -118,6 +118,60 @@ namespace FlixTv.Clients.WebApp.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ContinueWatching(int page = 1, int pageSize = 12)
+        {
+            // login yoxdursa – Signin-ə yönləndir
+            if (!(User?.Identity?.IsAuthenticated ?? false))
+                return RedirectToAction("Signin", "Account",
+                    new { returnUrl = Url.Action("ContinueWatching", "Movies") });
+
+            var res = await moviesService.GetUnfinishedMoviesAsync();
+            var all = res.IsSuccess ? (res.Data ?? new List<GetAllMoviesQueryResponse>())
+                                    : new List<GetAllMoviesQueryResponse>();
+
+            var vm = new MoviesViewModel
+            {
+                List = new MoviesListPartialViewModel
+                {
+                    Movies = all.Skip((page - 1) * pageSize).Take(pageSize).ToList(),
+                    TotalCount = all.Count,
+                    Page = page,
+                    PageSize = pageSize,
+                    Query = new Dictionary<string, string?>(),
+                    ListController = "Movies",
+                    ListAction = "ContinueGrid"
+                }
+            };
+
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ContinueGrid(int page = 1, int pageSize = 12)
+        {
+            if (!(User?.Identity?.IsAuthenticated ?? false))
+                return Unauthorized();
+
+            var res = await moviesService.GetUnfinishedMoviesAsync();
+            if (!res.IsSuccess) return StatusCode(500, "Could not load movies.");
+
+            var all = res.Data ?? new List<GetAllMoviesQueryResponse>();
+
+            var vm = new MoviesListPartialViewModel
+            {
+                Movies = all.Skip((page - 1) * pageSize).Take(pageSize).ToList(),
+                TotalCount = all.Count,
+                Page = page,
+                PageSize = pageSize,
+                Query = new Dictionary<string, string?>(),
+                ListController = "Movies",
+                ListAction = "ContinueGrid"
+            };
+
+            return PartialView("_MoviesGrid", vm);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> MoviesGrid(
         string? searchText, List<string>? categories, string? orderBy,
         int? minReleaseYear, int? maxReleaseYear, int page = 1, int pageSize = 12)
