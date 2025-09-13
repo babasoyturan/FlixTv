@@ -12,5 +12,9 @@ namespace FlixTv.Clients.WebApp.Services.Abstractions
 
         Task<ApiResult<int>> GetMyFavouriteMoviesCountAsync(
             CancellationToken ct = default);
+
+        Task<ApiResult<bool>> ToggleFavouriteMovieAsync(
+            int movieId, 
+            CancellationToken ct = default);
     }
 }

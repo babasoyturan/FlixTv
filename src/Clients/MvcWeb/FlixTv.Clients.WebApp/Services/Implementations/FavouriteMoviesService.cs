@@ -8,13 +8,14 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
     {
         private const string MyFavsEndpoint = "FavouriteMovies/GetMyFavouriteMovies";
         private const string MyFavsCountEndpoint = "FavouriteMovies/GetMyFavouriteMoviesCount";
+        private const string ToggleEndpoint = "FavouriteMovies/ToggleFavouriteMovie";
 
         public FavouriteMoviesService(IHttpClientFactory factory)
             : base(factory.CreateClient("flix-api")) { }
 
         public Task<ApiResult<IList<GetFavouriteMovieQueryResponse>>> GetMyFavouriteMoviesAsync(
-            int page, 
-            int pageSize, 
+            int page,
+            int pageSize,
             CancellationToken ct = default)
         {
             page = Math.Max(1, page);
@@ -26,5 +27,10 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         public Task<ApiResult<int>> GetMyFavouriteMoviesCountAsync(
             CancellationToken ct = default)
             => GetAsync<int>(MyFavsCountEndpoint, ct);
+
+        public Task<ApiResult<bool>> ToggleFavouriteMovieAsync(
+            int movieId, 
+            CancellationToken ct = default)
+            => PostAsync($"{ToggleEndpoint}?movieId={movieId}", content: null, ct);
     }
 }

@@ -16,13 +16,11 @@ namespace FlixTv.Api.Application.Features.FavouriteMovies.Commands.CreateFavouri
     public class CreateFavouriteMovieCommandHandler : IRequestHandler<CreateFavouriteMovieCommandRequest, Unit>
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly int userId;
 
-        public CreateFavouriteMovieCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public CreateFavouriteMovieCommandHandler(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.userId = Convert.ToInt32(httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
         }
 

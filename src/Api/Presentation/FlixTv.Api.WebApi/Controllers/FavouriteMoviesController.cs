@@ -1,7 +1,11 @@
-﻿using FlixTv.Api.Application.Features.FavouriteMovies.Commands.DeleteFavouriteMovie;
+﻿using FlixTv.Api.Application.Features.Comments.Commands.IncrementCommentLike;
+using FlixTv.Api.Application.Features.FavouriteMovies.Commands.DeleteFavouriteMovie;
+using FlixTv.Api.Application.Features.FavouriteMovies.Commands.ToggleFavouriteMovie;
 using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetAllFavouriteMovies;
 using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetFavouriteMovie;
 using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetFavouriteMoviesCount;
+using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetMyFavouriteMovies;
+using FlixTv.Api.Application.Features.FavouriteMovies.Queries.GetMyFavouriteMoviesCount;
 using FlixTv.Api.Application.Utilities;
 using FlixTv.Api.Domain.Concretes;
 using FlixTv.Common.Models.RequestModels.FavouriteMovies;
@@ -68,7 +72,7 @@ namespace FlixTv.Api.WebApi.Controllers
         [FromQuery] int pageSize = 0
         )
         {
-            var request = new GetAllFavouriteMoviesQueryRequest()
+            var request = new GetMyFavouriteMoviesQueryRequest()
             {
                 pageSize = pageSize,
                 currentPage = currentPage,
@@ -123,9 +127,18 @@ namespace FlixTv.Api.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyFavouriteMoviesCount()
         {
-            var response = await mediator.Send(new GetFavouriteMoviesCountQueryRequest());
+            var response = await mediator.Send(new GetMyFavouriteMoviesCountQueryRequest());
 
             return Ok(response);
+        }
+
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavouriteMovie([FromQuery] int movieId)
+        {
+            await mediator.Send(new ToggleFavouriteMovieCommandRequest { MovieId = movieId });
+
+            return Ok("The Favourite Movie was succesfully toggled.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -134,7 +147,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "The favourite movie was created successfully." });
+            return Ok("The favourite movie was created successfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -144,7 +157,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(new DeleteFavouriteMovieCommandRequest { FavouriteMovieId = favouriteMovieId });
 
-            return Ok(new { message = "The favourite movie was deleted successfully!" });
+            return Ok("The favourite movie was deleted successfully!");
         }
     }
 }

@@ -5,6 +5,7 @@ using FlixTv.Common.Models.ResponseModels.Comments;
 using FlixTv.Common.Models.ResponseModels.FavouriteMovies;
 using FlixTv.Common.Models.ResponseModels.Movies;
 using FlixTv.Common.Models.ResponseModels.Reviews;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -125,7 +126,7 @@ namespace FlixTv.Clients.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ContinueWatching(int page = 1, int pageSize = 12)
+        public async Task<IActionResult> ContinueWatching(int page = 1, int pageSize = 24)
         {
             // login yoxdursa – Signin-ə yönləndir
             if (!(User?.Identity?.IsAuthenticated ?? false))
@@ -154,7 +155,7 @@ namespace FlixTv.Clients.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Favourites(int page = 1, int pageSize = 12)
+        public async Task<IActionResult> Favourites(int page = 1, int pageSize = 24)
         {
             if (!(User?.Identity?.IsAuthenticated ?? false))
                 return RedirectToAction("Signin", "Account",
@@ -185,7 +186,7 @@ namespace FlixTv.Clients.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> FavouritesGrid(int page = 1, int pageSize = 12)
+        public async Task<IActionResult> FavouritesGrid(int page = 1, int pageSize = 24)
         {
             if (!(User?.Identity?.IsAuthenticated ?? false))
                 return Unauthorized();
@@ -210,7 +211,7 @@ namespace FlixTv.Clients.WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ContinueGrid(int page = 1, int pageSize = 12)
+        public async Task<IActionResult> ContinueGrid(int page = 1, int pageSize = 24)
         {
             if (!(User?.Identity?.IsAuthenticated ?? false))
                 return Unauthorized();
@@ -232,6 +233,18 @@ namespace FlixTv.Clients.WebApp.Controllers
             };
 
             return PartialView("_MoviesGrid", vm);
+        }
+
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavourite(int movieId)
+        {
+            var res = await favouriteMoviesService.ToggleFavouriteMovieAsync(movieId);
+            if (!res.IsSuccess)
+                return StatusCode((int)res.StatusCode, new { errors = res.Errors });
+
+            // cavab yalnız “ok” – client optimistic-toggle edəcək
+            return Ok(new { success = true });
         }
 
         [HttpGet]

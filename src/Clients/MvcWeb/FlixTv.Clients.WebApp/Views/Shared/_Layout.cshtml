@@ -115,6 +115,95 @@
 	<script src="~/js/jquery.magnific-popup.min.js"></script>
 	<script src="~/js/admin.js"></script>
 	<script src="~/js/main.js"></script>
+    <script>
+        (function () {
+          // Auth flag (serverdən)
+          window.__isAuth = @((User?.Identity?.IsAuthenticated ?? false).ToString().ToLower());
+
+          // Ajax header-ları (antiforgery varsa əlavə olunur)
+          $.ajaxSetup({
+            headers: (function(){
+              var h = { 'X-Requested-With': 'XMLHttpRequest' };
+              var t = document.querySelector('input[name="__RequestVerificationToken"]');
+              if (t && t.value) h['RequestVerificationToken'] = t.value;
+              return h;
+            })()
+          });
+
+          function allBtnsFor(mid){ return $('.js-fav-btn[data-movie-id="'+ mid +'"]'); }
+          function setBtnState(mid, active){
+            allBtnsFor(mid).each(function(){
+              $(this).toggleClass('active', !!active)
+                     .attr('aria-pressed', !!active);
+            });
+          }
+
+          // Login yoxdursa – bütün favourite düymələrini gizlət
+          if (!window.__isAuth) {
+            $('.js-fav-btn').remove(); // ya da: .hide()
+            return;
+          }
+
+          // Favourites grid-i varsa, hazır function
+          function reloadFavouritesGridIfExists(){
+            var $wrap = $('#favContainer');
+            if (!$wrap.length) return;
+
+            var $grid = $('#moviesGridWrap');
+            var $active = $grid.find('.js-movies-pager li.active a');
+            var page = parseInt(($active.text() || '1'), 10) || 1;
+            var ps = parseInt($('#js-movies-page-size').val() || $grid.data('page-size') || '12', 10);
+
+            var url = '@Url.Action("FavouritesGrid", "Movies")' + '?page=' + page + '&pageSize=' + ps;
+
+            var prevH = $grid.height();
+            $grid.css({ minHeight: prevH }).addClass('loading');
+
+            $.get(url)
+              .done(function(html){
+                $grid.html(html);
+                var ps2 = $('#js-movies-page-size').val();
+                if (ps2) $grid.data('page-size', parseInt(ps2,10));
+              })
+              .always(function(){
+                $grid.removeClass('loading').css({ minHeight: '' });
+              });
+          }
+
+          // Klik – Toggle
+          $(document).on('click', '.js-fav-btn', function(e){
+            e.preventDefault();
+            var $btn = $(this);
+            if ($btn.data('busy')) return;
+            $btn.data('busy', true);
+
+            var movieId = parseInt($btn.attr('data-movie-id') || '0', 10);
+            var willBeActive = !$btn.hasClass('active'); // OPTIMISTIC next state
+
+            // Optimistic UI – bütün eyni movie-id-lərdə sinxron
+            setBtnState(movieId, willBeActive);
+
+            $.post('@Url.Action("ToggleFavourite", "Movies")', { movieId: movieId })
+             .done(function(){
+               // server OK – optimistic qalır
+               if (!willBeActive) {
+                 // Favourites səhifəsində id söndürülübsə grid-i yenilə
+                 reloadFavouritesGridIfExists();
+               }
+             })
+             .fail(function(xhr){
+               // rollback
+               setBtnState(movieId, !willBeActive);
+               if (xhr.status === 401) {
+                 window.location = '@Url.Action("Signin", "Account")' + '?returnUrl=' + encodeURIComponent(location.href);
+               } else {
+                 alert('Could not update favourites.');
+               }
+             })
+             .always(function(){ $btn.data('busy', false); });
+          });
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
