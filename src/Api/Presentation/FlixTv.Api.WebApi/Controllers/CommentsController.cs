@@ -8,6 +8,7 @@ using FlixTv.Api.Application.Features.Comments.Queries.GetAllComments;
 using FlixTv.Api.Application.Features.Comments.Queries.GetComment;
 using FlixTv.Api.Application.Features.Comments.Queries.GetCommentsCount;
 using FlixTv.Api.Application.Features.Comments.Queries.GetMyComments;
+using FlixTv.Api.Application.Features.Comments.Queries.GetMyCommentsCount;
 using FlixTv.Api.Application.Utilities;
 using FlixTv.Common.Models.RequestModels.Comments;
 using MediatR;
@@ -144,7 +145,7 @@ namespace FlixTv.Api.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyCommentsCount()
         {
-            var response = await mediator.Send(new GetCommentsCountQueryRequest());
+            var response = await mediator.Send(new GetMyCommentsCountQueryRequest());
 
             return Ok(response);
         }

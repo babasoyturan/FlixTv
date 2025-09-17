@@ -4,6 +4,7 @@ using FlixTv.Api.Application.Features.Comments.Queries.GetComment;
 using FlixTv.Api.Application.Features.Reviews.Commands.DeleteReview;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetAllReviews;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetMyReviews;
+using FlixTv.Api.Application.Features.Reviews.Queries.GetMyReviewsCount;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetReview;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetReviewsCount;
 using FlixTv.Api.Application.Utilities;
@@ -154,7 +155,7 @@ namespace FlixTv.Api.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyReviewsCount()
         {
-            var response = await mediator.Send(new GetReviewsCountQueryRequest());
+            var response = await mediator.Send(new GetMyReviewsCountQueryRequest());
 
             return Ok(response);
         }

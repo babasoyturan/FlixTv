@@ -16,6 +16,8 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         private const string DecDislikeEndpoint = "Comments/DecrementCommentDislike";
         private const string CreateCommentEndpoint = "Comments/CreateComment";
         private const string DeleteCommentEndpoint = "Comments/DeleteComment";
+        private const string GetMyCommentsEndpoint = "Comments/GetMyComments";
+        private const string GetMyCommentsCountEndpoint = "Comments/GetMyCommentsCount";
 
         public CommentsService(IHttpClientFactory factory)
             : base(factory.CreateClient("flix-api")) { }
@@ -54,6 +56,24 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
             var url = $"{GetCommentsCountEndpoint}?movieId={movieId}";
             return GetAsync<int>(url, ct);
         }
+
+        public Task<ApiResult<IList<GetCommentQueryResponse>>> GetMyCommentsAsync(
+            int currentPage, 
+            int pageSize, 
+            string? orderBy = "createdDate", 
+            CancellationToken ct = default)
+        {
+            if (currentPage <= 0 || pageSize <= 0)
+                return Task.FromResult(ApiResult<IList<GetCommentQueryResponse>>
+                    .Fail(new[] { "Invalid pagination." }, System.Net.HttpStatusCode.BadRequest));
+
+            var url = $"{GetMyCommentsEndpoint}?currentPage={currentPage}&pageSize={pageSize}";
+            if (!string.IsNullOrWhiteSpace(orderBy)) url += $"&orderBy={Uri.EscapeDataString(orderBy)}";
+            return GetAsync<IList<GetCommentQueryResponse>>(url, ct);
+        }
+
+        public Task<ApiResult<int>> GetMyCommentsCountAsync(CancellationToken ct = default)
+            => GetAsync<int>(GetMyCommentsCountEndpoint, ct);
 
         public async Task<ApiResult<GetCommentQueryResponse>> ReactAsync(
             int commentId,

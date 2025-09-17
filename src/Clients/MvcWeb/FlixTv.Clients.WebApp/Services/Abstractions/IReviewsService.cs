@@ -17,6 +17,15 @@ namespace FlixTv.Clients.WebApp.Services.Abstractions
             int movieId,
             CancellationToken ct = default);
 
+        Task<ApiResult<IList<GetReviewQueryResponse>>> GetMyReviewsAsync(
+            int currentPage, 
+            int pageSize, 
+            string? orderBy = "createdDate", 
+            CancellationToken ct = default);
+
+        Task<ApiResult<int>> GetMyReviewsCountAsync(
+            CancellationToken ct = default);
+
         Task<ApiResult<int>> GetMovieUserReviewCountAsync(
             int movieId,
             int authorId,

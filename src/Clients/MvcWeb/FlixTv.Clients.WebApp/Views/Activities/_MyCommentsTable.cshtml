@@ -1,0 +1,109 @@
+﻿@model MyCommentsTablePartialViewModel
+@using System.Security.Claims
+
+@functions {
+    List<int?> BuildPages(int current, int total)
+    {
+        var list = new List<int?>(); if (total <= 1) return list;
+        int start = Math.Max(2, current - 2);
+        int end = Math.Min(total - 1, current + 2);
+        list.Add(1); if (start > 2) list.Add(null);
+        for (int i = start; i <= end; i++) list.Add(i);
+        if (end < total - 1) list.Add(null);
+        list.Add(total);
+        return list.Distinct().ToList();
+    }
+}
+@{
+    var totalPages = Model.TotalPages;
+    var current = Math.Min(Math.Max(1, Model.Page), Math.Max(1, totalPages));
+    var pages = BuildPages(current, totalPages);
+    var shown = Model.Comments?.Count ?? 0;
+    var fromIndex = shown == 0 ? 0 : (Model.Page - 1) * Model.PageSize + 1;
+    var toIndex = shown == 0 ? 0 : fromIndex + shown - 1;
+}
+
+<div class="main__table-wrap">
+    <table class="main__table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>MOVIE NAME</th>
+                <th>MESSAGE</th>
+                <th>LIKE / DISLIKE</th>
+                <th>CREATED DATE</th>
+                <th>ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (shown == 0)
+            {
+                <tr><td colspan="6"><div class="main__table-text">No comments</div></td></tr>
+            }
+            else
+            {
+                foreach (var c in Model.Comments)
+                {
+                    <tr data-comment-id="@c.Id">
+                        <td><div class="main__table-text">@c.Id</div></td>
+                        <td><div class="main__table-text">@c.Movie?.Title</div></td>
+                        <td><div class="main__table-text">@c.Message</div></td>
+                        <td><div class="main__table-text">@c.LikeCount / @c.DislikeCount</div></td>
+                        <td><div class="main__table-text">@c.CreatedDate.ToString("dd MMM yyyy")</div></td>
+                        <td>
+                            <div class="main__table-btns">
+                                <a href="#modal-view"
+                                   class="main__table-btn main__table-btn--view open-modal js-comment-view"
+                                   data-comment-id="@c.Id"
+                                   data-author="@($"{c.Author?.Name} {c.Author?.Surname}")"
+                                   data-date="@c.CreatedDate.ToString("o")"
+                                   data-message="@c.Message"
+                                   data-like="@c.LikeCount"
+                                   data-dislike="@c.DislikeCount"
+                                   data-movie="@c.Movie?.Title">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,17.09,7.9,20,12,20s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,18c-3.17,0-6.17-2.29-7.9-6C5.83,8.29,8.83,6,12,6s6.17,2.29,7.9,6C18.17,15.71,15.17,18,12,18ZM12,8a4,4,0,1,0,4,4A4,4,0,0,0,12,8Zm0,6a2,2,0,1,1,2-2A2,2,0,0,1,12,14Z" /></svg>
+                                </a>
+                                <a href="#modal-delete"
+                                   class="main__table-btn main__table-btn--delete open-modal js-mycomment-del"
+                                   data-comment-id="@c.Id">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10,18a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,10,18ZM20,6H16V5a3,3,0,0,0-3-3H11A3,3,0,0,0,8,5V6H4A1,1,0,0,0,4,8H5V19a3,3,0,0,0,3,3h8a3,3,0,0,0,3-3V8h1a1,1,0,0,0,0-2ZM10,5a1,1,0,0,1,1-1h2a1,1,0,0,1,1,1V6H10Zm7,14a1,1,0,0,1-1,1H8a1,1,0,0,1-1-1V8H17Zm-3-1a1,1,0,0,0,1-1V11a1,1,0,0,0-2,0v6A1,1,0,0,0,14,18Z" /></svg>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (totalPages > 1)
+{
+    <div class="catalog__paginator-wrap">
+        <span class="catalog__pages">@fromIndex-@toIndex from @Model.TotalCount</span>
+        <ul class="catalog__paginator js-mycomments-pager">
+            <li class="@(current == 1 ? "disabled" : "")">
+                <a href="@Url.Action("MyComments", "Activities", new { page = Math.Max(1, current - 1), pageSize = Model.PageSize })">
+                    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </a>
+            </li>
+            @foreach (var p in pages)
+            {
+                if (p is null)
+                {
+                    <li class="disabled"><span style="color:white">…</span></li>
+                }
+                else
+                {
+                    <li class="@(p == current ? "active" : "")"><a href="@Url.Action("MyComments", "Activities", new { page = p, pageSize = Model.PageSize })">@p</a></li>
+                }
+            }
+            <li class="@(current == totalPages ? "disabled" : "")">
+                <a href="@Url.Action("MyComments", "Activities", new { page = Math.Min(totalPages, current + 1), pageSize = Model.PageSize })">
+                    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </a>
+            </li>
+        </ul>
+    </div>
+}
+<input type="hidden" id="js-mycomments-total" value="@Model.TotalCount" />

@@ -12,6 +12,8 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
         private const string GetReviewEndpoint = "Reviews/GetReview";
         private const string CreateReviewEndpoint = "Reviews/CreateReview";
         private const string DeleteReviewEndpoint = "Reviews/DeleteReview";
+        private const string GetMyReviewsEndpoint = "Reviews/GetMyReviews";
+        private const string GetMyReviewsCountEndpoint = "Reviews/GetMyReviewsCount";
 
         public ReviewsService(IHttpClientFactory factory)
             : base(factory.CreateClient("flix-api")) { }
@@ -50,6 +52,25 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
             var url = $"{GetReviewsCountEndpoint}?movieId={movieId}";
             return GetAsync<int>(url, ct);
         }
+
+        public Task<ApiResult<IList<GetReviewQueryResponse>>> GetMyReviewsAsync(
+            int currentPage, 
+            int pageSize, 
+            string? orderBy = "createdDate", 
+            CancellationToken ct = default)
+        {
+            if (currentPage <= 0 || pageSize <= 0)
+                return Task.FromResult(ApiResult<IList<GetReviewQueryResponse>>
+                    .Fail(new[] { "Invalid pagination." }, System.Net.HttpStatusCode.BadRequest));
+
+            var url = $"{GetMyReviewsEndpoint}?currentPage={currentPage}&pageSize={pageSize}";
+            if (!string.IsNullOrWhiteSpace(orderBy)) url += $"&orderBy={Uri.EscapeDataString(orderBy)}";
+            return GetAsync<IList<GetReviewQueryResponse>>(url, ct);
+        }
+
+        public Task<ApiResult<int>> GetMyReviewsCountAsync(
+            CancellationToken ct = default)
+            => GetAsync<int>(GetMyReviewsCountEndpoint, ct);
 
         public Task<ApiResult<int>> GetMovieUserReviewCountAsync(
             int movieId,

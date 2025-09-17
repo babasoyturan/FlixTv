@@ -17,6 +17,15 @@ namespace FlixTv.Clients.WebApp.Services.Abstractions
             int movieId,
             CancellationToken ct = default);
 
+        Task<ApiResult<IList<GetCommentQueryResponse>>> GetMyCommentsAsync(
+            int currentPage, 
+            int pageSize, 
+            string? orderBy = "createdDate", 
+            CancellationToken ct = default);
+
+        Task<ApiResult<int>> GetMyCommentsCountAsync(
+            CancellationToken ct = default);
+
         Task<ApiResult<GetCommentQueryResponse>> ReactAsync(
             int commentId, 
             string action, 
