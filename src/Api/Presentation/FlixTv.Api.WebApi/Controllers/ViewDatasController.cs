@@ -3,6 +3,8 @@ using FlixTv.Api.Application.Features.Reviews.Queries.GetAllReviews;
 using FlixTv.Api.Application.Features.Reviews.Queries.GetReview;
 using FlixTv.Api.Application.Features.ViewDatas.Commands.DeleteViewData;
 using FlixTv.Api.Application.Features.ViewDatas.Queries.GetAllViewDatas;
+using FlixTv.Api.Application.Features.ViewDatas.Queries.GetMyViewDatas;
+using FlixTv.Api.Application.Features.ViewDatas.Queries.GetMyViewDatasCount;
 using FlixTv.Api.Application.Features.ViewDatas.Queries.GetViewData;
 using FlixTv.Api.Application.Features.ViewDatas.Queries.GetViewDatasCount;
 using FlixTv.Api.Application.Utilities;
@@ -103,6 +105,46 @@ namespace FlixTv.Api.WebApi.Controllers
 
             if (maxDate.HasValue)
                 request.predicate = request.predicate.And(v => v.CreatedDate <= maxDate.Value);
+
+            var response = await mediator.Send(request);
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpGet]
+        public async Task<IActionResult> GetMyViewDatas(
+        [FromQuery] string? orderBy,
+        [FromQuery] int currentPage = 0,
+        [FromQuery] int pageSize = 0
+        )
+        {
+            var request = new GetMyViewDatasQueryRequest()
+            {
+                pageSize = pageSize,
+                currentPage = currentPage,
+            };
+
+            if (!string.IsNullOrWhiteSpace(orderBy))
+                switch (orderBy)
+                {
+                    case "createdDate":
+                        request.orderBy = x => x.OrderByDescending(v => v.CreatedDate);
+                        break;
+                    default:
+                        break;
+                }
+
+            var response = await mediator.Send(request);
+
+            return Ok(response);
+        }
+
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpGet]
+        public async Task<IActionResult> GetMyViewDatasCount()
+        {
+            var request = new GetMyViewDatasCountQueryRequest();
 
             var response = await mediator.Send(request);
 
