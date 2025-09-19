@@ -44,7 +44,18 @@
                 {
                     <tr data-review-id="@r.Id">
                         <td><div class="main__table-text">@r.Id</div></td>
-                        <td><div class="main__table-text"><a asp-controller="Movies" asp-action="Watch" asp-route-id="@r.Author?.Id">@r.Movie?.Title</a></div></td>
+                        <td>
+                            <div class="main__table-text">
+                                @if (r.Movie?.Id > 0)
+                                {
+                                    <a asp-controller="Movies" asp-action="Watch" asp-route-id="@r.Movie.Id">@r.Movie.Title</a>
+                                }
+                                else
+                                {
+                                    @r.Movie?.Title
+                                }
+                            </div>
+                        </td>
                         <td><div class="main__table-text">@r.Title</div></td>
                         <td><div class="main__table-text">@r.Message</div></td>
                         <td><div class="main__table-text main__table-text--rate">@r.RatingPoint</div></td>

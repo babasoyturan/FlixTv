@@ -46,7 +46,17 @@
                 {
                     <tr data-comment-id="@c.Id">
                         <td><div class="main__table-text">@c.Id</div></td>
-                        <td><div class="main__table-text">@c.Movie?.Title</div></td>
+                        <td>
+                            <div class="main__table-text">
+                                @if (c.Movie?.Id > 0)
+                                {
+                                    <a asp-controller="Movies" asp-action="Watch" asp-route-id="@c.Movie.Id">@c.Movie.Title</a>
+                                }
+                                else
+                                {
+                                    @c.Movie?.Title
+                                }
+                            </div>
                         <td><div class="main__table-text">@c.Message</div></td>
                         <td><div class="main__table-text">@c.LikeCount / @c.DislikeCount</div></td>
                         <td><div class="main__table-text">@c.CreatedDate.ToString("dd MMM yyyy")</div></td>

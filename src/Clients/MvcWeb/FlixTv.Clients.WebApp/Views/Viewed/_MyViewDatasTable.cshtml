@@ -1,0 +1,126 @@
+﻿@model MyViewDatasTablePartialViewModel
+
+@functions {
+    List<int?> BuildPages(int current, int total)
+    {
+        var list = new List<int?>(); if (total <= 1) return list;
+        int start = Math.Max(2, current - 2);
+        int end = Math.Min(total - 1, current + 2);
+        list.Add(1); if (start > 2) list.Add(null);
+        for (int i = start; i <= end; i++) list.Add(i);
+        if (end < total - 1) list.Add(null);
+        list.Add(total);
+        return list.Distinct().ToList();
+    }
+
+    // Yeni: saniyəni "1h 2m 5s" / "2m 03s" / "45s" tipinə çevirən helper
+    string FormatDuration(int seconds)
+    {
+        if (seconds <= 0) return "0s";
+        var ts = TimeSpan.FromSeconds(seconds);
+        var parts = new List<string>();
+
+        if (ts.Days > 0)
+        {
+            parts.Add($"{ts.Days}d");
+        }
+        if (ts.Hours > 0)
+        {
+            parts.Add($"{ts.Hours}h");
+        }
+        if (ts.Minutes > 0)
+        {
+            parts.Add($"{ts.Minutes}m");
+        }
+        if (ts.Seconds > 0 || parts.Count == 0)
+        {
+            parts.Add($"{ts.Seconds}s");
+        }
+
+        return string.Join(" ", parts);
+    }
+}
+@{
+    var totalPages = Model.TotalPages;
+    var current = Math.Min(Math.Max(1, Model.Page), Math.Max(1, totalPages));
+    var pages = BuildPages(current, totalPages);
+    var shown = Model.ViewDatas?.Count ?? 0;
+    var fromIndex = shown == 0 ? 0 : (Model.Page - 1) * Model.PageSize + 1;
+    var toIndex = shown == 0 ? 0 : fromIndex + shown - 1;
+}
+<div class="main__table-wrap">
+    <table class="main__table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>MOVIE NAME</th>
+                <th>WATCHED TIME</th> <!-- dəyişiklik: text -->
+                <th>COMPLETED</th>
+                <th>LAST WATCHED DATE</th>
+                <th>STARTED DATE</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (shown == 0)
+            {
+                <tr><td colspan="6"><div class="main__table-text">No items</div></td></tr>
+            }
+            else
+            {
+                foreach (var v in Model.ViewDatas)
+                {
+                    <tr data-viewdata-id="@v.Id">
+                        <td><div class="main__table-text">@v.Id</div></td>
+                        <td>
+                            <div class="main__table-text">
+                                @if (v.Movie?.Id > 0)
+                                {
+                                    <a asp-controller="Movies" asp-action="Watch" asp-route-id="@v.Movie.Id">@v.Movie.Title</a>
+                                }
+                                else
+                                {
+                                    @v.Movie?.Title
+                                }
+                            </div>
+                        </td>
+                        <td><div class="main__table-text">@FormatDuration(v.WatchedSeconds)</div></td>  <!-- burası dəyişib -->
+                        <td><div class="main__table-text">@(v.IsCompleted ? "Yes" : "No")</div></td>
+                        <td><div class="main__table-text">@v.LastWatchedAt.ToString("dd MMM yyyy")</div></td>
+                        <td><div class="main__table-text">@v.CreatedDate.ToString("dd MMM yyyy")</div></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (totalPages > 1)
+{
+    <div class="catalog__paginator-wrap">
+        <span class="catalog__pages">@fromIndex-@toIndex from @Model.TotalCount</span>
+        <ul class="catalog__paginator js-myviewdatas-pager">
+            <li class="@(current == 1 ? "disabled" : "")">
+                <a href="@Url.Action("MyViewDatas", "Viewed", new { page = Math.Max(1, current - 1), pageSize = Model.PageSize })">
+                    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </a>
+            </li>
+            @foreach (var p in pages)
+            {
+                if (p is null)
+                {
+                    <li class="disabled"><span style="color:white">…</span></li>
+                }
+                else
+                {
+                    <li class="@(p == current ? "active" : "")"><a href="@Url.Action("MyViewDatas", "Viewed", new { page = p, pageSize = Model.PageSize })">@p</a></li>
+                }
+            }
+            <li class="@(current == totalPages ? "disabled" : "")">
+                <a href="@Url.Action("MyViewDatas", "Viewed", new { page = Math.Min(totalPages, current + 1), pageSize = Model.PageSize })">
+                    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </a>
+            </li>
+        </ul>
+    </div>
+}
+<input type="hidden" id="js-myviewdatas-total" value="@Model.TotalCount" />
