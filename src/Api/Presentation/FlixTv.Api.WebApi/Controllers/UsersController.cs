@@ -79,8 +79,7 @@ namespace FlixTv.Api.WebApi.Controllers
 
         [Authorize(Roles = "Admin, Moderator")]
         [HttpGet]
-        public async Task<IActionResult> GetUsersCount(
-            [FromQuery] string? searchText = null
+        public async Task<IActionResult> GetUsersCount([FromQuery] string? searchText = null
         )
         {
             var request = new GetUsersCountQueryRequest();
@@ -97,7 +96,7 @@ namespace FlixTv.Api.WebApi.Controllers
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserCommandRequest request)
         {
             await mediator.Send(request);
-            return Ok(new { message = "User updated successfully." });
+            return Ok("User updated successfully.");
         }
 
         [Authorize(Roles = "User, Admin, Moderator")]
@@ -105,7 +104,7 @@ namespace FlixTv.Api.WebApi.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordCommandRequest request)
         {
             await mediator.Send(request);
-            return Ok(new { message = "Password changed successfully." });
+            return Ok("Password changed successfully.");
         }
 
         [Authorize(Roles = "Admin, Moderator")]
@@ -124,7 +123,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             await mediator.Send(request);
 
-            return Ok(new { message = "User role reset successfully." });
+            return Ok("User role reset successfully.");
         }
 
         [Authorize(Roles = "Admin, Moderator")]
@@ -134,7 +133,7 @@ namespace FlixTv.Api.WebApi.Controllers
         {
             var request = new DeleteUserCommandRequest { UserId = userId };
             await mediator.Send(request);
-            return Ok(new { message = "User deleted successfully." });
+            return Ok("User deleted successfully.");
         }
     }
 }

@@ -1,0 +1,306 @@
+﻿@model ProfileViewModel
+@{
+    ViewData["Title"] = "Profile";
+}
+
+@Html.AntiForgeryToken()
+
+<section class="section section--head section--head-fixed">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-6">
+                <h1 class="section__title section__title--head">Profile</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="catalog catalog--page">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="profile">
+                    <div class="profile__user">
+                        <div class="profile__avatar">
+                            <img src="~/img/avatar.svg" alt="">
+                        </div>
+                        <div class="profile__meta">
+                            <h3 id="profileFullName">@($"{Model?.Name} {Model?.Surname}".Trim())</h3>
+                            <span>FlixTV ID: @Model?.Id</span>
+                        </div>
+                    </div>
+
+                    <ul style="visibility:hidden" class="nav nav-tabs profile__tabs" id="profile__tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tab-1" role="tab" aria-controls="tab-1" aria-selected="true">Profile</a>
+                        </li>
+                    </ul>
+
+                    <button id="btnSignout" class="profile__logout" type="button">
+                        <span>Sign out</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4,12a1,1,0,0,0,1,1h7.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4a1,1,0,0,0,.21-.33,1,1,0,0,0,0-.76,1,1,0,0,0-.21-.33l-4-4a1,1,0,1,0-1.42,1.42L12.59,11H5A1,1,0,0,0,4,12ZM17,2H7A3,3,0,0,0,4,5V8A1,1,0,0,0,6,8V5A1,1,0,0,1,7,4H17a1,1,0,0,1,1,1V19a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V16a1,1,0,0,0-2,0v3a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V5A3,3,0,0,0,17,2Z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tab-content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="sign__wrap">
+                        <div class="row">
+                            <!-- details form -->
+                            <div class="col-12 col-lg-6">
+                                <form class="sign__form sign__form--profile sign__form--first" onsubmit="return false;">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h4 class="sign__title">Profile details</h4>
+                                        </div>
+
+                                        <div class="col-12 col-md-6 col-lg-12 col-xl-6">
+                                            <div class="sign__group">
+                                                <label class="sign__label" for="firstname">First name</label>
+                                                <input id="firstname" type="text" class="sign__input"
+                                                       placeholder="Name" value="@Model?.Name">
+                                                <small class="text-danger d-block mt-1" id="err-firstname"></small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6 col-lg-12 col-xl-6">
+                                            <div class="sign__group">
+                                                <label class="sign__label" for="lastname">Last name</label>
+                                                <input id="lastname" type="text" class="sign__input"
+                                                       placeholder="Surname" value="@Model?.Surname">
+                                                <small class="text-danger d-block mt-1" id="err-lastname"></small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                                            <div class="sign__group">
+                                                <label class="sign__label" for="email">Email</label>
+                                                <input id="email" type="text" class="sign__input"
+                                                       placeholder="Email"
+                                                       value="@Model?.Email"
+                                                       data-init-email="@Model?.Email">
+                                                <small class="text-danger d-block mt-1" id="err-email"></small>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="sign__text" id="pf-msg"></div>
+                                            <button id="btnSave" class="sign__btn" type="button">Save</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- end details form -->
+
+                            <!-- password form -->
+                            <div class="col-12 col-lg-6">
+                                <form class="sign__form sign__form--profile" onsubmit="return false;">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h4 class="sign__title">Change password</h4>
+                                        </div>
+
+                                        <div class="col-12 col-md-12 col-lg-12 col-xl-12">
+                                            <div class="sign__group">
+                                                <label class="sign__label" for="oldpass">Old password</label>
+                                                <input id="oldpass" type="password" class="sign__input">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6 col-lg-12 col-xl-6">
+                                            <div class="sign__group">
+                                                <label class="sign__label" for="newpass">New password</label>
+                                                <input id="newpass" type="password" class="sign__input">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6 col-lg-12 col-xl-6">
+                                            <div class="sign__group">
+                                                <label class="sign__label" for="confirmpass">Confirm new password</label>
+                                                <input id="confirmpass" type="password" class="sign__input">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="sign__text" id="pw-msg"></div>
+                                            <button id="btnChangePw" class="sign__btn" type="button">Change</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- end password form -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+
+@section Scripts{
+<script>
+  // --- helpers ---
+  const updateUrl   = '@Url.Action("Update","Profile")';
+  const changePwUrl = '@Url.Action("ChangePassword","Profile")';
+  const logoutUrl   = '@Url.Action("Logout","Profile")';
+  const signinUrl   = '@Url.Action("Signin","Account")';
+
+  $.ajaxSetup({
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+      'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+    }
+  });
+
+  const rxName  = /^[A-Za-zÀ-ž'’\-\s]{2,}$/;
+  const rxEmail = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+
+  function setMsg($el, text, ok){
+    // əvvəlcə hər iki rəngi sil
+    $el.removeClass('text-success text-danger');
+  
+    if (!text) { $el.text(''); return; }
+  
+    // mətn + düzgün rəng
+    $el.text(text).addClass(ok ? 'text-success' : 'text-danger');
+  }
+
+  function disable($btn, on, textBusy, textIdle){
+    if (on){ $btn.prop('disabled', true).data('idle', textIdle).text(textBusy); }
+    else   { $btn.prop('disabled', false).text($btn.data('idle')||textIdle); }
+  }
+
+  // --- SAVE PROFILE ---
+  $('#btnSave').on('click', function(){
+    const $btn = $(this);
+    const name = $('#firstname').val().trim();
+    const surname = $('#lastname').val().trim();
+    const email = $('#email').val().trim();
+    const initEmail = $('#email').data('init-email');
+
+    // clear errors
+    $('#err-firstname,#err-lastname,#err-email').text('');
+    setMsg($('#pf-msg'), '');
+
+    // client validation
+    let ok = true;
+    if (!rxName.test(name)){ $('#err-firstname').text('Please enter a valid first name.'); ok = false; }
+    if (!rxName.test(surname)){ $('#err-lastname').text('Please enter a valid last name.'); ok = false; }
+    if (!rxEmail.test(email)){ $('#err-email').text('Please enter a valid email address.'); ok = false; }
+    if (!ok) return;
+
+    disable($btn, true, 'Saving...', 'Save');
+
+    $.ajax({
+      url: updateUrl,
+      method: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({ name, surname, email })
+    })
+    .done(function(res, status, xhr){
+      // Server iki cür cavab verə bilər:
+      // 1) Email DƏYİŞİBSƏ → 200 + { redirect: "/Account/Signin" } və ya 401/302 — hər iki halda redirect
+      // 2) Ad/Soyad → 200 + "ok"
+      const redirectTo = (res && res.redirect) ? res.redirect : null;
+
+      if (redirectTo){
+        window.location = redirectTo; // logout + signin
+        return;
+      }
+
+      // header-də adı da yeniləyək (səhifə yenilənmədən)
+      const full = (name + ' ' + surname).trim();
+      $('.header .header__user span').first().text(full);
+      $('#profileFullName').text(full);
+
+      // email dəyişməyibsə, local init-email-i də yenilə
+      $('#email').data('init-email', email);
+
+      setMsg($('#pf-msg'), 'Saved successfully.', true);
+    })
+    .fail(function(xhr){
+      let msg = 'Failed to save profile.';
+      try{
+        const j = JSON.parse(xhr.responseText);
+        if (Array.isArray(j) && j.length) msg = j[0];
+        else if (j && j.errors && j.errors.length) msg = j.errors[0];
+        else if (typeof j === 'string') msg = j;
+      }catch{}
+      // xüsusi error mapping
+      if (/already exists/i.test(msg)) $('#err-email').text(msg);
+      else setMsg($('#pf-msg'), msg, false);
+    })
+    .always(function(){ disable($btn, false, '', 'Save'); });
+  });
+
+  // --- CHANGE PASSWORD ---
+  $('#btnChangePw').on('click', function(){
+    const $btn = $(this);
+    const oldp = $('#oldpass').val();
+    const np   = $('#newpass').val();
+    const cp   = $('#confirmpass').val();
+
+    setMsg($('#pw-msg'), '');
+
+    // client validation
+    if (!oldp || !np){ setMsg($('#pw-msg'), 'Please fill all password fields.'); return; }
+    if (np.length < 6){ setMsg($('#pw-msg'), 'New password must be at least 6 characters.'); return; }
+    if (np !== cp){ setMsg($('#pw-msg'), 'Passwords do not match.'); return; }
+    if (np === oldp){ setMsg($('#pw-msg'), 'New password must be different from the old one.'); return; }
+
+    disable($btn, true, 'Changing...', 'Change');
+
+    $.ajax({
+      url: changePwUrl,
+      method: 'POST',
+      contentType: 'application/json; charset=utf-8',
+      data: JSON.stringify({ oldPassword: oldp, newPassword: np })
+    })
+    .done(function(){
+      $('#oldpass,#newpass,#confirmpass').val('');
+      setMsg($('#pw-msg'), 'Password changed successfully.', true);
+    })
+    .fail(function(xhr){
+      let msg = 'Failed to change password.';
+      try{
+        const j = JSON.parse(xhr.responseText);
+        if (Array.isArray(j) && j.length) msg = j[0];
+        else if (j && j.errors && j.errors.length) msg = j.errors[0];
+        else if (typeof j === 'string') msg = j;
+      }catch{}
+      setMsg($('#pw-msg'), msg, false);
+    })
+    .always(function(){ disable($btn, false, '', 'Change'); });
+  });
+
+  // --- SIGN OUT ---
+  $('#btnSignout').on('click', function(){
+    const $btn = $(this);
+    disable($btn, true, 'Signing out...', 'Sign out');
+    $.post(logoutUrl)
+      .done(function(){ window.location = signinUrl; })
+      .fail(function(){ disable($btn, false, '', 'Sign out'); alert('Failed to sign out'); });
+  });
+</script>
+    <style>
+        /* ümumi status mesajları */
+        .sign__text.text-success {
+            color: #28a745 !important;
+        }
+        /* yaşıl */
+        .sign__text.text-danger {
+            color: #dc3545 !important;
+        }
+        /* qırmızı */
+
+        /* input altındakı error <small>’lar üçün əlavə sığorta */
+        small.text-danger {
+            color: #dc3545 !important;
+        }
+    </style>
+}

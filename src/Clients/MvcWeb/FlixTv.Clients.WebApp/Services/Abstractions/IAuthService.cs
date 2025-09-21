@@ -16,6 +16,10 @@ namespace FlixTv.Clients.WebApp.Services.Abstractions
 
         Task<ApiResult<string>> ConfirmEmailAsync(string url);
 
+        Task<ApiResult<bool>> RevokeMeAsync();
+
+        Task UpdateCookieClaimsAsync(HttpContext ctx, string? name = null, string? surname = null, string? email = null);
+
         Task LogoutAsync(HttpContext ctx);
     }
 }

@@ -14,7 +14,7 @@ namespace FlixTv.Clients.WebApp.Controllers
         public ViewedController(IViewDatasService viewDatas) => _viewDatas = viewDatas;
 
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 2)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
             var vm = new ViewedViewModel
             {
@@ -35,7 +35,6 @@ namespace FlixTv.Clients.WebApp.Controllers
             return View(vm);
         }
 
-        // AJAX Partial for pagination
         [HttpGet]
         public async Task<IActionResult> MyViewDatas(int page = 1, int pageSize = 10)
         {

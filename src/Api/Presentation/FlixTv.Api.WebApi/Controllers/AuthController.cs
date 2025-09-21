@@ -1,5 +1,7 @@
-﻿using FlixTv.Common.Models.RequestModels.Auth;
+﻿using FlixTv.Api.Application.Features.Auth.Commands.RevokeMe;
+using FlixTv.Common.Models.RequestModels.Auth;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -55,8 +57,18 @@ namespace FlixTv.Api.WebApi.Controllers
             return StatusCode(StatusCodes.Status200OK, response);
         }
 
+        [Authorize(Roles = "Admin, Moderator")]
         [HttpPost]
         public async Task<IActionResult> Revoke([FromBody] RevokeCommandRequest request)
+        {
+            await mediator.Send(request);
+
+            return StatusCode(StatusCodes.Status200OK);
+        }
+
+        [Authorize(Roles = "User, Admin, Moderator")]
+        [HttpPost]
+        public async Task<IActionResult> RevokeMe([FromBody] RevokeMeCommandRequest request)
         {
             await mediator.Send(request);
 

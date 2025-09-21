@@ -53,12 +53,41 @@ namespace FlixTv.Clients.WebApp.Services.Implementations
             return result;
         }
 
+        public Task<ApiResult<bool>> RevokeMeAsync() => PostAsync("Auth/RevokeMe");
+
+        // Profil info dəyişəndə UI cookie principal-ı yenilə
+        public async Task UpdateCookieClaimsAsync(HttpContext ctx, string? name = null, string? surname = null, string? email = null)
+        {
+            var old = ctx.User?.Claims ?? Enumerable.Empty<Claim>();
+
+            // “name”, “surname”, Email claim-lərini çıxarıb qalanlarını saxla
+            var filtered = old.Where(c =>
+                !string.Equals(c.Type, "name", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(c.Type, "surname", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(c.Type, ClaimTypes.Email, StringComparison.OrdinalIgnoreCase));
+
+            var id = new ClaimsIdentity("Cookies");
+            id.AddClaims(filtered);
+
+            // Yenisini əlavə et (göndərilməyənləri köhnədən saxla)
+            var finalName = name ?? old.FirstOrDefault(c => c.Type == "name")?.Value;
+            var finalSurname = surname ?? old.FirstOrDefault(c => c.Type == "surname")?.Value;
+            var finalEmail = email ?? old.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            if (!string.IsNullOrWhiteSpace(finalName)) id.AddClaim(new Claim("name", finalName));
+            if (!string.IsNullOrWhiteSpace(finalSurname)) id.AddClaim(new Claim("surname", finalSurname));
+            if (!string.IsNullOrWhiteSpace(finalEmail)) id.AddClaim(new Claim(ClaimTypes.Email, finalEmail));
+
+            var principal = new ClaimsPrincipal(id);
+            await ctx.SignInAsync("Cookies", principal);
+        }
+
         public async Task LogoutAsync(HttpContext ctx)
         {
+            try { await RevokeMeAsync(); } catch { /* ignore */ }
             ctx.Response.Cookies.Delete("flix_access_token");
             ctx.Response.Cookies.Delete("flix_refresh_token");
             await ctx.SignOutAsync("Cookies");
-            await Task.CompletedTask;
         }
 
         private static void SaveTokens(HttpContext ctx, LoginCommandResponse data)
