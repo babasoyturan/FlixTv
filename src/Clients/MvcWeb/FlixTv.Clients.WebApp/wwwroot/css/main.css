@@ -1,4 +1,4 @@
-/*----------------------------------------
+﻿/*----------------------------------------
 [Master Stylesheet]
 
 Project:	FlixTV HTML Template
@@ -6666,7 +6666,7 @@ button.js-dislike.active svg {
     }
 }
 
-/* IFRAME "korpus"u � plyr-? b?nz?r */
+/* IFRAME "korpus"u – plyr-? b?nz?r */
 .iframe-player {
     background: #0b0f19;
     border-radius: 16px;
@@ -6680,21 +6680,21 @@ button.js-dislike.active svg {
     width: 100%;
     aspect-ratio: 16 / 9; /* modern, padding hack-? ehtiyac yoxdu */
     border-radius: 16px;
-    overflow: hidden; /* i� skrolu gizl?t */
+    overflow: hidden; /* iç skrolu gizl?t */
 }
     
-/* Frame-in �z�nd? skrolu gizl?t + k?nar bo?luqlar? s?rala */
+/* Frame-in özünd? skrolu gizl?t + k?nar bo?luqlar? s?rala */
 .iframe-wrap iframe {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     border: 0;
-    display: block; /* baseline bo?lu?unu g�t�r�r */
+    display: block; /* baseline bo?lu?unu götürür */
     background: #000;
     overflow: hidden;
-    /* Scrollbar gizl?t � brauzerl?r? uy?un */
-    -ms-overflow-style: none; /* IE/Edge k�hn? */
+    /* Scrollbar gizl?t – brauzerl?r? uy?un */
+    -ms-overflow-style: none; /* IE/Edge köhn? */
     scrollbar-width: none; /* Firefox */
 }
 
@@ -6703,7 +6703,7 @@ button.js-dislike.active svg {
     height: 0;
 }
 
-/* Plyr video il? vizual eynilik ���n */
+/* Plyr video il? vizual eynilik üçün */
 #player {
     width: 100%;
     border-radius: 16px;
@@ -6716,7 +6716,7 @@ button.js-dislike.active svg {
     overflow-anchor: none;
 }
 
-/* jQuery animate i?l?y?n anda qlobal CSS smooth-u m�v?qq?ti s�nd�rm?k ���n */
+/* jQuery animate i?l?y?n anda qlobal CSS smooth-u müv?qq?ti söndürm?k üçün */
 html.no-css-smooth {
     scroll-behavior: auto !important;
 }
@@ -7301,3 +7301,19 @@ html.no-css-smooth {
   width: 16px;
   height: auto;
 }
+
+.sign__btn:disabled,
+.sign__btn[disabled] {
+    opacity: .45; /* daha solğun görünsün */
+    cursor: not-allowed; /* disabled siqnalı */
+    pointer-events: none; /* hover/klik tam söndürülür */
+    filter: saturate(70%); /* (istəyə görə) rəngi bir az sönük et */
+}
+
+    /* bəzi temalarda :hover rəngi yenə işləyə bilər – sığorta üçün */
+    .sign__btn:disabled:hover,
+    .sign__btn[disabled]:hover {
+        background: inherit !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }

@@ -63,7 +63,8 @@
                                             <div class="sign__group">
                                                 <label class="sign__label" for="firstname">First name</label>
                                                 <input id="firstname" type="text" class="sign__input"
-                                                       placeholder="Name" value="@Model?.Name">
+                                                    placeholder="Name" value="@Model?.Name"
+                                                    data-init-name="@Model?.Name">
                                                 <small class="text-danger d-block mt-1" id="err-firstname"></small>
                                             </div>
                                         </div>
@@ -72,7 +73,8 @@
                                             <div class="sign__group">
                                                 <label class="sign__label" for="lastname">Last name</label>
                                                 <input id="lastname" type="text" class="sign__input"
-                                                       placeholder="Surname" value="@Model?.Surname">
+                                                    placeholder="Surname" value="@Model?.Surname"
+                                                    data-init-surname="@Model?.Surname">
                                                 <small class="text-danger d-block mt-1" id="err-lastname"></small>
                                             </div>
                                         </div>
@@ -81,16 +83,16 @@
                                             <div class="sign__group">
                                                 <label class="sign__label" for="email">Email</label>
                                                 <input id="email" type="text" class="sign__input"
-                                                       placeholder="Email"
-                                                       value="@Model?.Email"
-                                                       data-init-email="@Model?.Email">
+                                                    placeholder="Email"
+                                                    value="@Model?.Email"
+                                                    data-init-email="@Model?.Email">
                                                 <small class="text-danger d-block mt-1" id="err-email"></small>
                                             </div>
                                         </div>
 
                                         <div class="col-12">
                                             <div class="sign__text" id="pf-msg"></div>
-                                            <button id="btnSave" class="sign__btn" type="button">Save</button>
+                                            <button id="btnSave" class="sign__btn" type="button" disabled>Save</button>
                                         </div>
                                     </div>
                                 </form>
@@ -128,7 +130,7 @@
 
                                         <div class="col-12">
                                             <div class="sign__text" id="pw-msg"></div>
-                                            <button id="btnChangePw" class="sign__btn" type="button">Change</button>
+                                            <button id="btnChangePw" class="sign__btn" type="button" disabled>Change</button>
                                         </div>
                                     </div>
                                 </form>
@@ -142,8 +144,52 @@
     </div>    
 </div>
 
+
+<div id="modal-confirm" class="zoom-anim-dialog mfp-hide modal">
+    <h6 class="modal__title" id="mc-title">Please confirm</h6>
+    <p class="modal__text" id="mc-text">
+        Are you sure you want to apply this change?
+    </p>
+    <div class="modal__btns">
+        <button id="mc-apply" class="modal__btn modal__btn--apply" type="button">Yes, apply</button>
+        <button id="mc-cancel" class="modal__btn modal__btn--dismiss" type="button">Cancel</button>
+    </div>
+</div>
+
+
 @section Scripts{
 <script>
+   // --- Universal confirm modal helper ---
+   let __confirmCb = null;
+   
+   function openConfirmModal({ title, text, applyText = 'Yes, apply' }, onApply){
+     // mətnləri yerləşdir
+     $('#mc-title').text(title || 'Please confirm');
+     $('#mc-text').text(text || 'Are you sure?');
+     $('#mc-apply').text(applyText || 'Yes, apply');
+   
+     __confirmCb = (typeof onApply === 'function') ? onApply : null;
+   
+     // aç
+     if ($.magnificPopup && $.magnificPopup.instance && !$.magnificPopup.instance.isOpen) {
+       $.magnificPopup.open({ items: { src:'#modal-confirm' }, type:'inline' });
+     }
+   }
+   
+   // modal düymələri
+   $(document).on('click', '#mc-apply', function(){
+     const cb = __confirmCb; __confirmCb = null;
+     if ($.magnificPopup) $.magnificPopup.close();
+     if (cb) cb(); // təsdiq edildi → real əməliyyatı icra et
+   });
+   
+   $(document).on('click', '#mc-cancel', function(){
+     __confirmCb = null;
+     if ($.magnificPopup) $.magnificPopup.close();
+   });
+
+
+
   // --- helpers ---
   const updateUrl   = '@Url.Action("Update","Profile")';
   const changePwUrl = '@Url.Action("ChangePassword","Profile")';
@@ -159,6 +205,40 @@
 
   const rxName  = /^[A-Za-zÀ-ž'’\-\s]{2,}$/;
   const rxEmail = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+
+  function isBlank(v){ return !v || v.trim().length === 0; }
+  
+  function updateSaveState(){
+    const $btn = $('#btnSave');
+    const name    = ($('#firstname').val() || '').trim();
+    const surname = ($('#lastname').val()  || '').trim();
+    const email   = ($('#email').val()     || '').trim();
+  
+    const initName    = ($('#firstname').data('init-name')    || '').trim();
+    const initSurname = ($('#lastname').data('init-surname')  || '').trim();
+    const initEmail   = ($('#email').data('init-email')       || '').trim();
+  
+    const allFilled = !isBlank(name) && !isBlank(surname) && !isBlank(email);
+    const anyChanged = (name !== initName) || (surname !== initSurname) || (email !== initEmail);
+  
+    $btn.prop('disabled', !(allFilled && anyChanged));
+  }
+  
+  function updateChangeState(){
+    const oldp = ($('#oldpass').val()      || '').trim();
+    const np   = ($('#newpass').val()      || '').trim();
+    const cp   = ($('#confirmpass').val()  || '').trim();
+    const allFilled = !isBlank(oldp) && !isBlank(np) && !isBlank(cp);
+    $('#btnChangePw').prop('disabled', !allFilled);
+  }
+  
+  // Input event-ləri
+  $(document).on('input', '#firstname,#lastname,#email', updateSaveState);
+  $(document).on('input', '#oldpass,#newpass,#confirmpass', updateChangeState);
+  
+  // İlk yüklənmədə state-ləri qur
+  $(function(){ updateSaveState(); updateChangeState(); });
+
 
   function setMsg($el, text, ok){
     // əvvəlcə hər iki rəngi sil
@@ -181,7 +261,7 @@
     const name = $('#firstname').val().trim();
     const surname = $('#lastname').val().trim();
     const email = $('#email').val().trim();
-    const initEmail = $('#email').data('init-email');
+    const initEmail = ($('#email').data('init-email') || '').trim();
 
     // clear errors
     $('#err-firstname,#err-lastname,#err-email').text('');
@@ -194,88 +274,110 @@
     if (!rxEmail.test(email)){ $('#err-email').text('Please enter a valid email address.'); ok = false; }
     if (!ok) return;
 
-    disable($btn, true, 'Saving...', 'Save');
+    // email dəyişibsə – çox daha sərt xəbərdarlıq
+    const emailChanged = email !== initEmail;
+    const modalText = emailChanged
+      ? 'You are about to change your email. If the new email is invalid or not yours, you may lose access to this account (sign-out will be required). Are you absolutely sure?'
+      : 'Apply profile changes?';
 
-    $.ajax({
-      url: updateUrl,
-      method: 'POST',
-      contentType: 'application/json; charset=utf-8',
-      data: JSON.stringify({ name, surname, email })
-    })
-    .done(function(res, status, xhr){
-      // Server iki cür cavab verə bilər:
-      // 1) Email DƏYİŞİBSƏ → 200 + { redirect: "/Account/Signin" } və ya 401/302 — hər iki halda redirect
-      // 2) Ad/Soyad → 200 + "ok"
-      const redirectTo = (res && res.redirect) ? res.redirect : null;
+    openConfirmModal(
+      {
+        title: 'Confirm changes',
+        text: modalText,
+        applyText: emailChanged ? 'Yes, change my email' : 'Apply'
+      },
+      function doSaveProfile(){
+        disable($btn, true, 'Saving...', 'Save');
 
-      if (redirectTo){
-        window.location = redirectTo; // logout + signin
-        return;
+        $.ajax({
+          url: updateUrl,
+          method: 'POST',
+          contentType: 'application/json; charset=utf-8',
+          data: JSON.stringify({ name, surname, email })
+        })
+        .done(function(res){
+          const redirectTo = (res && res.redirect) ? res.redirect : null;
+          if (redirectTo){
+            window.location = redirectTo; // logout + signin
+            return;
+          }
+          const full = (name + ' ' + surname).trim();
+          $('.header .header__user span').first().text(full);
+          $('#profileFullName').text(full);
+          $('#firstname').data('init-name', name);
+          $('#lastname').data('init-surname', surname);
+          $('#email').data('init-email', email);
+          setMsg($('#pf-msg'), 'Saved successfully.', true);
+        })
+        .fail(function(xhr){
+          let msg = 'Failed to save profile.';
+          try{
+            const j = JSON.parse(xhr.responseText);
+            if (Array.isArray(j) && j.length) msg = j[0];
+            else if (j?.errors?.length) msg = j.errors[0];
+            else if (typeof j === 'string') msg = j;
+          }catch{}
+          if (/already exists/i.test(msg)) $('#err-email').text(msg);
+          else setMsg($('#pf-msg'), msg, false);
+        })
+        .always(function(){
+          disable($btn, false, '', 'Save');
+          updateSaveState();
+        });
       }
-
-      // header-də adı da yeniləyək (səhifə yenilənmədən)
-      const full = (name + ' ' + surname).trim();
-      $('.header .header__user span').first().text(full);
-      $('#profileFullName').text(full);
-
-      // email dəyişməyibsə, local init-email-i də yenilə
-      $('#email').data('init-email', email);
-
-      setMsg($('#pf-msg'), 'Saved successfully.', true);
-    })
-    .fail(function(xhr){
-      let msg = 'Failed to save profile.';
-      try{
-        const j = JSON.parse(xhr.responseText);
-        if (Array.isArray(j) && j.length) msg = j[0];
-        else if (j && j.errors && j.errors.length) msg = j.errors[0];
-        else if (typeof j === 'string') msg = j;
-      }catch{}
-      // xüsusi error mapping
-      if (/already exists/i.test(msg)) $('#err-email').text(msg);
-      else setMsg($('#pf-msg'), msg, false);
-    })
-    .always(function(){ disable($btn, false, '', 'Save'); });
+    );
   });
 
   // --- CHANGE PASSWORD ---
   $('#btnChangePw').on('click', function(){
     const $btn = $(this);
-    const oldp = $('#oldpass').val();
-    const np   = $('#newpass').val();
-    const cp   = $('#confirmpass').val();
-
+    const oldp = ($('#oldpass').val() || '').trim();
+    const np   = ($('#newpass').val() || '').trim();
+    const cp   = ($('#confirmpass').val() || '').trim();
+  
     setMsg($('#pw-msg'), '');
-
-    // client validation
+  
     if (!oldp || !np){ setMsg($('#pw-msg'), 'Please fill all password fields.'); return; }
     if (np.length < 6){ setMsg($('#pw-msg'), 'New password must be at least 6 characters.'); return; }
     if (np !== cp){ setMsg($('#pw-msg'), 'Passwords do not match.'); return; }
     if (np === oldp){ setMsg($('#pw-msg'), 'New password must be different from the old one.'); return; }
-
-    disable($btn, true, 'Changing...', 'Change');
-
-    $.ajax({
-      url: changePwUrl,
-      method: 'POST',
-      contentType: 'application/json; charset=utf-8',
-      data: JSON.stringify({ oldPassword: oldp, newPassword: np })
-    })
-    .done(function(){
-      $('#oldpass,#newpass,#confirmpass').val('');
-      setMsg($('#pw-msg'), 'Password changed successfully.', true);
-    })
-    .fail(function(xhr){
-      let msg = 'Failed to change password.';
-      try{
-        const j = JSON.parse(xhr.responseText);
-        if (Array.isArray(j) && j.length) msg = j[0];
-        else if (j && j.errors && j.errors.length) msg = j.errors[0];
-        else if (typeof j === 'string') msg = j;
-      }catch{}
-      setMsg($('#pw-msg'), msg, false);
-    })
-    .always(function(){ disable($btn, false, '', 'Change'); });
+  
+    openConfirmModal(
+      {
+        title: 'Confirm password change',
+        text: 'You are about to change your password. After this, you will need the new password to sign in. Proceed?',
+        applyText: 'Yes, change password'
+      },
+      function doChangePassword(){
+        disable($btn, true, 'Changing...', 'Change');
+  
+        $.ajax({
+          url: changePwUrl,
+          method: 'POST',
+          contentType: 'application/json; charset=utf-8',
+          data: JSON.stringify({ oldPassword: oldp, newPassword: np })
+        })
+        .done(function(){
+          $('#oldpass,#newpass,#confirmpass').val('');
+          setMsg($('#pw-msg'), 'Password changed successfully.', true);
+          updateChangeState();
+        })
+        .fail(function(xhr){
+          let msg = 'Failed to change password.';
+          try{
+            const j = JSON.parse(xhr.responseText);
+            if (Array.isArray(j) && j.length) msg = j[0];
+            else if (j?.errors?.length) msg = j.errors[0];
+            else if (typeof j === 'string') msg = j;
+          }catch{}
+          setMsg($('#pw-msg'), msg, false);
+        })
+        .always(function(){
+          disable($btn, false, '', 'Change');
+          updateChangeState();
+        });
+      }
+    );
   });
 
   // --- SIGN OUT ---

@@ -1,0 +1,108 @@
+﻿@{
+    var thisYear = DateTime.UtcNow.Year;
+}
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <!-- 1) About (logo + info + hüquqi/əlaqə) -->
+            <div class="col-12 col-sm-8 col-md-6 col-lg-4 col-xl-3 order-1">
+                <div class="footer__flixtv">
+                    <img src="~/img/logo.svg" alt="FlixTV">
+                </div>
+                <p class="footer__tagline">Movies &amp; TV Shows, online cinema.<br />Watch, track, and enjoy.</p>
+
+                <div class="footer__nav" style="margin-top:.75rem">
+                    <a asp-controller="Home" asp-action="Privacy">Privacy policy</a>
+                    <a asp-controller="Home" asp-action="Index">Terms of use</a>      @* TODO: Legal/Terms *@
+                    <a asp-controller="Home" asp-action="Index">Support service</a>   @* TODO: Support/Index *@
+                    <a asp-controller="Home" asp-action="Index">Contact us</a>        @* TODO: Contacts/Index *@
+                </div>
+
+                <div class="footer__social" style="margin-top:.75rem">
+                    <a href="#" aria-label="Facebook"><svg width="30" height="30"><use href="#ic-fb" /></svg></a>
+                    <a href="#" aria-label="Twitter"><svg width="30" height="30"><use href="#ic-x" /></svg></a>
+                    <a href="#" aria-label="Instagram"><svg width="30" height="30"><use href="#ic-ig" /></svg></a>
+                    <a href="#" aria-label="Telegram"><svg width="30" height="30"><use href="#ic-tg" /></svg></a>
+                </div>
+            </div>
+
+            <!-- 2) Browse -->
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2 order-2 offset-md-2 offset-lg-0 offset-xl-1">
+                <h6 class="footer__title">Browse</h6>
+                <div class="footer__nav">
+                    <a asp-controller="Movies" asp-action="Index">All movies</a>
+
+                    <!-- New releases: cari ilin filmləri -->
+                    <a asp-controller="Movies" asp-action="Index"
+                       asp-route-minReleaseYear="@thisYear">New releases</a>
+
+                    <!-- Top rated: reytinqə görə -->
+                    <a asp-controller="Movies" asp-action="Index"
+                       asp-route-orderBy="rating">Top rated</a>
+
+                    <!-- Popular / Trending: hazırda rating kimi, sonra service-də dəstək verəndə orderBy=popular/trending edərsən -->
+                    <a asp-controller="Movies" asp-action="Index"
+                       asp-route-orderBy="rating">Popular</a>
+                    <a asp-controller="Movies" asp-action="Index"
+                       asp-route-orderBy="rating">Trending</a>
+
+                    <!-- By genre nümunələri -->
+                    <a asp-controller="Movies" asp-action="Index"
+                       asp-route-categories="Action">By genre: Action</a>
+                    <a asp-controller="Movies" asp-action="Index"
+                       asp-route-categories="Drama">By genre: Drama</a>
+                </div>
+            </div>
+
+            <!-- 3) Library -->
+            <div class="col-6 col-md-4 col-lg-3 col-xl-2 order-3">
+                <h6 class="footer__title">Library</h6>
+                <div class="footer__nav">
+                    <a asp-controller="Movies" asp-action="Favourites">Favourites</a>
+                    <a asp-controller="Movies" asp-action="ContinueWatching">Continue watching</a>
+                    <a asp-controller="Viewed" asp-action="Index">Viewed</a>
+                    <a asp-controller="Activities" asp-action="Index">Activities</a>
+                </div>
+            </div>
+
+            <!-- 4) Account -->
+            <div class="col-12 col-md-8 col-lg-3 col-xl-3 order-4">
+                <h6 class="footer__title">Account</h6>
+                <div class="footer__nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a asp-controller="Profile" asp-action="Index">My profile</a>
+                        <a asp-controller="Profile" asp-action="Index">Settings</a>
+             @* eyni səhifənin ilk paneli *@
+                        <a asp-controller="Profile" asp-action="Index">Change password</a>  @* sağ panel *@
+                        <a asp-controller="Home" asp-action="Index">Subscriptions</a>    @* TODO *@
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Signin">Sign in</a>
+                        <a asp-controller="Account" asp-action="Signup">Create account</a>
+      @* varsa *@
+                        <a asp-controller="Account" asp-action="ForgotPassword">Forgot password</a>
+                        <a asp-controller="Home" asp-action="Index">Why FlixTV?</a>
+          @* TODO info *@
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="footer__content">
+                    <div class="footer__links">
+                        <a asp-controller="Home" asp-action="Privacy">Privacy policy</a>
+                        <span>·</span>
+                        <a asp-controller="Home" asp-action="Index">Cookies</a>             @* TODO *@
+                    </div>
+                    <small class="footer__copyright">
+                        © FlixTV, @thisYear. Created by <a href="#" target="_blank" rel="noopener">Atom Developers Group</a>.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
