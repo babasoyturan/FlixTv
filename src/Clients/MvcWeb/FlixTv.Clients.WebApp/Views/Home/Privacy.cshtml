@@ -1,7 +1,320 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Privacy policy";
+    var lastUpdated = "23 Sep 2025";
 }
+<!-- head -->
+<section class="section section--head section--head-fixed" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-6">
+                <h1 class="section__title section__title--head">Privacy policy</h1>
+                <p class="section__text section__text--small">Last updated: @lastUpdated</p>
+            </div>
+            <div class="col-12 col-xl-6">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb__item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb__item breadcrumb__item--active">Privacy policy</li>
+                </ul>
+            </div>
+        </div>
 
-<h1>@ViewData["Title"]</h1>
+        <!-- in-page tabs -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <ul class="nav nav-tabs policy__tabs" role="tablist">
+                    <li class="nav-item"><a class="nav-link active" href="#sec-overview" role="tab" aria-current="page">Overview</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-collect" role="tab">Data we collect</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-use" role="tab">How we use data</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-cookies" role="tab">Cookies & analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-sharing" role="tab">Sharing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-security" role="tab">Security</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-rights" role="tab">Your rights</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-children" role="tab">Children</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-changes" role="tab">Changes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-contact" role="tab">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end head -->
 
-<p>Use this page to detail your site's privacy policy.</p>
+<section class="section section--pb0 section--gradient policy" id="policy-root">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-12 js-anchor" id="sec-overview">
+                <h2 class="policy__h">Overview</h2>
+                <p class="section__text section__text--small">
+                    This Privacy Policy explains how we collect, use, disclose, and protect your information when you use FlixTV.
+                    By using our services, you agree to the practices described here.
+                </p>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-collect">
+                <h2 class="policy__h">1. Data we collect</h2>
+                <div class="section__list">
+                    <ol>
+                        <li><b>Account data</b>: first name, last name, email address, password (stored using strong hashing).</li>
+                        <li><b>Usage data</b>: titles you watch, watch progress & duration, favourites, searches, device/region, session identifiers, interaction logs.</li>
+                        <li><b>Payment data (if applicable)</b>: tokens/identifiers from payment providers. We do not store raw card data.</li>
+                        <li><b>Support & feedback</b>: messages you send to our support channels.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-use">
+                <h2 class="policy__h">2. How we use your data</h2>
+                <ul class="section__text section__text--small policy__bullets">
+                    <li>Provide and improve the service, keep your session, favourites and “continue watching”.</li>
+                    <li>Personalise recommendations and search quality.</li>
+                    <li>Detect and prevent abuse or fraud; comply with legal obligations.</li>
+                    <li>Send service notices and updates with your consent (you can opt out at any time).</li>
+                </ul>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-cookies">
+                <h2 class="policy__h">3. Cookies & analytics</h2>
+                <p class="section__text section__text--small">
+                    We use cookies for session management and analytics. You can restrict cookies in your browser,
+                    but some features may not function properly. Analytics uses aggregated or pseudonymised information.
+                </p>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-sharing">
+                <h2 class="policy__h">4. How we share information</h2>
+                <div class="section__list">
+                    <ol>
+                        <li>Service providers (hosting, CDN, email, analytics) that operate the platform.</li>
+                        <li>Authorities when required by law or to protect legal rights.</li>
+                        <li>A successor entity in case of merger, acquisition, or reorganisation.</li>
+                    </ol>
+                </div>
+                <p class="section__text section__text--small">We never sell your personal information for advertising purposes.</p>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-security">
+                <h2 class="policy__h">5. Security</h2>
+                <p class="section__text section__text--small">
+                    Data is transmitted over encrypted channels (HTTPS). Passwords are stored using industry-standard hashing.
+                    No online system is 100% secure, but we apply best practices to reduce risk.
+                </p>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-rights">
+                <h2 class="policy__h">6. Your rights</h2>
+                <ul class="section__text section__text--small policy__bullets">
+                    <li>Access, export, correct, or delete your personal data (including delete your account).</li>
+                    <li>Restrict or object to processing; withdraw consent where processing relies on consent.</li>
+                    <li>File a complaint with your local data protection authority, if applicable.</li>
+                </ul>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-children">
+                <h2 class="policy__h">7. Children’s privacy</h2>
+                <p class="section__text section__text--small">
+                    Our services are not directed to children under the age required by applicable law. If you believe
+                    we have collected data from a child, contact us to remove it.
+                </p>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-changes">
+                <h2 class="policy__h">8. Changes to this policy</h2>
+                <p class="section__text section__text--small">
+                    We may update this policy from time to time. We will post the new date at the top.
+                    Your continued use of the service after changes means you accept the updated policy.
+                </p>
+            </div>
+
+            <div class="col-12 js-anchor" id="sec-contact">
+                <h2 class="policy__h">9. Contact us</h2>
+                <p class="section__text section__text--small">
+                    For privacy questions or requests, email
+                    <a href="mailto:flixtv.movie.platform@gmail.com">flixtv.movie.platform@gmail.com</a>.
+                </p>
+                <p class="section__text section__text--small">
+                    <!-- NOTE: back-to-top now points to #sec-overview so tabs sync properly -->
+                    <a href="#sec-overview" class="js-backtotop">Back to top ↑</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+          // ---------- header offset ----------
+          function headerOffset() {
+            const h = document.querySelector('header.header');
+            return (h?.offsetHeight || 0) + 16;
+          }
+          function applyAnchorOffset() {
+            document.documentElement.style.setProperty('--anchor-offset', headerOffset() + 'px');
+          }
+          applyAnchorOffset();
+          window.addEventListener('resize', applyAnchorOffset);
+
+          // helpers
+          const links = Array.from(document.querySelectorAll('.policy__tabs .nav-link'));
+          function setActive(hash) {
+            links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === hash));
+          }
+          function smoothGoTo(hash) {
+            // special-case: #top should behave like Overview so tabs sync
+            if (hash === '#top') hash = '#sec-overview';
+            const target = document.querySelector(hash);
+            if (!target) return;
+            const y = Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - headerOffset());
+            setActive(hash);                 // instant visual feedback
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            history.replaceState(null, '', hash);
+          }
+
+          // ---------- tabs click ----------
+          links.forEach(a => {
+            a.addEventListener('click', e => {
+              const href = a.getAttribute('href') || '';
+              if (!href.startsWith('#')) return;
+              e.preventDefault();
+              smoothGoTo(href);
+            });
+          });
+
+          // ---------- back-to-top link(s) ----------
+          document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+              e.preventDefault();
+              smoothGoTo('#sec-overview');
+            });
+          });
+
+          // ---------- scrollspy with IntersectionObserver ----------
+          const targetNodes = () => Array.from(document.querySelectorAll('.section.policy .js-anchor[id]'));
+          let io = null;
+          function buildObserver() {
+            if (io) io.disconnect();
+            io = new IntersectionObserver((entries) => {
+              // choose the intersecting section closest to the top
+              let best = null;
+              for (const en of entries) {
+                if (!en.isIntersecting) continue;
+                if (!best || en.boundingClientRect.top < best.boundingClientRect.top) best = en;
+              }
+              if (best) setActive('#' + best.target.id);
+            }, {
+              root: null,
+              rootMargin: `-${headerOffset()}px 0px -70% 0px`,
+              threshold: [0, 0.01, 0.1]
+            });
+            targetNodes().forEach(t => io.observe(t));
+          }
+          buildObserver();
+          window.addEventListener('resize', buildObserver);
+
+          // ---------- handle direct hash on load ----------
+          if (location.hash) {
+            smoothGoTo(location.hash);
+          } else {
+            setActive('#sec-overview');
+          }
+        })();
+    </script>
+
+    <style>
+        /* headings */
+        .section.policy .policy__h {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.5rem;
+            line-height: 1.4;
+            margin: 2rem 0 .75rem;
+        }
+
+        @@media (min-width:1200px) {
+            .section.policy .policy__h {
+                font-size: 1.7rem;
+            }
+        }
+
+        /* body text contrast */
+        .section.policy .section__text.section__text--small,
+        .section.policy .section__list,
+        .section.policy .section__list li {
+            color: rgba(255,255,255,.88);
+        }
+
+            .section.policy .section__list ol {
+                padding-left: 1.25rem;
+            }
+
+            .section.policy .section__list li {
+                margin: .25rem 0;
+            }
+
+        /* tabs */
+        .policy__tabs {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: .375rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-bottom: 0;
+            padding: .25rem 0;
+            scrollbar-width: none;
+        }
+
+            .policy__tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .policy__tabs .nav-item {
+                flex: 0 0 auto;
+            }
+
+            .policy__tabs .nav-link {
+                border: 1px solid rgba(255,255,255,.14);
+                border-radius: 10px;
+                padding: .5rem .75rem;
+                font-size: .92rem;
+                color: #e6e6e6;
+                background: rgba(255,255,255,.05);
+                transition: all .15s;
+                line-height: 1.2;
+            }
+
+                .policy__tabs .nav-link:hover {
+                    background: rgba(255,255,255,.10);
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+                .policy__tabs .nav-link.active {
+                    background: #fff;
+                    border-color: #fff;
+                    color: #111;
+                    font-weight: 600;
+                }
+
+        /* bullets */
+        .policy__bullets {
+            padding-left: 1.25rem;
+        }
+
+            .policy__bullets li {
+                margin: .3rem 0;
+            }
+
+        /* never let anchors hide under the fixed header */
+        .section.policy .js-anchor {
+            scroll-margin-top: var(--anchor-offset,96px);
+        }
+
+        :target {
+            scroll-margin-top: var(--anchor-offset,96px);
+        }
+    </style>
+}

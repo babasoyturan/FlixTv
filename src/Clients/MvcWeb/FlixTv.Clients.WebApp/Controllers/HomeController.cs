@@ -76,8 +76,12 @@ namespace FlixTv.Clients.WebApp.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Admin")]
         public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        public IActionResult Cookies()
         {
             return View();
         }

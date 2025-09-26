@@ -1,0 +1,447 @@
+﻿@{
+    ViewData["Title"] = "Cookies policy";
+    var lastUpdated = "23 Sep 2025";
+}
+<!-- head -->
+<section class="section section--head section--head-fixed" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-6">
+                <h1 class="section__title section__title--head">Cookies policy</h1>
+                <p class="section__text section__text--small">Last updated: @lastUpdated</p>
+            </div>
+            <div class="col-12 col-xl-6">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb__item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb__item breadcrumb__item--active">Cookies policy</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- in-page tabs -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <ul class="nav nav-tabs cookie__tabs" role="tablist">
+                    <li class="nav-item"><a class="nav-link active" href="#sec-overview" role="tab">Overview</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-what" role="tab">What are cookies</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-use" role="tab">Cookies we use</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-manage" role="tab">Manage preferences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-browser" role="tab">Browser settings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-changes" role="tab">Changes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-contact" role="tab">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end head -->
+
+<section class="section section--pb0 section--gradient cookie" id="cookie-root">
+    <div class="container">
+        <div class="row">
+
+            <!-- Overview -->
+            <div class="col-12 js-anchor" id="sec-overview">
+                <h2 class="cookie__h">Overview</h2>
+                <p class="section__text section__text--small">
+                    We use cookies and similar technologies to run our service, measure performance, remember your preferences,
+                    and personalize content. This Cookies Policy explains what cookies are, which ones we use, and how you can control them.
+                </p>
+            </div>
+
+            <!-- What are cookies -->
+            <div class="col-12 js-anchor" id="sec-what">
+                <h2 class="cookie__h">1. What are cookies?</h2>
+                <p class="section__text section__text--small">
+                    Cookies are small text files placed on your device by your browser. They are widely used to make websites
+                    work, or work more efficiently, as well as to provide reporting information. Pixels, local storage and similar
+                    technologies serve comparable purposes; we refer to all of them as “cookies”.
+                </p>
+                <ul class="section__text section__text--small cookie__bullets">
+                    <li><b>Session cookies</b> – deleted when you close your browser.</li>
+                    <li><b>Persistent cookies</b> – remain until they expire or you delete them.</li>
+                    <li><b>First-party</b> (set by FlixTV) and <b>third-party</b> (set by our partners, e.g., analytics/CDN).</li>
+                </ul>
+            </div>
+
+            <!-- Cookies we use -->
+            <div class="col-12 js-anchor" id="sec-use">
+                <h2 class="cookie__h">2. Cookies we use</h2>
+                <div class="section__list">
+                    <ol>
+                        <li><b>Essential</b> – required to sign in, keep your session, secure the site (cannot be switched off).</li>
+                        <li><b>Functional</b> – remember preferences (language, autoplay, quality).</li>
+                        <li><b>Analytics</b> – help us understand usage and improve features.</li>
+                        <li><b>Advertising</b> (if applicable) – measure ads performance and avoid repetition.</li>
+                    </ol>
+                </div>
+
+                <div class="main__table-wrap mt-3">
+                    <table class="main__table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Provider</th>
+                                <th>Duration</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="main__table-text">.AspNetCore.Cookies</div></td>
+                                <td><div class="main__table-text">Essential / Auth</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">Session / 2h</div></td>
+                                <td><div class="main__table-text">Maintains your login session securely.</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">RequestVerificationToken</div></td>
+                                <td><div class="main__table-text">Essential / Security</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">Session</div></td>
+                                <td><div class="main__table-text">Prevents CSRF attacks for forms and AJAX.</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">_ga</div></td>
+                                <td><div class="main__table-text">Analytics</div></td>
+                                <td><div class="main__table-text">Google Analytics</div></td>
+                                <td><div class="main__table-text">13 months</div></td>
+                                <td><div class="main__table-text">Aggregated usage statistics (pages, events).</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">ftv_lang</div></td>
+                                <td><div class="main__table-text">Functional</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">6 months</div></td>
+                                <td><div class="main__table-text">Stores your language and UI preferences.</div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Manage preferences -->
+            <div class="col-12 js-anchor" id="sec-manage">
+                <h2 class="cookie__h">3. Manage preferences</h2>
+                <p class="section__text section__text--small">
+                    You can control non-essential cookies below. Essential cookies are always on because they are required for the website to function.
+                </p>
+
+                <div class="cookie__prefs">
+                    <div class="cookie__row">
+                        <label class="cookie__label">
+                            <input type="checkbox" checked disabled>
+                            <span>Essential</span>
+                        </label>
+                        <small>Always active – login, security, payment flow.</small>
+                    </div>
+
+                    <div class="cookie__row">
+                        <label class="cookie__label">
+                            <input type="checkbox" id="pref-functional">
+                            <span>Functional</span>
+                        </label>
+                        <small>Saves preferences like language, autoplay and quality.</small>
+                    </div>
+
+                    <div class="cookie__row">
+                        <label class="cookie__label">
+                            <input type="checkbox" id="pref-analytics">
+                            <span>Analytics</span>
+                        </label>
+                        <small>Helps us improve by collecting aggregated usage data.</small>
+                    </div>
+
+                    <div class="cookie__row">
+                        <label class="cookie__label">
+                            <input type="checkbox" id="pref-ads">
+                            <span>Advertising</span>
+                        </label>
+                        <small>Personalised ads and measurement (if applicable).</small>
+                    </div>
+
+                    <div class="cookie__actions">
+                        <button type="button" class="sign__btn" id="btn-accept-all">Accept all</button>
+                        <button type="button" class="sign__btn" id="btn-reject-nonessential">Reject non-essential</button>
+                        <button type="button" class="sign__btn" id="btn-save-prefs">Save preferences</button>
+                        <span class="cookie__status" id="cookie-status"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser settings -->
+            <div class="col-12 js-anchor" id="sec-browser">
+                <h2 class="cookie__h">4. Manage cookies in your browser</h2>
+                <p class="section__text section__text--small">
+                    Most browsers let you block or delete cookies. Instructions are available in the help pages for
+                    Chrome, Firefox, Safari, Edge and others. If you block essential cookies, some parts of the site may not work.
+                </p>
+            </div>
+
+            <!-- Changes -->
+            <div class="col-12 js-anchor" id="sec-changes">
+                <h2 class="cookie__h">5. Changes to this policy</h2>
+                <p class="section__text section__text--small">
+                    We may update this Cookies Policy from time to time. We will update the date at the top and, where required,
+                    obtain your consent again.
+                </p>
+            </div>
+
+            <!-- Contact -->
+            <div class="col-12 js-anchor" id="sec-contact">
+                <h2 class="cookie__h">6. Contact</h2>
+                <p class="section__text section__text--small">
+                    Questions about cookies? Email <a href="mailto:privacy@flixtv.example">privacy@flixtv.example</a>.
+                </p>
+                <p class="section__text section__text--small">
+                    <a href="#sec-overview" class="js-backtotop">Back to top ↑</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (function(){
+          // ------- layout offset for fixed header -------
+          function headerOffset(){
+            const h = document.querySelector('header.header');
+            return (h?.offsetHeight || 0) + 16;
+          }
+          function applyOffsetVar(){
+            document.documentElement.style.setProperty('--anchor-offset', headerOffset() + 'px');
+          }
+          applyOffsetVar();
+          window.addEventListener('resize', applyOffsetVar);
+
+          // ------- smooth scroll helpers -------
+          const tabLinks = Array.from(document.querySelectorAll('.cookie__tabs .nav-link'));
+          function setActive(hash){
+            tabLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === hash));
+          }
+          function smoothGoTo(hash){
+            if(hash==='#top') hash='#sec-overview';
+            const el = document.querySelector(hash);
+            if(!el) return;
+            const y = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset());
+            setActive(hash);
+            window.scrollTo({top:y, behavior:'smooth'});
+            history.replaceState(null,'',hash);
+          }
+
+          tabLinks.forEach(a=>{
+            a.addEventListener('click', e=>{
+              const href=a.getAttribute('href')||'';
+              if(!href.startsWith('#')) return;
+              e.preventDefault();
+              smoothGoTo(href);
+            });
+          });
+
+          document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a=>{
+            a.addEventListener('click', e=>{
+              e.preventDefault();
+              smoothGoTo('#sec-overview');
+            });
+          });
+
+          // ------- scrollspy (IntersectionObserver) -------
+          const anchors = Array.from(document.querySelectorAll('.section.cookie .js-anchor[id]'));
+          let io=null;
+          function buildIO(){
+            if(io) io.disconnect();
+            io = new IntersectionObserver((entries)=>{
+              let best=null;
+              for(const en of entries){
+                if(!en.isIntersecting) continue;
+                if(!best || en.boundingClientRect.top < best.boundingClientRect.top) best=en;
+              }
+              if(best) setActive('#'+best.target.id);
+            },{
+              root:null,
+              rootMargin:`-${headerOffset()}px 0px -70% 0px`,
+              threshold:[0,0.01,0.1]
+            });
+            anchors.forEach(a=>io.observe(a));
+          }
+          buildIO();
+          window.addEventListener('resize', buildIO);
+
+          // ------- preferences (localStorage) -------
+          const $fn = document.getElementById('pref-functional');
+          const $an = document.getElementById('pref-analytics');
+          const $ad = document.getElementById('pref-ads');
+          const $status = document.getElementById('cookie-status');
+
+          function loadPrefs(){
+            try{
+              const raw = localStorage.getItem('cookiePrefs');
+              if(!raw) return;
+              const p = JSON.parse(raw);
+              $fn.checked = !!p.functional;
+              $an.checked = !!p.analytics;
+              $ad.checked = !!p.ads;
+            }catch{}
+          }
+          function savePrefs(obj){
+            localStorage.setItem('cookiePrefs', JSON.stringify(obj));
+            $status.textContent = 'Saved';
+            setTimeout(()=>{$status.textContent='';}, 1500);
+          }
+          loadPrefs();
+
+          document.getElementById('btn-accept-all')?.addEventListener('click', ()=>{
+            $fn.checked = $an.checked = $ad.checked = true;
+            savePrefs({functional:true, analytics:true, ads:true});
+          });
+          document.getElementById('btn-reject-nonessential')?.addEventListener('click', ()=>{
+            $fn.checked = $an.checked = $ad.checked = false;
+            savePrefs({functional:false, analytics:false, ads:false});
+          });
+          document.getElementById('btn-save-prefs')?.addEventListener('click', ()=>{
+            savePrefs({functional:$fn.checked, analytics:$an.checked, ads:$ad.checked});
+          });
+
+          // direct hash on load
+          if(location.hash) smoothGoTo(location.hash); else setActive('#sec-overview');
+        })();
+    </script>
+
+    <style>
+        /* headings */
+        .section.cookie .cookie__h {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.5rem;
+            line-height: 1.4;
+            margin: 2rem 0 .75rem;
+        }
+
+        @@media (min-width:1200px) {
+            .section.cookie .cookie__h {
+                font-size: 1.7rem;
+            }
+        }
+
+        /* text & lists */
+        .section.cookie .section__text.section__text--small,
+        .section.cookie .section__list, .section.cookie .section__list li {
+            color: rgba(255,255,255,.88);
+        }
+
+            .section.cookie .section__list ol {
+                padding-left: 1.25rem;
+            }
+
+            .section.cookie .section__list li {
+                margin: .25rem 0;
+            }
+
+        .cookie__bullets {
+            padding-left: 1.25rem;
+        }
+
+            .cookie__bullets li {
+                margin: .3rem 0;
+            }
+
+        /* tabs */
+        .cookie__tabs {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: .375rem;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-bottom: 0;
+            padding: .25rem 0;
+            scrollbar-width: none;
+        }
+
+            .cookie__tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .cookie__tabs .nav-item {
+                flex: 0 0 auto;
+            }
+
+            .cookie__tabs .nav-link {
+                border: 1px solid rgba(255,255,255,.14);
+                border-radius: 10px;
+                padding: .5rem .75rem;
+                font-size: .92rem;
+                color: #e6e6e6;
+                background: rgba(255,255,255,.05);
+                transition: all .15s;
+                line-height: 1.2;
+            }
+
+                .cookie__tabs .nav-link:hover {
+                    background: rgba(255,255,255,.10);
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+                .cookie__tabs .nav-link.active {
+                    background: #fff;
+                    border-color: #fff;
+                    color: #111;
+                    font-weight: 600;
+                }
+
+        /* prefs block */
+        .cookie__prefs {
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 12px;
+            padding: 1rem;
+            background: rgba(255,255,255,.04);
+        }
+
+        .cookie__row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .5rem 0;
+            border-bottom: 1px dashed rgba(255,255,255,.12);
+        }
+
+            .cookie__row:last-child {
+                border-bottom: 0;
+            }
+
+        .cookie__label {
+            display: flex;
+            gap: .5rem;
+            align-items: center;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .cookie__actions {
+            display: flex;
+            gap: .5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .cookie__status {
+            margin-left: .25rem;
+            opacity: .9
+        }
+
+        /* anchor offset */
+        .section.cookie .js-anchor {
+            scroll-margin-top: var(--anchor-offset,96px);
+        }
+
+        :target {
+            scroll-margin-top: var(--anchor-offset,96px);
+        }
+    </style>
+}
