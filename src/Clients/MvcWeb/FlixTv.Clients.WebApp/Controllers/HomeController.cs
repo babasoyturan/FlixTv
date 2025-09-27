@@ -76,6 +76,11 @@ namespace FlixTv.Clients.WebApp.Controllers
             return View(model);
         }
 
+        public IActionResult AboutUs()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

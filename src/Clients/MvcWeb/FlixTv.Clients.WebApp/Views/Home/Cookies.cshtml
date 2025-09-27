@@ -10,6 +10,7 @@
                 <h1 class="section__title section__title--head">Cookies policy</h1>
                 <p class="section__text section__text--small">Last updated: @lastUpdated</p>
             </div>
+
             <div class="col-12 col-xl-6">
                 <ul class="breadcrumb">
                     <li class="breadcrumb__item"><a asp-controller="Home" asp-action="Index">Home</a></li>
@@ -25,7 +26,7 @@
                     <li class="nav-item"><a class="nav-link active" href="#sec-overview" role="tab">Overview</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-what" role="tab">What are cookies</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-use" role="tab">Cookies we use</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#sec-manage" role="tab">Manage preferences</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-headers" role="tab">Diagnostics & headers</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-browser" role="tab">Browser settings</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-changes" role="tab">Changes</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-contact" role="tab">Contact</a></li>
@@ -44,8 +45,8 @@
             <div class="col-12 js-anchor" id="sec-overview">
                 <h2 class="cookie__h">Overview</h2>
                 <p class="section__text section__text--small">
-                    We use cookies and similar technologies to run our service, measure performance, remember your preferences,
-                    and personalize content. This Cookies Policy explains what cookies are, which ones we use, and how you can control them.
+                    We use cookies and similar technologies to run FlixTV securely (login, sessions), protect against abuse,
+                    and keep the product reliable. This page explains which cookies we set in the current client, based on our implementation.
                 </p>
             </div>
 
@@ -53,26 +54,24 @@
             <div class="col-12 js-anchor" id="sec-what">
                 <h2 class="cookie__h">1. What are cookies?</h2>
                 <p class="section__text section__text--small">
-                    Cookies are small text files placed on your device by your browser. They are widely used to make websites
-                    work, or work more efficiently, as well as to provide reporting information. Pixels, local storage and similar
-                    technologies serve comparable purposes; we refer to all of them as “cookies”.
+                    Cookies are small text files stored by your browser. We also use related technologies (e.g. localStorage and headers).
+                    In this policy we call them collectively “cookies”, though we clearly label non-cookie storage below.
                 </p>
                 <ul class="section__text section__text--small cookie__bullets">
-                    <li><b>Session cookies</b> – deleted when you close your browser.</li>
-                    <li><b>Persistent cookies</b> – remain until they expire or you delete them.</li>
-                    <li><b>First-party</b> (set by FlixTV) and <b>third-party</b> (set by our partners, e.g., analytics/CDN).</li>
+                    <li><b>Session cookies</b> – removed when you close the browser.</li>
+                    <li><b>Persistent cookies</b> – remain until their expiry time or until you delete them.</li>
+                    <li><b>First-party</b> cookies are set by FlixTV; we currently don’t set third-party cookies from analytics/ads by default.</li>
                 </ul>
             </div>
 
             <!-- Cookies we use -->
             <div class="col-12 js-anchor" id="sec-use">
-                <h2 class="cookie__h">2. Cookies we use</h2>
+                <h2 class="cookie__h">2. Cookies we use (current implementation)</h2>
+
                 <div class="section__list">
                     <ol>
-                        <li><b>Essential</b> – required to sign in, keep your session, secure the site (cannot be switched off).</li>
-                        <li><b>Functional</b> – remember preferences (language, autoplay, quality).</li>
-                        <li><b>Analytics</b> – help us understand usage and improve features.</li>
-                        <li><b>Advertising</b> (if applicable) – measure ads performance and avoid repetition.</li>
+                        <li><b>Essential</b> – required to sign in, keep your session and secure the site (cannot be switched off).</li>
+                        <li><b>Functional</b> – may remember simple UI preferences (if enabled in the UI).</li>
                     </ol>
                 </div>
 
@@ -84,98 +83,107 @@
                                 <th>Type</th>
                                 <th>Provider</th>
                                 <th>Duration</th>
-                                <th>Purpose</th>
+                                <th>Purpose / Attributes</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><div class="main__table-text">.AspNetCore.Cookies</div></td>
+                                <td><div class="main__table-text">flix_access_token</div></td>
                                 <td><div class="main__table-text">Essential / Auth</div></td>
                                 <td><div class="main__table-text">FlixTV</div></td>
-                                <td><div class="main__table-text">Session / 2h</div></td>
-                                <td><div class="main__table-text">Maintains your login session securely.</div></td>
+                                <td><div class="main__table-text">Until API “Expiration” (short-lived)</div></td>
+                                <td>
+                                    <div class="main__table-text">
+                                        JWT access token used for authenticated API calls (read by <code>AuthHeaderHandler</code>).
+                                        Set as <b>HttpOnly</b>, <b>SameSite=Lax</b>, <b>Secure</b> (Secure may be off locally in dev).
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">flix_refresh_token</div></td>
+                                <td><div class="main__table-text">Essential / Auth</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">Until API “Expiration” (longer-lived)</div></td>
+                                <td>
+                                    <div class="main__table-text">
+                                        Refresh token used by <code>RefreshTokenHandler</code> to obtain a new access token.
+                                        Set as <b>HttpOnly</b>, <b>SameSite=Lax</b>, <b>Secure</b> (Secure may be off locally in dev).
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">.AspNetCore.Cookies</div></td>
+                                <td><div class="main__table-text">Essential / Auth</div></td>
+                                <td><div class="main__table-text">FlixTV (ASP.NET Core)</div></td>
+                                <td><div class="main__table-text">Session (unless configured persistent)</div></td>
+                                <td>
+                                    <div class="main__table-text">
+                                        Framework authentication cookie created by the “Cookies” scheme on sign-in. Keeps your web session.
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td><div class="main__table-text">RequestVerificationToken</div></td>
                                 <td><div class="main__table-text">Essential / Security</div></td>
                                 <td><div class="main__table-text">FlixTV</div></td>
                                 <td><div class="main__table-text">Session</div></td>
-                                <td><div class="main__table-text">Prevents CSRF attacks for forms and AJAX.</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="main__table-text">_ga</div></td>
-                                <td><div class="main__table-text">Analytics</div></td>
-                                <td><div class="main__table-text">Google Analytics</div></td>
-                                <td><div class="main__table-text">13 months</div></td>
-                                <td><div class="main__table-text">Aggregated usage statistics (pages, events).</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="main__table-text">ftv_lang</div></td>
-                                <td><div class="main__table-text">Functional</div></td>
-                                <td><div class="main__table-text">FlixTV</div></td>
-                                <td><div class="main__table-text">6 months</div></td>
-                                <td><div class="main__table-text">Stores your language and UI preferences.</div></td>
+                                <td>
+                                    <div class="main__table-text">
+                                        Anti-forgery protection for forms/AJAX when those pages render a CSRF token.
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <p class="section__text section__text--small mt-2">
+                    <i>Note:</i> We don’t set third-party analytics/advertising cookies in the code you’ve shared. If such tools are
+                    added later (e.g., Google Analytics), this table will be updated accordingly.
+                </p>
             </div>
 
-            <!-- Manage preferences -->
-            <div class="col-12 js-anchor" id="sec-manage">
-                <h2 class="cookie__h">3. Manage preferences</h2>
-                <p class="section__text section__text--small">
-                    You can control non-essential cookies below. Essential cookies are always on because they are required for the website to function.
-                </p>
-
-                <div class="cookie__prefs">
-                    <div class="cookie__row">
-                        <label class="cookie__label">
-                            <input type="checkbox" checked disabled>
-                            <span>Essential</span>
-                        </label>
-                        <small>Always active – login, security, payment flow.</small>
-                    </div>
-
-                    <div class="cookie__row">
-                        <label class="cookie__label">
-                            <input type="checkbox" id="pref-functional">
-                            <span>Functional</span>
-                        </label>
-                        <small>Saves preferences like language, autoplay and quality.</small>
-                    </div>
-
-                    <div class="cookie__row">
-                        <label class="cookie__label">
-                            <input type="checkbox" id="pref-analytics">
-                            <span>Analytics</span>
-                        </label>
-                        <small>Helps us improve by collecting aggregated usage data.</small>
-                    </div>
-
-                    <div class="cookie__row">
-                        <label class="cookie__label">
-                            <input type="checkbox" id="pref-ads">
-                            <span>Advertising</span>
-                        </label>
-                        <small>Personalised ads and measurement (if applicable).</small>
-                    </div>
-
-                    <div class="cookie__actions">
-                        <button type="button" class="sign__btn" id="btn-accept-all">Accept all</button>
-                        <button type="button" class="sign__btn" id="btn-reject-nonessential">Reject non-essential</button>
-                        <button type="button" class="sign__btn" id="btn-save-prefs">Save preferences</button>
-                        <span class="cookie__status" id="cookie-status"></span>
-                    </div>
+            <!-- Diagnostics & headers (not cookies) -->
+            <div class="col-12 js-anchor" id="sec-headers">
+                <h2 class="cookie__h">3. Diagnostics & headers (not cookies)</h2>
+                <div class="main__table-wrap mt-2">
+                    <table class="main__table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Where used</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="main__table-text">X-Correlation-Id</div></td>
+                                <td><div class="main__table-text">HTTP header</div></td>
+                                <td><div class="main__table-text">Every API call (<code>CorrelationIdHandler</code>)</div></td>
+                                <td><div class="main__table-text">Helps trace a single request across services for diagnostics.</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">Authorization: Bearer &lt;jwt&gt;</div></td>
+                                <td><div class="main__table-text">HTTP header</div></td>
+                                <td><div class="main__table-text">API calls (<code>AuthHeaderHandler</code>)</div></td>
+                                <td><div class="main__table-text">Sends the access token from cookie storage to the API.</div></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+                <p class="section__text section__text--small">
+                    We may also store lightweight UI state in <b>localStorage</b> (e.g., consent/preferences) when such features are enabled.
+                    These are not cookies and can be cleared from your browser storage.
+                </p>
             </div>
 
             <!-- Browser settings -->
             <div class="col-12 js-anchor" id="sec-browser">
                 <h2 class="cookie__h">4. Manage cookies in your browser</h2>
                 <p class="section__text section__text--small">
-                    Most browsers let you block or delete cookies. Instructions are available in the help pages for
-                    Chrome, Firefox, Safari, Edge and others. If you block essential cookies, some parts of the site may not work.
+                    Most browsers let you block or delete cookies. You can do this in the privacy settings of Chrome, Firefox,
+                    Safari, Edge and others. If you block essential cookies, you won’t be able to sign in or keep a session.
                 </p>
             </div>
 
@@ -183,8 +191,7 @@
             <div class="col-12 js-anchor" id="sec-changes">
                 <h2 class="cookie__h">5. Changes to this policy</h2>
                 <p class="section__text section__text--small">
-                    We may update this Cookies Policy from time to time. We will update the date at the top and, where required,
-                    obtain your consent again.
+                    If we introduce new cookies or vendors, we’ll update this page and, where required, ask for your consent again.
                 </p>
             </div>
 
@@ -192,11 +199,9 @@
             <div class="col-12 js-anchor" id="sec-contact">
                 <h2 class="cookie__h">6. Contact</h2>
                 <p class="section__text section__text--small">
-                    Questions about cookies? Email <a href="mailto:privacy@flixtv.example">privacy@flixtv.example</a>.
+                    Questions about cookies? Email <a href="mailto:flixtv.movie.platform@gmail.com">flixtv.movie.platform@gmail.com</a>.
                 </p>
-                <p class="section__text section__text--small">
-                    <a href="#sec-overview" class="js-backtotop">Back to top ↑</a>
-                </p>
+                <p class="section__text section__text--small"><a href="#sec-overview" class="js-backtotop">Back to top ↑</a></p>
             </div>
 
         </div>
@@ -206,47 +211,32 @@
 @section Scripts {
     <script>
         (function(){
-          // ------- layout offset for fixed header -------
+          // ------- dynamic header offset -------
           function headerOffset(){
             const h = document.querySelector('header.header');
             return (h?.offsetHeight || 0) + 16;
           }
-          function applyOffsetVar(){
+          function setVar(){
             document.documentElement.style.setProperty('--anchor-offset', headerOffset() + 'px');
           }
-          applyOffsetVar();
-          window.addEventListener('resize', applyOffsetVar);
+          setVar(); window.addEventListener('resize', setVar);
 
-          // ------- smooth scroll helpers -------
-          const tabLinks = Array.from(document.querySelectorAll('.cookie__tabs .nav-link'));
-          function setActive(hash){
-            tabLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === hash));
-          }
-          function smoothGoTo(hash){
+          // ------- tabs + smooth scroll -------
+          const tabs = Array.from(document.querySelectorAll('.cookie__tabs .nav-link'));
+          function setActive(hash){ tabs.forEach(l=>l.classList.toggle('active', l.getAttribute('href')===hash)); }
+          function go(hash){
             if(hash==='#top') hash='#sec-overview';
-            const el = document.querySelector(hash);
-            if(!el) return;
-            const y = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset());
-            setActive(hash);
-            window.scrollTo({top:y, behavior:'smooth'});
-            history.replaceState(null,'',hash);
+            const t = document.querySelector(hash); if(!t) return;
+            const y = Math.max(0, t.getBoundingClientRect().top + window.pageYOffset - headerOffset());
+            setActive(hash); window.scrollTo({top:y, behavior:'smooth'}); history.replaceState(null,'',hash);
           }
-
-          tabLinks.forEach(a=>{
-            a.addEventListener('click', e=>{
-              const href=a.getAttribute('href')||'';
-              if(!href.startsWith('#')) return;
-              e.preventDefault();
-              smoothGoTo(href);
-            });
-          });
-
-          document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a=>{
-            a.addEventListener('click', e=>{
-              e.preventDefault();
-              smoothGoTo('#sec-overview');
-            });
-          });
+          tabs.forEach(a=>a.addEventListener('click',e=>{
+            const href=a.getAttribute('href')||''; if(!href.startsWith('#')) return;
+            e.preventDefault(); go(href);
+          }));
+          document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a=>a.addEventListener('click',e=>{
+            e.preventDefault(); go('#sec-overview');
+          }));
 
           // ------- scrollspy (IntersectionObserver) -------
           const anchors = Array.from(document.querySelectorAll('.section.cookie .js-anchor[id]'));
@@ -260,53 +250,13 @@
                 if(!best || en.boundingClientRect.top < best.boundingClientRect.top) best=en;
               }
               if(best) setActive('#'+best.target.id);
-            },{
-              root:null,
-              rootMargin:`-${headerOffset()}px 0px -70% 0px`,
-              threshold:[0,0.01,0.1]
-            });
+            }, { root:null, rootMargin:`-${headerOffset()}px 0px -70% 0px`, threshold:[0,0.01,0.1] });
             anchors.forEach(a=>io.observe(a));
           }
-          buildIO();
-          window.addEventListener('resize', buildIO);
+          buildIO(); window.addEventListener('resize', buildIO);
 
-          // ------- preferences (localStorage) -------
-          const $fn = document.getElementById('pref-functional');
-          const $an = document.getElementById('pref-analytics');
-          const $ad = document.getElementById('pref-ads');
-          const $status = document.getElementById('cookie-status');
-
-          function loadPrefs(){
-            try{
-              const raw = localStorage.getItem('cookiePrefs');
-              if(!raw) return;
-              const p = JSON.parse(raw);
-              $fn.checked = !!p.functional;
-              $an.checked = !!p.analytics;
-              $ad.checked = !!p.ads;
-            }catch{}
-          }
-          function savePrefs(obj){
-            localStorage.setItem('cookiePrefs', JSON.stringify(obj));
-            $status.textContent = 'Saved';
-            setTimeout(()=>{$status.textContent='';}, 1500);
-          }
-          loadPrefs();
-
-          document.getElementById('btn-accept-all')?.addEventListener('click', ()=>{
-            $fn.checked = $an.checked = $ad.checked = true;
-            savePrefs({functional:true, analytics:true, ads:true});
-          });
-          document.getElementById('btn-reject-nonessential')?.addEventListener('click', ()=>{
-            $fn.checked = $an.checked = $ad.checked = false;
-            savePrefs({functional:false, analytics:false, ads:false});
-          });
-          document.getElementById('btn-save-prefs')?.addEventListener('click', ()=>{
-            savePrefs({functional:$fn.checked, analytics:$an.checked, ads:$ad.checked});
-          });
-
-          // direct hash on load
-          if(location.hash) smoothGoTo(location.hash); else setActive('#sec-overview');
+          // initial hash
+          if(location.hash) go(location.hash); else setActive('#sec-overview');
         })();
     </script>
 
@@ -393,47 +343,6 @@
                     color: #111;
                     font-weight: 600;
                 }
-
-        /* prefs block */
-        .cookie__prefs {
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 12px;
-            padding: 1rem;
-            background: rgba(255,255,255,.04);
-        }
-
-        .cookie__row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: .5rem 0;
-            border-bottom: 1px dashed rgba(255,255,255,.12);
-        }
-
-            .cookie__row:last-child {
-                border-bottom: 0;
-            }
-
-        .cookie__label {
-            display: flex;
-            gap: .5rem;
-            align-items: center;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .cookie__actions {
-            display: flex;
-            gap: .5rem;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .cookie__status {
-            margin-left: .25rem;
-            opacity: .9
-        }
 
         /* anchor offset */
         .section.cookie .js-anchor {

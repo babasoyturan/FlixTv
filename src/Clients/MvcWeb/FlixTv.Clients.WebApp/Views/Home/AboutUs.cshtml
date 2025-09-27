@@ -1,0 +1,271 @@
+﻿@{
+    ViewData["Title"] = "About FlixTV";
+}
+<!-- head -->
+<section class="section section--head section--head-fixed" id="top">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-6">
+                <h1 class="section__title section__title--head">About FlixTV</h1>
+            </div>
+
+            <div class="col-12 col-xl-6">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb__item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb__item breadcrumb__item--active">About</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end head -->
+<!-- about intro -->
+<section class="section section--pb0">
+    <div class="container">
+        <div class="row">
+            <!-- section text -->
+            <div class="col-12">
+                <p class="section__text section__text--small">
+                    FlixTV is a <b>free movie platform</b>. You can watch titles without creating an account.
+                    If you choose to sign in, the experience becomes <b>personalized</b>: we learn what you enjoy
+                    from your viewing activity and surface better suggestions on the homepage over time.
+                </p>
+                <p class="section__text section__text--small">
+                    Logged-in members can write comments &amp; reviews, like/dislike others’ comments, build their
+                    own <b>Favourites</b>, and continue from where they left off. Anonymous visitors can still watch
+                    movies and read public feedback — just without personalization.
+                </p>
+            </div>
+            <!-- end section text -->
+        </div>
+
+        <!-- how it works (steps) -->
+        <div class="row row--grid">
+            <div class="col-12 col-lg-4">
+                <div class="step">
+                    <span class="step__number">01</span>
+                    <h3 class="step__title">Browse &amp; watch — free</h3>
+                    <p class="step__text">Enjoy the catalog instantly. No payments, no subscriptions, no hidden fees.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="step">
+                    <span class="step__number">02</span>
+                    <h3 class="step__title">Create an account (optional)</h3>
+                    <p class="step__text">Sign in to comment, review, like/dislike and build your own favourites list.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="step">
+                    <span class="step__number">03</span>
+                    <h3 class="step__title">Get personalized</h3>
+                    <p class="step__text">Your home feed adapts to your taste based on what you watch and interact with.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end about intro -->
+<!-- features -->
+<section class="section section--pb0 section--gradient">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="section__title">Platform features</h2>
+            </div>
+        </div>
+
+        <div class="row row--grid">
+            <!-- Free forever -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 3h14a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5z" /></svg>
+                    </span>
+                    <h3 class="feature__title">Always free</h3>
+                    <p class="feature__text">No payments or subscriptions. Watch without any paywalls.</p>
+                </div>
+            </div>
+
+            <!-- Comments & Reviews -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v15l4-3h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z" /></svg>
+                    </span>
+                    <h3 class="feature__title">Comments &amp; reviews</h3>
+                    <p class="feature__text">Share your thoughts, read others’ feedback, and join the discussion.</p>
+                </div>
+            </div>
+
+            <!-- Like / Dislike -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M2 10h4v10H2zM22 11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32a1 1 0 0 0-.29-.7L13 2 7.59 7.41A2 2 0 0 0 7 8.83V20a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l.95-6.65L22 11z" /></svg>
+                    </span>
+                    <h3 class="feature__title">Like / Dislike</h3>
+                    <p class="feature__text">Upvote helpful comments, downvote low-quality ones — keep it friendly.</p>
+                </div>
+            </div>
+
+            <!-- Favourites -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A4.5 4.5 0 0 1 6.5 4c1.74 0 3.41.81 4.5 2.09A6.02 6.02 0 0 1 15 4a4.5 4.5 0 0 1 4.5 4.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                    </span>
+                    <h3 class="feature__title">Favourites</h3>
+                    <p class="feature__text">Build your own list to re-watch or keep for later.</p>
+                </div>
+            </div>
+
+            <!-- Continue watching & progress -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 5a7 7 0 1 1-7 7h2a5 5 0 1 0 5-5v3l-4-4 4-4v3z" /></svg>
+                    </span>
+                    <h3 class="feature__title">Continue watching</h3>
+                    <p class="feature__text">We remember where you left off and your progress for each title.</p>
+                </div>
+            </div>
+
+            <!-- Viewing history -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8v5l4 2M12 22a10 10 0 1 1 10-10" /></svg>
+                    </span>
+                    <h3 class="feature__title">Viewing history</h3>
+                    <p class="feature__text">See what you watched, when you started, and your last position.</p>
+                </div>
+            </div>
+
+            <!-- Activities -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 13h4l3 7 4-18 3 11h4" /></svg>
+                    </span>
+                    <h3 class="feature__title">Activities</h3>
+                    <p class="feature__text">Track reviews, likes &amp; other interactions in your profile.</p>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 7-6.5-4.5L5.5 20l2-7L2 9h7z" /></svg>
+                    </span>
+                    <h3 class="feature__title">Smarter home feed</h3>
+                    <p class="feature__text">Suggestions improve the more you watch and interact.</p>
+                </div>
+            </div>
+
+            <!-- Privacy note -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1l8 4v6c0 5-3.5 9.74-8 11-4.5-1.26-8-6-8-11V5l8-4zM7 11a5 5 0 1 0 10 0" /></svg>
+                    </span>
+                    <h3 class="feature__title">Privacy-friendly</h3>
+                    <p class="feature__text">We don’t store your search history. Logged-in viewing data powers personalization only.</p>
+                </div>
+            </div>
+
+            <!-- Email support -->
+            <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="feature">
+                    <span class="feature__icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 4l8 8 8-8" /></svg>
+                    </span>
+                    <h3 class="feature__title">Email support</h3>
+                    <p class="feature__text">Questions or feedback? Write to <a href="mailto:flixtv.movie.platform@gmail.com">flixtv.movie.platform@gmail.com</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end features -->
+<!-- data & personalization blurb -->
+<section class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-xl-10">
+                <h2 class="section__title">Personalization in practice</h2>
+                <p class="section__text section__text--small">
+                    Personalization on FlixTV is simple: we only use your <b>viewing activity</b>
+                    (e.g., what you watched, progress, dates and last position) together with your
+                    explicit interactions (favourites, likes/dislikes, reviews) to refine the titles
+                    we highlight for you. The more you use the platform, the better the fits become.
+                    You can still watch without signing in — just without personalization.
+                </p>
+                <p class="section__text section__text--small">
+                    For details about how we handle data, see our
+                    <a asp-controller="Home" asp-action="Privacy">Privacy Policy</a>.
+                </p>
+                <p class="section__text section__text--small">
+                    <a href="#top" class="js-backtotop">Back to top ↑</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (function () {
+          // Header height → CSS var for scroll-margin
+          function headerOffset() {
+            const h = document.querySelector('header.header');
+            return (h?.offsetHeight || 0) + 16; // extra breathing room
+          }
+          function applyOffsetVar() {
+            document.documentElement.style.setProperty('--anchor-offset', headerOffset() + 'px');
+          }
+          applyOffsetVar();
+          window.addEventListener('resize', applyOffsetVar);
+
+          // Smooth scroll that respects header height
+          function smoothGoTo(hash) {
+            const el = document.querySelector(hash);
+            if (!el) return;
+            const y = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset());
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            history.replaceState(null, '', hash);
+          }
+
+          // Hook up all “back to top” links
+          document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a => {
+            a.addEventListener('click', (e) => {
+              e.preventDefault();
+              smoothGoTo('#top');
+            });
+          });
+
+          // If page opened with a hash, align it under the header
+          if (location.hash) {
+            const target = document.querySelector(location.hash);
+            if (target) {
+              const y = Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - headerOffset());
+              window.scrollTo({ top: y, behavior: 'auto' });
+            }
+          }
+        })();
+    </script>
+
+    <style>
+        /* Ensure anchors never hide behind the fixed header */
+        #top {
+            scroll-margin-top: var(--anchor-offset, 96px);
+        }
+
+        :target {
+            scroll-margin-top: var(--anchor-offset, 96px);
+        }
+    </style>
+}

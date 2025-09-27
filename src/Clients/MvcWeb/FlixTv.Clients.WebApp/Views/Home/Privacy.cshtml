@@ -1,7 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Privacy policy";
-    var lastUpdated = "23 Sep 2025";
+    var lastUpdated = "23 Sep 2025"; // optionally pass from controller
 }
+
 <!-- head -->
 <section class="section section--head section--head-fixed" id="top">
     <div class="container">
@@ -25,9 +26,10 @@
                     <li class="nav-item"><a class="nav-link active" href="#sec-overview" role="tab" aria-current="page">Overview</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-collect" role="tab">Data we collect</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-use" role="tab">How we use data</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#sec-cookies" role="tab">Cookies & analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-cookies" role="tab">Cookies & tracking</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-sharing" role="tab">Sharing</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-security" role="tab">Security</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#sec-retention" role="tab">Retention & deletion</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-rights" role="tab">Your rights</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-children" role="tab">Children</a></li>
                     <li class="nav-item"><a class="nav-link" href="#sec-changes" role="tab">Changes</a></li>
@@ -43,49 +45,121 @@
     <div class="container">
         <div class="row">
 
+            <!-- Overview -->
             <div class="col-12 js-anchor" id="sec-overview">
                 <h2 class="policy__h">Overview</h2>
                 <p class="section__text section__text--small">
-                    This Privacy Policy explains how we collect, use, disclose, and protect your information when you use FlixTV.
-                    By using our services, you agree to the practices described here.
+                    This Privacy Policy explains how FlixTV collects, uses, discloses, and protects your information.
+                    FlixTV is a <b>free</b> service — we do not accept payments and we do not process card data.
                 </p>
             </div>
 
+            <!-- Data we collect -->
             <div class="col-12 js-anchor" id="sec-collect">
                 <h2 class="policy__h">1. Data we collect</h2>
                 <div class="section__list">
                     <ol>
-                        <li><b>Account data</b>: first name, last name, email address, password (stored using strong hashing).</li>
-                        <li><b>Usage data</b>: titles you watch, watch progress & duration, favourites, searches, device/region, session identifiers, interaction logs.</li>
-                        <li><b>Payment data (if applicable)</b>: tokens/identifiers from payment providers. We do not store raw card data.</li>
-                        <li><b>Support & feedback</b>: messages you send to our support channels.</li>
+                        <li>
+                            <b>Account data</b> – first name, last name, email address, and password
+                            (stored using strong hashing).
+                        </li>
+                        <li>
+                            <b>Watch activity (only)</b> – per title we store:
+                            start date (first time you started watching), last watched date,
+                            current playback position / max reached, and completion status.
+                            <u>We do not store</u> your search history or ad identifiers.
+                        </li>
+                        <li>
+                            <b>Support messages</b> – if you email us, the content of your message and our replies.
+                            We provide support <i>only via email</i>.
+                        </li>
+                        <li>
+                            <b>Technical information</b> – authentication/session cookies and a request header
+                            <code>X-Correlation-Id</code> (random GUID) used for diagnostics. These do not track you across sites.
+                        </li>
                     </ol>
                 </div>
             </div>
 
+            <!-- How we use data -->
             <div class="col-12 js-anchor" id="sec-use">
                 <h2 class="policy__h">2. How we use your data</h2>
                 <ul class="section__text section__text--small policy__bullets">
-                    <li>Provide and improve the service, keep your session, favourites and “continue watching”.</li>
-                    <li>Personalise recommendations and search quality.</li>
-                    <li>Detect and prevent abuse or fraud; comply with legal obligations.</li>
-                    <li>Send service notices and updates with your consent (you can opt out at any time).</li>
+                    <li>Run the service and keep you signed in.</li>
+                    <li>Resume playback, show “Continue Watching”, and remember where you left off.</li>
+                    <li>Maintain basic service integrity and comply with legal obligations.</li>
+                    <li>Handle support requests via email.</li>
                 </ul>
             </div>
 
+            <!-- Cookies & tracking -->
             <div class="col-12 js-anchor" id="sec-cookies">
-                <h2 class="policy__h">3. Cookies & analytics</h2>
+                <h2 class="policy__h">3. Cookies &amp; tracking</h2>
                 <p class="section__text section__text--small">
-                    We use cookies for session management and analytics. You can restrict cookies in your browser,
-                    but some features may not function properly. Analytics uses aggregated or pseudonymised information.
+                    We use cookies required to operate the site securely. You can learn more on the
+                    <a asp-controller="Home" asp-action="Cookies">Cookies page</a>. A summary of key cookies is below.
+                </p>
+                <div class="main__table-wrap mt-3">
+                    <table class="main__table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Provider</th>
+                                <th>Duration</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="main__table-text">.AspNetCore.Cookies</div></td>
+                                <td><div class="main__table-text">Essential / Auth</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">Session / ~2h</div></td>
+                                <td><div class="main__table-text">Keeps you signed in securely.</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">RequestVerificationToken</div></td>
+                                <td><div class="main__table-text">Essential / Security</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">Session</div></td>
+                                <td><div class="main__table-text">Protects forms & AJAX from CSRF.</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">flix_access_token</div></td>
+                                <td><div class="main__table-text">Essential / Token</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">Until access token expiry</div></td>
+                                <td><div class="main__table-text">Stores your JWT access token (HttpOnly).</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">flix_refresh_token</div></td>
+                                <td><div class="main__table-text">Essential / Token</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">Until refresh token expiry</div></td>
+                                <td><div class="main__table-text">Allows seamless re-authentication (HttpOnly).</div></td>
+                            </tr>
+                            <tr>
+                                <td><div class="main__table-text">ftv_lang</div></td>
+                                <td><div class="main__table-text">Functional</div></td>
+                                <td><div class="main__table-text">FlixTV</div></td>
+                                <td><div class="main__table-text">~6 months</div></td>
+                                <td><div class="main__table-text">Stores your language/UI preference.</div></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="section__text section__text--small mt-2">
+                    We do <b>not</b> store or profile your search queries.
                 </p>
             </div>
 
+            <!-- Sharing -->
             <div class="col-12 js-anchor" id="sec-sharing">
                 <h2 class="policy__h">4. How we share information</h2>
                 <div class="section__list">
                     <ol>
-                        <li>Service providers (hosting, CDN, email, analytics) that operate the platform.</li>
+                        <li>Service providers (hosting, CDN, email) that operate the platform under contract.</li>
                         <li>Authorities when required by law or to protect legal rights.</li>
                         <li>A successor entity in case of merger, acquisition, or reorganisation.</li>
                     </ol>
@@ -93,47 +167,65 @@
                 <p class="section__text section__text--small">We never sell your personal information for advertising purposes.</p>
             </div>
 
+            <!-- Security -->
             <div class="col-12 js-anchor" id="sec-security">
                 <h2 class="policy__h">5. Security</h2>
-                <p class="section__text section__text--small">
-                    Data is transmitted over encrypted channels (HTTPS). Passwords are stored using industry-standard hashing.
-                    No online system is 100% secure, but we apply best practices to reduce risk.
-                </p>
-            </div>
-
-            <div class="col-12 js-anchor" id="sec-rights">
-                <h2 class="policy__h">6. Your rights</h2>
                 <ul class="section__text section__text--small policy__bullets">
-                    <li>Access, export, correct, or delete your personal data (including delete your account).</li>
-                    <li>Restrict or object to processing; withdraw consent where processing relies on consent.</li>
-                    <li>File a complaint with your local data protection authority, if applicable.</li>
+                    <li>Data in transit is protected with HTTPS/TLS.</li>
+                    <li>Passwords are stored using industry-standard hashing.</li>
+                    <li>Auth cookies are <code>HttpOnly</code> with <code>SameSite=Lax</code>; in production we set <code>Secure=true</code>.</li>
+                    <li>Anti-forgery tokens protect forms and AJAX calls against CSRF.</li>
+                    <li>Automatic token refresh reduces the need to re-enter credentials.</li>
                 </ul>
             </div>
 
+            <!-- Retention -->
+            <div class="col-12 js-anchor" id="sec-retention">
+                <h2 class="policy__h">6. Data retention &amp; deletion</h2>
+                <ul class="section__text section__text--small policy__bullets">
+                    <li>Watch activity is kept so you can resume playback and view “Continue Watching”.</li>
+                    <li>Session and access tokens expire automatically; refresh tokens have longer lifetimes and are rotated.</li>
+                    <li>Support emails are retained as required to resolve your request.</li>
+                    <li>You may request deletion of your account and watch activity via email; we remove data not required by law.</li>
+                </ul>
+            </div>
+
+            <!-- Rights -->
+            <div class="col-12 js-anchor" id="sec-rights">
+                <h2 class="policy__h">7. Your rights</h2>
+                <ul class="section__text section__text--small policy__bullets">
+                    <li>Access, export, correct, or delete your personal data (including delete your account).</li>
+                    <li>Restrict or object to processing; withdraw consent where processing relies on consent.</li>
+                    <li>File a complaint with your local data-protection authority, if applicable.</li>
+                </ul>
+            </div>
+
+            <!-- Children -->
             <div class="col-12 js-anchor" id="sec-children">
-                <h2 class="policy__h">7. Children’s privacy</h2>
+                <h2 class="policy__h">8. Children’s privacy</h2>
                 <p class="section__text section__text--small">
-                    Our services are not directed to children under the age required by applicable law. If you believe
-                    we have collected data from a child, contact us to remove it.
+                    Our services are not directed to children under the age required by applicable law.
+                    If you believe we have collected data from a child, contact us to remove it.
                 </p>
             </div>
 
+            <!-- Changes -->
             <div class="col-12 js-anchor" id="sec-changes">
-                <h2 class="policy__h">8. Changes to this policy</h2>
+                <h2 class="policy__h">9. Changes to this policy</h2>
                 <p class="section__text section__text--small">
-                    We may update this policy from time to time. We will post the new date at the top.
-                    Your continued use of the service after changes means you accept the updated policy.
+                    This policy is stable and <b>rarely changes</b>. If we ever make a material change, we will update the date at the top
+                    and post a notice. Your continued use after changes means you accept the updated policy.
                 </p>
             </div>
 
+            <!-- Contact -->
             <div class="col-12 js-anchor" id="sec-contact">
-                <h2 class="policy__h">9. Contact us</h2>
+                <h2 class="policy__h">10. Contact us</h2>
                 <p class="section__text section__text--small">
-                    For privacy questions or requests, email
-                    <a href="mailto:flixtv.movie.platform@gmail.com">flixtv.movie.platform@gmail.com</a>.
+                    Support is handled only via email by our moderators. Send feedback or complaints to
+                    <a href="mailto:flixtv.movie.platform@gmail.com">flixtv.movie.platform@gmail.com</a>; we’ll reply by email.
                 </p>
                 <p class="section__text section__text--small">
-                    <!-- NOTE: back-to-top now points to #sec-overview so tabs sync properly -->
                     <a href="#sec-overview" class="js-backtotop">Back to top ↑</a>
                 </p>
             </div>
@@ -162,17 +254,16 @@
             links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === hash));
           }
           function smoothGoTo(hash) {
-            // special-case: #top should behave like Overview so tabs sync
             if (hash === '#top') hash = '#sec-overview';
             const target = document.querySelector(hash);
             if (!target) return;
             const y = Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - headerOffset());
-            setActive(hash);                 // instant visual feedback
+            setActive(hash);
             window.scrollTo({ top: y, behavior: 'smooth' });
             history.replaceState(null, '', hash);
           }
 
-          // ---------- tabs click ----------
+          // tab clicks
           links.forEach(a => {
             a.addEventListener('click', e => {
               const href = a.getAttribute('href') || '';
@@ -182,21 +273,20 @@
             });
           });
 
-          // ---------- back-to-top link(s) ----------
+          // back to top
           document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a => {
-            a.addEventListener('click', (e) => {
+            a.addEventListener('click', e => {
               e.preventDefault();
               smoothGoTo('#sec-overview');
             });
           });
 
-          // ---------- scrollspy with IntersectionObserver ----------
-          const targetNodes = () => Array.from(document.querySelectorAll('.section.policy .js-anchor[id]'));
+          // scrollspy with IntersectionObserver
+          const sections = Array.from(document.querySelectorAll('.section.policy .js-anchor[id]'));
           let io = null;
-          function buildObserver() {
+          function buildIO() {
             if (io) io.disconnect();
             io = new IntersectionObserver((entries) => {
-              // choose the intersecting section closest to the top
               let best = null;
               for (const en of entries) {
                 if (!en.isIntersecting) continue;
@@ -208,12 +298,12 @@
               rootMargin: `-${headerOffset()}px 0px -70% 0px`,
               threshold: [0, 0.01, 0.1]
             });
-            targetNodes().forEach(t => io.observe(t));
+            sections.forEach(s => io.observe(s));
           }
-          buildObserver();
-          window.addEventListener('resize', buildObserver);
+          buildIO();
+          window.addEventListener('resize', buildIO);
 
-          // ---------- handle direct hash on load ----------
+          // initial hash
           if (location.hash) {
             smoothGoTo(location.hash);
           } else {
@@ -223,7 +313,7 @@
     </script>
 
     <style>
-        /* headings */
+        /* Headings: strong contrast & spacing */
         .section.policy .policy__h {
             color: #fff;
             font-weight: 700;
@@ -238,7 +328,7 @@
             }
         }
 
-        /* body text contrast */
+        /* Body text (scoped to this page) */
         .section.policy .section__text.section__text--small,
         .section.policy .section__list,
         .section.policy .section__list li {
@@ -253,7 +343,16 @@
                 margin: .25rem 0;
             }
 
-        /* tabs */
+        /* Bullet lists */
+        .policy__bullets {
+            padding-left: 1.25rem;
+        }
+
+            .policy__bullets li {
+                margin: .3rem 0;
+            }
+
+        /* Tabs (chip style) */
         .policy__tabs {
             display: flex;
             flex-direction: row;
@@ -299,16 +398,7 @@
                     font-weight: 600;
                 }
 
-        /* bullets */
-        .policy__bullets {
-            padding-left: 1.25rem;
-        }
-
-            .policy__bullets li {
-                margin: .3rem 0;
-            }
-
-        /* never let anchors hide under the fixed header */
+        /* Anchor offset so sections don't hide under fixed header */
         .section.policy .js-anchor {
             scroll-margin-top: var(--anchor-offset,96px);
         }
