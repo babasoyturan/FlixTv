@@ -210,55 +210,94 @@
 
 @section Scripts {
     <script>
-        (function(){
-          // ------- dynamic header offset -------
-          function headerOffset(){
+        (function () {
+          // ---- fixed header offset ----
+          function headerOffset() {
             const h = document.querySelector('header.header');
-            return (h?.offsetHeight || 0) + 16;
+            return (h?.offsetHeight || 0) + 16; // buffer
           }
-          function setVar(){
-            document.documentElement.style.setProperty('--anchor-offset', headerOffset() + 'px');
-          }
-          setVar(); window.addEventListener('resize', setVar);
 
-          // ------- tabs + smooth scroll -------
+          // ---- tabs ----
           const tabs = Array.from(document.querySelectorAll('.cookie__tabs .nav-link'));
-          function setActive(hash){ tabs.forEach(l=>l.classList.toggle('active', l.getAttribute('href')===hash)); }
-          function go(hash){
-            if(hash==='#top') hash='#sec-overview';
-            const t = document.querySelector(hash); if(!t) return;
-            const y = Math.max(0, t.getBoundingClientRect().top + window.pageYOffset - headerOffset());
-            setActive(hash); window.scrollTo({top:y, behavior:'smooth'}); history.replaceState(null,'',hash);
+          function setActiveById(id) {
+            const hash = '#' + id;
+            tabs.forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash));
           }
-          tabs.forEach(a=>a.addEventListener('click',e=>{
-            const href=a.getAttribute('href')||''; if(!href.startsWith('#')) return;
-            e.preventDefault(); go(href);
-          }));
-          document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a=>a.addEventListener('click',e=>{
-            e.preventDefault(); go('#sec-overview');
-          }));
 
-          // ------- scrollspy (IntersectionObserver) -------
+          // ---- smooth scroll helper ----
+          function smoothTo(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const y = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset());
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            history.replaceState(null, '', '#' + id);
+          }
+
+          // ---- compute section trigger positions (top - headerOffset) ----
           const anchors = Array.from(document.querySelectorAll('.section.cookie .js-anchor[id]'));
-          let io=null;
-          function buildIO(){
-            if(io) io.disconnect();
-            io = new IntersectionObserver((entries)=>{
-              let best=null;
-              for(const en of entries){
-                if(!en.isIntersecting) continue;
-                if(!best || en.boundingClientRect.top < best.boundingClientRect.top) best=en;
-              }
-              if(best) setActive('#'+best.target.id);
-            }, { root:null, rootMargin:`-${headerOffset()}px 0px -70% 0px`, threshold:[0,0.01,0.1] });
-            anchors.forEach(a=>io.observe(a));
+          let sections = [];
+          function computeSections() {
+            const off = headerOffset();
+            sections = anchors.map(el => ({
+              id: el.id,
+              top: Math.floor(el.getBoundingClientRect().top + window.scrollY - off - 2) // -2px tolerance
+            })).sort((a,b) => a.top - b.top);
           }
-          buildIO(); window.addEventListener('resize', buildIO);
 
-          // initial hash
-          if(location.hash) go(location.hash); else setActive('#sec-overview');
+          // ---- scrollspy (RAF throttled) ----
+          let raf = 0;
+          function onScroll() {
+            if (raf) return;
+            raf = requestAnimationFrame(() => {
+              raf = 0;
+              if (!sections.length) computeSections();
+              const pos = window.scrollY;
+              let current = sections.length ? sections[0].id : null;
+              for (const s of sections) {
+                if (pos >= s.top) current = s.id; else break;
+              }
+              if (current) setActiveById(current);
+            });
+          }
+
+          // tab clicks → smooth
+          tabs.forEach(a => {
+            const href = a.getAttribute('href') || '';
+            if (!href.startsWith('#')) return;
+            a.addEventListener('click', (e) => {
+              e.preventDefault();
+              const id = href.slice(1);
+              smoothTo(id);
+            });
+          });
+
+          // page "Back to top" on this view → Overview
+          document.querySelectorAll('.section.cookie a.js-backtotop').forEach(a => {
+            a.addEventListener('click', (e) => { e.preventDefault(); smoothTo('sec-overview'); });
+          });
+
+          // init & listeners
+          computeSections();
+          onScroll(); // set initial active correctly
+          window.addEventListener('scroll', onScroll, { passive: true });
+          window.addEventListener('resize', () => { computeSections(); onScroll(); });
+          // in case fonts/images shift layout:
+          window.addEventListener('load', () => { computeSections(); onScroll(); });
+
+          // if opened with a hash, scroll to it respecting header
+          if (location.hash) {
+            let id = location.hash.slice(1);
+            if (id === 'top') id = 'sec-overview';
+            setActiveById(id);
+            // align under header without animation on initial load
+            const el = document.getElementById(id);
+            if (el) window.scrollTo(0, Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset()));
+          } else {
+            setActiveById(anchors[0]?.id || 'sec-overview');
+          }
         })();
     </script>
+
 
     <style>
         /* headings */

@@ -237,77 +237,87 @@
 @section Scripts {
     <script>
         (function () {
-          // ---------- header offset ----------
+          // ---- header offset + CSS var ----
           function headerOffset() {
             const h = document.querySelector('header.header');
             return (h?.offsetHeight || 0) + 16;
           }
-          function applyAnchorOffset() {
+          function applyAnchorOffsetVar() {
             document.documentElement.style.setProperty('--anchor-offset', headerOffset() + 'px');
           }
-          applyAnchorOffset();
-          window.addEventListener('resize', applyAnchorOffset);
+          applyAnchorOffsetVar();
+          window.addEventListener('resize', applyAnchorOffsetVar);
+          window.addEventListener('load', applyAnchorOffsetVar);
 
-          // helpers
+          // ---- tabs helpers ----
           const links = Array.from(document.querySelectorAll('.policy__tabs .nav-link'));
-          function setActive(hash) {
+          function setActiveById(id) {
+            const hash = '#' + id;
             links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === hash));
           }
-          function smoothGoTo(hash) {
-            if (hash === '#top') hash = '#sec-overview';
-            const target = document.querySelector(hash);
-            if (!target) return;
-            const y = Math.max(0, target.getBoundingClientRect().top + window.pageYOffset - headerOffset());
-            setActive(hash);
+          function smoothTo(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const y = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset());
             window.scrollTo({ top: y, behavior: 'smooth' });
-            history.replaceState(null, '', hash);
+            history.replaceState(null, '', '#' + id);
           }
 
-          // tab clicks
-          links.forEach(a => {
-            a.addEventListener('click', e => {
-              const href = a.getAttribute('href') || '';
-              if (!href.startsWith('#')) return;
-              e.preventDefault();
-              smoothGoTo(href);
-            });
-          });
+          // ---- build sections map (top - offset) ----
+          const anchors = Array.from(document.querySelectorAll('.section.policy .js-anchor[id]'));
+          let sections = [];
+          function computeSections() {
+            const off = headerOffset();
+            sections = anchors.map(a => ({
+              id: a.id,
+              top: Math.floor(a.getBoundingClientRect().top + window.scrollY - off - 2) // tolerance
+            })).sort((a,b) => a.top - b.top);
+          }
 
-          // back to top
-          document.querySelectorAll('a.js-backtotop, a[href="#top"]').forEach(a => {
-            a.addEventListener('click', e => {
-              e.preventDefault();
-              smoothGoTo('#sec-overview');
-            });
-          });
-
-          // scrollspy with IntersectionObserver
-          const sections = Array.from(document.querySelectorAll('.section.policy .js-anchor[id]'));
-          let io = null;
-          function buildIO() {
-            if (io) io.disconnect();
-            io = new IntersectionObserver((entries) => {
-              let best = null;
-              for (const en of entries) {
-                if (!en.isIntersecting) continue;
-                if (!best || en.boundingClientRect.top < best.boundingClientRect.top) best = en;
+          // ---- scrollspy (RAF throttled) ----
+          let raf = 0;
+          function onScroll() {
+            if (raf) return;
+            raf = requestAnimationFrame(() => {
+              raf = 0;
+              if (!sections.length) computeSections();
+              const pos = window.scrollY;
+              let current = sections.length ? sections[0].id : null;
+              for (const s of sections) {
+                if (pos >= s.top) current = s.id; else break;
               }
-              if (best) setActive('#' + best.target.id);
-            }, {
-              root: null,
-              rootMargin: `-${headerOffset()}px 0px -70% 0px`,
-              threshold: [0, 0.01, 0.1]
+              if (current) setActiveById(current);
             });
-            sections.forEach(s => io.observe(s));
           }
-          buildIO();
-          window.addEventListener('resize', buildIO);
 
-          // initial hash
+          // tab click → smooth
+          links.forEach(a => {
+            const href = a.getAttribute('href') || '';
+            if (!href.startsWith('#')) return;
+            a.addEventListener('click', e => { e.preventDefault(); smoothTo(href.slice(1)); });
+          });
+
+          // Bu səhifədəki "Back to top" (footerindəkilərlə qarışmasın)
+          document.querySelectorAll('.section.policy a.js-backtotop').forEach(a => {
+            a.addEventListener('click', e => { e.preventDefault(); smoothTo('sec-overview'); });
+          });
+
+          // init
+          computeSections();
+          onScroll();
+          window.addEventListener('scroll', onScroll, { passive: true });
+          window.addEventListener('resize', () => { computeSections(); onScroll(); });
+          window.addEventListener('load',   () => { computeSections(); onScroll(); });
+
+          // hash ilə açılma (#top → #sec-overview map)
           if (location.hash) {
-            smoothGoTo(location.hash);
+            let id = location.hash.slice(1);
+            if (id === 'top') id = 'sec-overview';
+            setActiveById(id);
+            const el = document.getElementById(id);
+            if (el) window.scrollTo(0, Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - headerOffset()));
           } else {
-            setActive('#sec-overview');
+            setActiveById(anchors[0]?.id || 'sec-overview');
           }
         })();
     </script>

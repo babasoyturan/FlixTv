@@ -3,116 +3,276 @@
 @functions {
     List<int?> BuildPages(int current, int total)
     {
-        var list = new List<int?>();
-        if (total <= 1) return list;
-        int start = Math.Max(2, current - 2);
-        int end = Math.Min(total - 1, current + 2);
-        list.Add(1);
-        if (start > 2) list.Add(null);
+        var list = new List<int?>(); if (total <= 1) return list;
+        int start = Math.Max(2, current - 2), end = Math.Min(total - 1, current + 2);
+        list.Add(1); if (start > 2) list.Add(null);
         for (int i = start; i <= end; i++) list.Add(i);
-        if (end < total - 1) list.Add(null);
-        list.Add(total);
-        return list.Distinct().ToList();
+        if (end < total - 1) list.Add(null); list.Add(total); return list.Distinct().ToList();
     }
-
     string BuildUrl(int page)
     {
-        // DƏYİŞDİ: hardcode yox, modeldən gəlir
         var url = Url.Action(Model.ListAction, Model.ListController)!;
-
         var parts = new List<string>();
-        foreach (var kv in Model.Query)
-        {
-            if (!string.IsNullOrWhiteSpace(kv.Value))
+        foreach (var kv in Model.Query) if (!string.IsNullOrWhiteSpace(kv.Value))
                 parts.Add($"{Uri.EscapeDataString(kv.Key)}={Uri.EscapeDataString(kv.Value!)}");
-        }
-
-        parts.Add($"page={page}");
-        parts.Add($"pageSize={Model.PageSize}");
-        var qs = string.Join("&", parts);
-        return $"{url}?{qs}";
+        parts.Add($"page={page}"); parts.Add($"pageSize={Model.PageSize}");
+        return $"{url}?{string.Join("&", parts)}";
     }
 }
 
 @{
     var totalPages = Model.TotalPages;
     var current = Math.Min(Math.Max(1, Model.Page), Math.Max(1, totalPages));
-    var pages = BuildPages(current, totalPages);
-    var shown = Model.Movies?.Count ?? 0;
+    var shown = Model?.TotalCount ?? 0;
     var fromIndex = shown == 0 ? 0 : (Model.Page - 1) * Model.PageSize + 1;
     var toIndex = shown == 0 ? 0 : fromIndex + shown - 1;
+
+    var ctxAction = (Model?.ListAction ?? "").ToLowerInvariant();
+    var ctxController = (Model?.ListController ?? "").ToLowerInvariant();
+
+    var isFav = ctxAction == "favouritesgrid";
+    var isCont = ctxAction == "continuegrid";
+
+    // Search konteksti: ya Search controller, ya da query-də q / searchText var
+    Model.Query.TryGetValue("q", out var qTerm);
+    if (string.IsNullOrWhiteSpace(qTerm)) Model.Query.TryGetValue("searchText", out qTerm);
+    var isSearch = ctxController == "search" || !string.IsNullOrWhiteSpace(qTerm);
+
+    // Başlıq + mesaj
+    var emptyTitle =
+        isFav ? "No favourites yet" :
+        isCont ? "Nothing to continue" :
+        isSearch ? $"No results for “{qTerm}”" :
+                  "No movies found";
+
+    var emptyText =
+        isFav ? "Tap the bookmark on any movie to add it here." :
+        isCont ? "When you stop a movie midway, it will show up here." :
+        isSearch ? "We couldn’t find any matches. Try a different keyword." :
+                  "Try clearing filters or browse all movies.";
 }
 
 <input type="hidden" id="js-movies-page-size" value="@Model.PageSize" />
 
-<div class="row row--grid" id="moviesGrid__list">
-    @foreach (var m in Model.Movies)
-    {
-        <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
-            <div class="card">
-                <a asp-controller="Movies" asp-action="Watch" asp-route-id="@m.Id" class="card__cover">
-                    <img src="@m.CoverImageUrl" alt="">
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 1C16.5228 1 21 5.47716 21 11C21 16.5228 16.5228 21 11 21C5.47716 21 1 16.5228 1 11C1 5.47716 5.47716 1 11 1Z" stroke-linecap="round" stroke-linejoin="round" /><path fill-rule="evenodd" clip-rule="evenodd" d="M14.0501 11.4669C13.3211 12.2529 11.3371 13.5829 10.3221 14.0099C10.1601 14.0779 9.74711 14.2219 9.65811 14.2239C9.46911 14.2299 9.28711 14.1239 9.19911 13.9539C9.16511 13.8879 9.06511 13.4569 9.03311 13.2649C8.93811 12.6809 8.88911 11.7739 8.89011 10.8619C8.88911 9.90489 8.94211 8.95489 9.04811 8.37689C9.07611 8.22089 9.15811 7.86189 9.18211 7.80389C9.22711 7.69589 9.30911 7.61089 9.40811 7.55789C9.48411 7.51689 9.57111 7.49489 9.65811 7.49789C9.74711 7.49989 10.1091 7.62689 10.2331 7.67589C11.2111 8.05589 13.2801 9.43389 14.0401 10.2439C14.1081 10.3169 14.2951 10.5129 14.3261 10.5529C14.3971 10.6429 14.4321 10.7519 14.4321 10.8619C14.4321 10.9639 14.4011 11.0679 14.3371 11.1549C14.3041 11.1999 14.1131 11.3999 14.0501 11.4669Z" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                </a>
-
-                <button class="card__add js-fav-btn @(m.IsFavourite ? "active" : "")" type="button" data-movie-id="@m.Id" aria-pressed="@(m.IsFavourite.ToString().ToLower())">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16,2H8A3,3,0,0,0,5,5V21a1,1,0,0,0,.5.87,1,1,0,0,0,1,0L12,18.69l5.5,3.18A1,1,0,0,0,18,22a1,1,0,0,0,.5-.13A1,1,0,0,0,19,21V5A3,3,0,0,0,16,2Zm1,17.27-4.5-2.6a1,1,0,0,0-1,0L7,19.27V5A1,1,0,0,1,8,4h8a1,1,0,0,1,1,1Z" /></svg>
-                </button>
-
-                <span class="card__rating">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22,9.67A1,1,0,0,0,21.14,9l-5.69-.83L12.9,3a1,1,0,0,0-1.8,0L8.55,8.16,2.86,9a1,1,0,0,0-.81.68,1,1,0,0,0,.25,1l4.13,4-1,5.68A1,1,0,0,0,6.9,21.44L12,18.77l5.1,2.67a.93.93,0,0,0,.46.12,1,1,0,0,0,.59-.19,1,1,0,0,0,.4-1l-1-5.68,4.13-4A1,1,0,0,0,22,9.67Z" /></svg>
-                    @m.Rating
-                </span>
-
-                <h3 class="card__title">
-                    <a asp-controller="Movies" asp-action="Watch" asp-route-id="@m.Id">@m.Title</a>
-                </h3>
-                <ul class="card__list">
-                    @foreach (var cat in m.Categories)
-                    {
-                        <li>@cat</li>
-                    }
-                    <li>@m.ReleaseYear</li>
-                </ul>
-            </div>
-        </div>
-    }
-</div>
-
-@if (totalPages > 1)
+@if (shown == 0)
 {
     <div class="row">
         <div class="col-12">
-            <div class="catalog__paginator-wrap">
-                <span class="catalog__pages">@fromIndex-@toIndex from @Model.TotalCount</span>
-                <ul class="catalog__paginator js-movies-pager">
-                    <li class="@(current == 1 ? "disabled" : "")">
-                        <a href="@BuildUrl(Math.Max(1, current - 1))">
-                            <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                        </a>
-                    </li>
-
-                    @foreach (var p in BuildPages(current, totalPages))
+            <div class="empty">
+                <div class="empty__icon" aria-hidden="true">
+                    @* Kontekstə görə ikon *@
+                    @if (isFav)
                     {
-                        if (p is null)
-                        {
-                            <li class="disabled"><span style="color:white">…</span></li>
-                        }
-                        else
-                        {
-                            <li class="@(p == current ? "active" : "")">
-                                <a href="@BuildUrl(p.Value)">@p</a>
-                            </li>
-                        }
+                        <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5A4.5 4.5 0 0 1 6.5 4c1.74 0 3.41.81 4.5 2.09A6.02 6.02 0 0 1 15 4a4.5 4.5 0 0 1 4.5 4.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
                     }
+                    else if (isSearch)
+                    {
+                        <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm11 19-5.4-5.4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" /></svg>
+                    }
+                    else
+                    {
+                        @* Film-strip / kaset *@
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm3 2H5v2h2V6zm0 4H5v2h2v-2zm0 4H5v2h2v-2zm7-8H8v12h6V6zm4 0h-2v2h2V6zm0 4h-2v2h2v-2zm0 4h-2v2h2v-2z" /></svg>
+                    }
+                </div>
 
-                    <li class="@(current == totalPages ? "disabled" : "")">
-                        <a href="@BuildUrl(Math.Min(totalPages, current + 1))">
-                            <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                        </a>
-                    </li>
-                </ul>
+                <h3 class="empty__title">@emptyTitle</h3>
+                <p class="empty__text">@emptyText</p>
+
+                <div class="empty__actions">
+                    <a class="empty__btn empty__btn--primary"
+                       asp-controller="Movies" asp-action="Index">Browse movies</a>
+
+                    @if (isFav)
+                    {
+                        <a class="empty__btn empty__btn--ghost"
+                           asp-controller="Home" asp-action="AboutUs">How it works</a>
+                    }
+                </div>
             </div>
         </div>
     </div>
+
+    <style>
+        .empty {
+            --brand: #3b82f6; /* fallback brand */
+        }
+
+        .empty {
+            text-align: center;
+            padding: 3rem 1rem 4rem;
+            border: 1px dashed rgba(255,255,255,.12);
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+        }
+
+        .empty__icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto .75rem;
+            opacity: .9;
+            color: #fff
+        }
+
+            .empty__icon svg {
+                width: 100%;
+                height: 100%;
+                fill: currentColor
+            }
+
+        .empty__title {
+            color: #fff;
+            font-size: 1.35rem;
+            margin: .25rem 0 .35rem;
+            font-weight: 700
+        }
+
+        .empty__text {
+            color: rgba(255,255,255,.8);
+            margin: 0 auto 1.1rem;
+            max-width: 520px
+        }
+
+        .empty__actions {
+            display: flex;
+            gap: .6rem;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .empty__btn {
+            display: inline-block;
+            padding: .6rem 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            line-height: 1.1;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,.22);
+            background: rgba(255,255,255,.06);
+            color: #eaeaea;
+            transform: translateY(0);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+            transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease, border-color .18s ease;
+        }
+            /* Ghost default → hover dəyişimi aydın olsun */
+            .empty__btn:hover {
+                background: rgba(59,130,246,.12);
+                border-color: rgba(59,130,246,.55);
+                color: #fff;
+                transform: translateY(-1px) scale(1.01);
+                box-shadow: 0 10px 22px rgba(0,0,0,.28);
+                text-decoration: none;
+            }
+
+        /* Primary (Browse) – hoverda brend rənginə keçsin */
+        .empty__btn--primary {
+            background: #fff;
+            color: #111;
+            border-color: #fff;
+        }
+
+            .empty__btn--primary:hover {
+                background: var(--brand);
+                color: #fff;
+                border-color: transparent;
+                transform: translateY(-1px) scale(1.01);
+                box-shadow: 0 12px 26px rgba(0,0,0,.30);
+            }
+
+        .empty__btn--ghost {
+            background: transparent;
+            color: #fff
+        }
+
+        .empty__btn:active {
+            transform: translateY(0) scale(1.0);
+            box-shadow: 0 6px 16px rgba(0,0,0,.22)
+        }
+
+        .empty__btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,.55), 0 0 0 5px rgba(59,130,246,.25)
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            .empty__btn {
+                transition: none
+            }
+
+                .empty__btn:hover, .empty__btn:active {
+                    transform: none;
+                    box-shadow: none
+                }
+        }
+    </style>
+}
+else
+{
+    <div class="row row--grid" id="moviesGrid__list">
+        @foreach (var m in Model.Movies)
+        {
+            <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
+                <div class="card">
+                    <a asp-controller="Movies" asp-action="Watch" asp-route-id="@m.Id" class="card__cover">
+                        <img src="@m.CoverImageUrl" alt="">
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M11 1C16.5228 1 21 5.47716 21 11C21 16.5228 16.5228 21 11 21C5.47716 21 1 16.5228 1 11C1 5.47716 5.47716 1 11 1Z" stroke-linecap="round" stroke-linejoin="round" /><path fill-rule="evenodd" clip-rule="evenodd" d="M14.0501 11.4669C13.3211 12.2529 11.3371 13.5829 10.3221 14.0099C10.1601 14.0779 9.74711 14.2219 9.65811 14.2239C9.46911 14.2299 9.28711 14.1239 9.19911 13.9539C9.16511 13.8879 9.06511 13.4569 9.03311 13.2649C8.93811 12.6809 8.88911 11.7739 8.89011 10.8619C8.88911 9.90489 8.94211 8.95489 9.04811 8.37689C9.07611 8.22089 9.15811 7.86189 9.18211 7.80389C9.22711 7.69589 9.30911 7.61089 9.40811 7.55789C9.48411 7.51689 9.57111 7.49489 9.65811 7.49789C9.74711 7.49989 10.1091 7.62689 10.2331 7.67589C11.2111 8.05589 13.2801 9.43389 14.0401 10.2439C14.1081 10.3169 14.2951 10.5129 14.3261 10.5529C14.3971 10.6429 14.4321 10.7519 14.4321 10.8619C14.4321 10.9639 14.4011 11.0679 14.3371 11.1549C14.3041 11.1999 14.1131 11.3999 14.0501 11.4669Z" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    </a>
+
+                    <button class="card__add js-fav-btn @(m.IsFavourite ? "active" : "")"
+                            type="button" data-movie-id="@m.Id"
+                            aria-pressed="@(m.IsFavourite.ToString().ToLower())">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16,2H8A3,3,0,0,0,5,5V21a1,1,0,0,0,.5.87,1,1,0,0,0,1,0L12,18.69l5.5,3.18A1,1,0,0,0,18,22a1,1,0,0,0,.5-.13A1,1,0,0,0,19,21V5A3,3,0,0,0,16,2Zm1,17.27-4.5-2.6a1,1,0,0,0-1,0L7,19.27V5A1,1,0,0,1,8,4h8a1,1,0,0,1,1,1Z" /></svg>
+                    </button>
+
+                    <span class="card__rating">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M22,9.67A1,1,0,0,0,21.14,9l-5.69-.83L12.9,3a1,1,0,0,0-1.8,0L8.55,8.16,2.86,9a1,1,0,0,0-.81.68,1,1,0,0,0,.25,1l4.13,4-1,5.68A1,1,0,0,0,6.9,21.44L12,18.77l5.1,2.67a.93.93,0,0,0,.46.12,1,1,0,0,0,.59-.19,1,1,0,0,0,.4-1l-1-5.68,4.13-4A1,1,0,0,0,22,9.67Z" /></svg>
+                        @m.Rating
+                    </span>
+
+                    <h3 class="card__title"><a asp-controller="Movies" asp-action="Watch" asp-route-id="@m.Id">@m.Title</a></h3>
+                    <ul class="card__list">
+                        @foreach (var cat in m.Categories)
+                        {
+                            <li>@cat</li>
+                        }
+                        <li>@m.ReleaseYear</li>
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="catalog__paginator-wrap">
+                    <span class="catalog__pages">@fromIndex-@toIndex from @Model.TotalCount</span>
+                    <ul class="catalog__paginator js-movies-pager">
+                        <li class="@(current == 1 ? "disabled" : "")">
+                            <a href="@BuildUrl(Math.Max(1, current - 1))">
+                                <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            </a>
+                        </li>
+                        @foreach (var p in BuildPages(current, totalPages))
+                        {
+                            if (p is null)
+                            {
+                                <li class="disabled"><span style="color:white">…</span></li>
+                            }
+                            else
+                            {
+                                <li class="@(p == current ? "active" : "")"><a href="@BuildUrl(p.Value)">@p</a></li>
+                            }
+                        }
+                        <li class="@(current == totalPages ? "disabled" : "")">
+                            <a href="@BuildUrl(Math.Min(totalPages, current + 1))">
+                                <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
 }

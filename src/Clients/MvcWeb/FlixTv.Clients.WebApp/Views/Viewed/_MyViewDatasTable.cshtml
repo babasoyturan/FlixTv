@@ -52,12 +52,11 @@
     <table class="main__table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>MOVIE NAME</th>
                 <th>WATCHED TIME</th> <!-- dəyişiklik: text -->
                 <th>COMPLETED</th>
-                <th>LAST WATCHED DATE</th>
-                <th>STARTED DATE</th>
+                <th>DATE YOU LAST WATCHED</th>
+                <th>DATE YOU STARTED WATCHING</th>
             </tr>
         </thead>
         <tbody>
@@ -70,7 +69,6 @@
                 foreach (var v in Model.ViewDatas)
                 {
                     <tr data-viewdata-id="@v.Id">
-                        <td><div class="main__table-text">@v.Id</div></td>
                         <td>
                             <div class="main__table-text">
                                 @if (v.Movie?.Id > 0)

@@ -27,11 +27,10 @@
     <table class="main__table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>MOVIE NAME</th>
                 <th>MESSAGE</th>
                 <th>LIKE / DISLIKE</th>
-                <th>CREATED DATE</th>
+                <th>DATE</th>
                 <th>ACTIONS</th>
             </tr>
         </thead>
@@ -45,7 +44,6 @@
                 foreach (var c in Model.Comments)
                 {
                     <tr data-comment-id="@c.Id">
-                        <td><div class="main__table-text">@c.Id</div></td>
                         <td>
                             <div class="main__table-text">
                                 @if (c.Movie?.Id > 0)

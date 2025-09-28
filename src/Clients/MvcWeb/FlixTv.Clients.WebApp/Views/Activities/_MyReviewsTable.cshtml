@@ -24,12 +24,11 @@
     <table class="main__table">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>MOVIE NAME</th>
                 <th>TITLE</th>
                 <th>MESSAGE</th>
                 <th>RATING</th>
-                <th>CREATED DATE</th>
+                <th>DATE</th>
                 <th>ACTIONS</th>
             </tr>
         </thead>
@@ -43,7 +42,6 @@
                 foreach (var r in Model.Reviews)
                 {
                     <tr data-review-id="@r.Id">
-                        <td><div class="main__table-text">@r.Id</div></td>
                         <td>
                             <div class="main__table-text">
                                 @if (r.Movie?.Id > 0)

@@ -67,7 +67,7 @@ namespace FlixTv.Api.WebApi.Controllers
         [Authorize(Roles = "User, Admin, Moderator")]
         [HttpGet]
         public async Task<IActionResult> GetMyFavouriteMovies(
-        [FromQuery] string? orderBy,
+        [FromQuery] string? orderBy = "createdDate",
         [FromQuery] int currentPage = 0,
         [FromQuery] int pageSize = 0
         )
