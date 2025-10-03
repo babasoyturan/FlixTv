@@ -28,6 +28,12 @@ namespace FlixTv.Api.Infrastructure.Seeding.Tmdb
         public Task<TmdbPaged<TmdbMovieSummary>?> GetTopRatedAsync(int page)
             => GetAsync<TmdbPaged<TmdbMovieSummary>>($"movie/top_rated?page={page}");
 
+        public Task<TmdbPaged<TmdbMovieSummary>?> DiscoverAsync(int page, int? year = null, int voteCountGte = 1)
+            => GetAsync<TmdbPaged<TmdbMovieSummary>>(
+                $"discover/movie?page={page}&sort_by=popularity.desc&vote_count.gte={voteCountGte}" +
+                (year.HasValue ? $"&primary_release_year={year.Value}" : "")
+            );
+
         public Task<TmdbMovieDetails?> GetDetailsAsync(int id)
             => GetAsync<TmdbMovieDetails>($"movie/{id}");
 
@@ -43,11 +49,28 @@ namespace FlixTv.Api.Infrastructure.Seeding.Tmdb
         public Task<TmdbPaged<TmdbMovieSummary>?> GetRecommendationsAsync(int id, int page = 1)
             => GetAsync<TmdbPaged<TmdbMovieSummary>>($"movie/{id}/recommendations?page={page}");
 
-        private async Task<T?> GetAsync<T>(string url)
+        private async Task<T?> GetAsync<T>(string url, int attempts = 4, CancellationToken ct = default)
         {
-            using var resp = await _http.GetAsync(url);
-            resp.EnsureSuccessStatusCode();
-            return await resp.Content.ReadFromJsonAsync<T>(_json);
+            for (var i = 0; i < attempts; i++)
+            {
+                try
+                {
+                    using var resp = await _http.GetAsync(url, ct);
+                    if ((int)resp.StatusCode == 429)
+                    {
+                        var wait = resp.Headers.RetryAfter?.Delta ?? TimeSpan.FromSeconds(1 << i);
+                        await Task.Delay(wait, ct);
+                        continue;
+                    }
+                    resp.EnsureSuccessStatusCode();
+                    return await resp.Content.ReadFromJsonAsync<T>(_json, ct);
+                }
+                catch (HttpRequestException) when (i < attempts - 1)
+                { await Task.Delay(250 * (1 << i), ct); }
+                catch (IOException) when (i < attempts - 1)
+                { await Task.Delay(250 * (1 << i), ct); }
+            }
+            return default;
         }
 
         public string PosterUrl(string? path)

@@ -46,39 +46,39 @@ namespace FlixTv.Api.Application.Features.Movies.Commands.CreateMovie
             if (request.TmdbId.HasValue)
                 movie.TmdbId = request.TmdbId.Value;
 
-            var allMovies = await unitOfWork.GetReadRepository<Movie>()
-                .GetAllAsync(include: x => x.Include(m => m.SimilarMovies));
+            //var allMovies = await unitOfWork.GetReadRepository<Movie>()
+            //    .GetAllAsync(include: x => x.Include(m => m.SimilarMovies));
 
             await unitOfWork.GetWriteRepository<Movie>().AddAsync(movie);
             await unitOfWork.SaveAsync();
 
 
 
-            double similarityThreshold = 0.9;
+            //double similarityThreshold = 0.9;
 
-            if (allMovies != null)
-                foreach (var m in allMovies)
-                {
-                    double score = CosineSimilarity(movie.FeatureVector, m.FeatureVector);
+            //if (allMovies != null)
+            //    foreach (var m in allMovies)
+            //    {
+            //        double score = CosineSimilarity(movie.FeatureVector, m.FeatureVector);
 
-                    if (score >= similarityThreshold)
-                    {
-                        if (movie.SimilarMovies == null)
-                            movie.SimilarMovies = new List<Movie>();
+            //        if (score >= similarityThreshold)
+            //        {
+            //            if (movie.SimilarMovies == null)
+            //                movie.SimilarMovies = new List<Movie>();
 
-                        movie.SimilarMovies.Add(m);
+            //            movie.SimilarMovies.Add(m);
 
-                        if (m.SimilarMovies == null)
-                            m.SimilarMovies = new List<Movie>();
+            //            if (m.SimilarMovies == null)
+            //                m.SimilarMovies = new List<Movie>();
 
-                        m.SimilarMovies.Add(movie);
+            //            m.SimilarMovies.Add(movie);
 
-                        await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(m);
-                    }
-                }
+            //            await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(m);
+            //        }
+            //    }
 
-            await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(movie);
-            await unitOfWork.SaveAsync();
+            //await unitOfWork.GetWriteRepository<Movie>().UpdateAsync(movie);
+            //await unitOfWork.SaveAsync();
 
 
             //////////////////////////////////////////////////////////////////

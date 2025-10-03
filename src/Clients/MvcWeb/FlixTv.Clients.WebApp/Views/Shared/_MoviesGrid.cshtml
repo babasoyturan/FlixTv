@@ -25,7 +25,7 @@
     var current = Math.Min(Math.Max(1, Model.Page), Math.Max(1, totalPages));
     var shown = Model?.TotalCount ?? 0;
     var fromIndex = shown == 0 ? 0 : (Model.Page - 1) * Model.PageSize + 1;
-    var toIndex = shown == 0 ? 0 : fromIndex + shown - 1;
+    var toIndex = shown == 0 ? 0 : fromIndex + Model.PageSize - 1;
 
     var ctxAction = (Model?.ListAction ?? "").ToLowerInvariant();
     var ctxController = (Model?.ListController ?? "").ToLowerInvariant();

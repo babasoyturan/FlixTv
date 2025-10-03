@@ -296,7 +296,7 @@ namespace FlixTv.Api.WebApi.Controllers
             return Ok(new { message = "The Movie was updated successfully" });
         }
 
-        [Authorize(Roles = "Admin, Moderator")]
+        
         [HttpPost]
         [Route("{movieId}")]
         public async Task<IActionResult> DeleteMovie(int movieId)

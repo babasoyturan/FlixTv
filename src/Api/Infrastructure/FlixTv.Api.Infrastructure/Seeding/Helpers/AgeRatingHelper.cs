@@ -20,7 +20,7 @@ namespace FlixTv.Api.Infrastructure.Seeding.Helpers
 
             if (!string.IsNullOrWhiteSpace(cert))
             {
-                if (cert is "G" or "U") return 0;
+                if (cert is "G" or "U") return 6;
                 if (cert is "PG") return 12;
                 if (cert is "PG-13" or "12" or "12A" or "TV-14") return 16;
                 if (cert is "R" or "15" or "NC-17" or "18" or "TV-MA") return 18;

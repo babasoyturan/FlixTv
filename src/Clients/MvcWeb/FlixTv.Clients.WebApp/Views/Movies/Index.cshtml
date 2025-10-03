@@ -81,14 +81,14 @@
         years.push({ key:'1980:1989',  text:"'80s" });
         years.push({ key:'1990:1999',  text:"'90s" });
         years.push({ key:'2000:2010',  text:'2000-10' });
-        years.push({ key:'2010:2020',  text:'2010-20' });
+        years.push({ key:'2011:2020',  text:'2011-20' });
 
         // 2020-dən sonrakı məntiq:
         // - Əgər tam 10 illik məsafə keçibsə (yəni now >= 2031) → 2020–2030 aralığını göstər,
         //   qalan illəri 2031..now dəqiq illər kimi əlavə et.
         // - Yoxdursa (now <= 2030) → 2021..now dəqiq illər kimi əlavə et.
         if (now >= 2031) {
-          years.push({ key:'2020:2030', text:'2020-30' });
+          years.push({ key:'2021:2030', text:'2021-30' });
           for (let y = 2031; y <= now; y++) years.push({ key:`${y}:${y}`, text:String(y) });
         } else {
           for (let y = 2021; y <= now; y++) years.push({ key:`${y}:${y}`, text:String(y) });

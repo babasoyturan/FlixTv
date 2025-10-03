@@ -31,8 +31,8 @@ namespace FlixTv.Projections.SendEmailService
         {
             try
             {
-                string senderEmail = "flixtv.movie.platform@gmail.com";
-                string senderPassword = "dlwc hwup gelj tzhk";
+                string senderEmail = "flixtv.movies.platform@gmail.com";
+                string senderPassword = "zzuu jmam aard arfx";
 
                 string recipientEmail = to;
 
